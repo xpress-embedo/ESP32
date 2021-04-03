@@ -1,10 +1,10 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/embeddedlab)
 
 # ESP32
-The ESP32 module I am using is of 38 pin, but it doesn't matter, I purchased it from [this link](https://amzn.to/2PSL5eN).  
+The ESP32 module I am using is 38 pin, but it doesn't matter, I purchased it from [this link](https://amzn.to/2PSL5eN).  
 
 ### Pin Out
-The ESP32 chip comes with 48 pins with multiple functions. Not all pins are exposed in all ESP32 development boards, and there are some pins that cannot be used.  
+The ESP32 chip comes with 48 pins with multiple functions. Not all pins are exposed in all ESP32 development boards, and some pins cannot be used.  
 If you're using an ESP32 38 pin Development board, you can use the following GPIO diagram as a reference. ESP32 38 pin Development board pinout diagram GPIO's pins. _This will be used in all the examples_.  
 <img src="Support/ESP32-38 PIN-DEVBOARD.png" width=80% height=80% />
 
@@ -16,7 +16,7 @@ The following figure illustrates the ESP-WROOM-32 chip pinout. Use this diagram 
 
 ### ESP32 Peripherals
 The ESP32 Peripherals include:
-* 18 Analog to Dogital Converter Channels
+* 18 Analog to Digital Converter Channels
 * 3 SPI Interfaces
 * 3 UART Interfaces
 * 2 I2C Interfaces
@@ -24,12 +24,12 @@ The ESP32 Peripherals include:
 * 2 Digital to Analog Converters
 * 2 I2S Interfaces
 * 10 Capacitive Sensing GPIO's
-The Analog to Digital Converter pins and Digital to Analog Converter pins are fixed, but other interfaces like UART, I2C, SPI, PWM etc pins, can be configured using internal multiplexer.  
+The Analog to Digital Converter pins and Digital to Analog Converter pins are fixed, but other interfaces like UART, I2C, SPI, PWM, etc pins, can be configured using an internal multiplexer.  
 The absolute maximum current drawn per GPIO is 40mA according to the “Recommended Operating Conditions” section in the ESP32 datasheet.  
 The ESP32 also features a built-in hall effect sensor that detects changes in the magnetic field in its surroundings.  
 
 #### Input Only Pins
-The GPIO's 34 to 39 are GPI's i.e. these pins are input only pins, and these pins don't have internal pull-up or pull-down resistors. These pins can't be used for outputs.  
+The GPIO's 34 to 39 are GPI's i.e. these pins are input-only, and these pins don't have internal pull-up or pull-down resistors. These pins can't be used for outputs.  
 
 #### Capacitive Touch GPIOs
 The ESP32 has 10 internal capacitive touch sensors. These can sense variations in anything that holds an electrical charge, like the human skin. So they can detect variations induced when touching the GPIOs with a finger. These pins can be easily integrated into capacitive pads, and replace mechanical buttons. The capacitive touch pins can also be used to wake up the ESP32 from sleep/deep sleep.  
@@ -69,7 +69,7 @@ The ESP32 has 18 x 12 bits ADC input channels (while the ESP8266 only has 1x 10 
 
 **_how to use the ESP32 ADC pins_**
 Note: ADC2 pins cannot be used when Wi-Fi is used. So, if you're using Wi-Fi and you're having trouble getting the value from an ADC2 GPIO, you may consider using an ADC1 GPIO instead, that should solve your problem.  
-The ADC input channels have a 12 bit resolution. This means that you can get analog readings ranging from 0 to 4095, in which 0 corresponds to 0V and 4095 to 3.3V. You also have the ability to set the resolution of your channels on the code, as well as the ADC range.  
+The ADC input channels have a 12-bit resolution. This means that you can get analog readings ranging from 0 to 4095, in which 0 corresponds to 0V and 4095 to 3.3V. You also can set the resolution of your channels on the code, as well as the ADC range.  
 
 #### Digital to Analog Converter (DAC)
 There are 2 x 8 bits DAC channels on the ESP32 to convert digital signals into analog voltage signal outputs. These are the DAC channels.
@@ -116,10 +116,10 @@ The ESP32 chip has the following strapping pins:
 * GPIO 12 (must be LOW during boot)
 * GPIO 15 (must be HIGH during boot)  
 These are used to put the ESP32 into bootloader or flashing mode. On most development boards with built-in USB/Serial, you don’t need to worry about the state of these pins. The board puts the pins in the right state for flashing or boot mode.  
-However, if you have peripherals connected to those pins, you may have trouble trying to upload new code, flashing the ESP32 with new firmware or resetting the board. If you have some peripherals connected to the strapping pins and you are getting trouble uploading code or flashing the ESP32, it may be because those peripherals are preventing the ESP32 to enter the right mode. After resetting, flashing, or booting, those pins work as expected.  
+However, if you have peripherals connected to those pins, you may have trouble trying to upload new code, flashing the ESP32 with new firmware, or resetting the board. If you have some peripherals connected to the strapping pins and you are getting trouble uploading code or flashing the ESP32, it may be because those peripherals are preventing the ESP32 to enter the right mode. After resetting, flashing, or booting, those pins work as expected.  
 
 #### Pins HIGH at Boot
-Some GPIO's change its state to HIGH or output PWM signals at boot or reset. This means that if you have outputs connected to these GPIOs you may get unexpected results when the ESP32 resets or boots.  
+Some GPIO's change their state to HIGH or output PWM signals at boot or reset. This means that if you have outputs connected to these GPIOs you may get unexpected results when the ESP32 resets or boots.  
 * GPIO 1
 * GPIO 3
 * GPIO 5
@@ -128,4 +128,4 @@ Some GPIO's change its state to HIGH or output PWM signals at boot or reset. Thi
 * GPIO 15
 
 #### Enable (EN)
-Enable (EN) is the 3.3V regulator's enable pin. It is pulled up, so connect to ground to disable the 3.3V regulator. This means that you can use this pin connected to a pushbutton to restart your ESP32.
+Enable (EN) is the 3.3V regulator's enable pin. It is pulled up, so connect to the ground to disable the 3.3V regulator. This means that you can use this pin connected to a pushbutton to restart your ESP32.
