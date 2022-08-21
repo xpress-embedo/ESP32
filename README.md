@@ -129,3 +129,27 @@ Some GPIO's change their state to HIGH or output PWM signals at boot or reset. T
 
 #### Enable (EN)
 Enable (EN) is the 3.3V regulator's enable pin. It is pulled up, so connect to the ground to disable the 3.3V regulator. This means that you can use this pin connected to a pushbutton to restart your ESP32.
+
+
+## Some Important Points
+### Install ESP32 and ESP8266 Library Support in Arduino IDE
+Go to `File` --> `Preferences` --> `Additional Board Manager` and update the following lines.
+```
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json, 
+http://arduino.esp8266.com/stable/package_esp8266com_index.json
+```
+
+### Permission denied: '/dev/ttyUSB0' issue in Ubuntu (Linux) OS
+This can be solved by executing the following command from the Terminal.  
+```
+sudo chmod a+rw /dev/ttyUSB0
+```
+
+### MD5 of files does not match data in flash. Error
+There could be several reason for the following error.  
+```
+A fatal error occurred: MD5 of file does not match data in flash! 
+```
+But in my case the issue is the power supply, I am using the USB cable to provide power to my ESP32 module, and this is also supplying power to 3.2 inch TFT screen, and hence I am getting this error, but if the power connection from the TFT screen is removed everything works fine.  
+The better solution is to use a good power supply to turn on the ESP32 module and TFT display. This will be tested later.  
+NOTE: The board used in Arduino IDE is LOLIN D32.

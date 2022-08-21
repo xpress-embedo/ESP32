@@ -1,3 +1,6 @@
 # Sublime Files
 *.sublime-workspace
 *.sublime-project
+
+# VS Code Workspace
+*.code-workspace
