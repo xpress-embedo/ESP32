@@ -4,7 +4,7 @@ static uint32_t idx = 0u;
 void setup() 
 {
   delay(100);
-  Serial.begin( 9600 );
+  Serial.begin( 115200 );
   Serial.println("Hello World from ESP32");
 }
 
