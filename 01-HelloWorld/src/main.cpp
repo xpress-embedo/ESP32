@@ -5,11 +5,12 @@
 #include <PubSubClient.h>
 
 // Macros
-#define DHTPIN                  (12)
-#define DHTTYPE                 (DHT11)
+#define DHTPIN                          (12)
+#define DHTTYPE                         (DHT11)
 
-#define DHT_REFRESH_TIME        (20000u)   // 20 seconds
-#define MQTT_PUB_BUFF_SIZE      (20u)
+#define DHT_REFRESH_TIME                (20000u)   // 20 seconds
+#define MQTT_PUB_BUFF_SIZE              (20u)
+#define WIFI_NOT_CONNECT_COUNT_MAX      (10)
 
 // Private Variables
 static uint32_t dht_refresh_timestamp = 0u;
@@ -95,18 +96,28 @@ void loop()
 // private function definitions
 void setup_wifi( void )
 {
+  uint16_t not_connected_counter = 0u;
+
   delay(10);
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
+  // Station Mode
+  WiFi.mode(WIFI_MODE_STA);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(2000);
+    delay(1500);
     Serial.print(".");
+    not_connected_counter++;
+    if( not_connected_counter > WIFI_NOT_CONNECT_COUNT_MAX )
+    {
+      Serial.println("Resetting ESP32, as not able to connected to WiFi");
+      ESP.restart();
+    }
   }
 
   Serial.println("");
@@ -164,7 +175,7 @@ void mqtt_reconnect( void )
       // Once connected, publish an announcement...
       // client.publish("Broadcast", "Connected with MQTT Server");
       // ... and resubscribe (Topic is "LED", to control the on board LED)
-      client.subscribe("led");
+      client.subscribe("led/#");
     }
     else
     {
