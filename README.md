@@ -3,16 +3,17 @@
 # ESP32
 The ESP32 module I am using is 38 pin, but it doesn't matter, I purchased it from [this link](https://amzn.to/2PSL5eN).  
 
+
 ### Pin Out
 The ESP32 chip comes with 48 pins with multiple functions. Not all pins are exposed in all ESP32 development boards, and some pins cannot be used.  
 If you're using an ESP32 38 pin Development board, you can use the following GPIO diagram as a reference. ESP32 38 pin Development board pinout diagram GPIO's pins. _This will be used in all the examples_.  
-<img src="Support/ESP32-38 PIN-DEVBOARD.png" width=80% height=80% />
+<img src="Support/ESP32-38 PIN-DEVBOARD.png" width=50% height=50% />
 
 If you're using an ESP32 30 pin Development board, you can use the following GPIO diagram as a reference. ESP32 30 pin Development board pinout diagram GPIO's pins.  
-<img src="Support/ESP32-30PIN-DEVBOARD.png" width=80% height=80% />
+<img src="Support/ESP32-30PIN-DEVBOARD.png" width=50% height=50% />
 
 The following figure illustrates the ESP-WROOM-32 chip pinout. Use this diagram if you're using an ESP32 bare chip in your projects.  
-<img src="Support/ESP32-VROOM-32D-PINOUT.png" width=80% height=80% />
+<img src="Support/ESP32-VROOM-32D-PINOUT.png" width=50% height=50% />
 
 ### ESP32 Peripherals
 The ESP32 Peripherals include:
@@ -24,6 +25,7 @@ The ESP32 Peripherals include:
 * 2 Digital to Analog Converters
 * 2 I2S Interfaces
 * 10 Capacitive Sensing GPIO's
+
 The Analog to Digital Converter pins and Digital to Analog Converter pins are fixed, but other interfaces like UART, I2C, SPI, PWM, etc pins, can be configured using an internal multiplexer.  
 The absolute maximum current drawn per GPIO is 40mA according to the “Recommended Operating Conditions” section in the ESP32 datasheet.  
 The ESP32 also features a built-in hall effect sensor that detects changes in the magnetic field in its surroundings.  
@@ -114,8 +116,10 @@ The ESP32 chip has the following strapping pins:
 * GPIO 4
 * GPIO 5 (must be HIGH during boot)
 * GPIO 12 (must be LOW during boot)
-* GPIO 15 (must be HIGH during boot)  
-These are used to put the ESP32 into bootloader or flashing mode. On most development boards with built-in USB/Serial, you don’t need to worry about the state of these pins. The board puts the pins in the right state for flashing or boot mode.  
+* GPIO 15 (must be HIGH during boot)
+
+These are used to put the ESP32 into bootloader or flashing mode. On most development boards with built-in USB/Serial, you don’t need to worry about the state of these pins. The board puts the pins in the right state for flashing or boot mode.
+
 However, if you have peripherals connected to those pins, you may have trouble trying to upload new code, flashing the ESP32 with new firmware, or resetting the board. If you have some peripherals connected to the strapping pins and you are getting trouble uploading code or flashing the ESP32, it may be because those peripherals are preventing the ESP32 to enter the right mode. After resetting, flashing, or booting, those pins work as expected.  
 
 #### Pins HIGH at Boot
@@ -144,6 +148,41 @@ This can be solved by executing the following command from the Terminal.
 ```
 sudo chmod a+rw /dev/ttyUSB0
 ```
+
+## Platformio-udev Rules
+Linux users have to install `udev` rules for PlatforIO supported devices/boards. The latest version of the rules maybe found at the following link.  
+
+[PlatformIO udev Rules Link](https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules)  
+
+This file can be download from the above link or we can use the following command from the Terminal.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
+```
+or alternatively we can download and manually copy the file to a destination folder.  
+```bash
+sudo cp 99-platformio-udev.rules /etc/udev/rules.d/99-platformio-udev.rules
+```
+
+Next step is to restart the `udev` management tool.
+```bash
+sudo service udev restart
+# or
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+Ubuntu/Debian users may need to add own “username” to the “dialout” group if they are not “root”, doing this issuing.
+```bash
+sudo usermod -a -G dialout $USER
+sudo usermod -a -G plugdev $USER
+```
+Similarly, Arch users may need to add their user to the “uucp” group. 
+```bash
+sudo usermod -a -G uucp $USER
+sudo usermod -a -G lock $USER
+```
+Now, the final step is to restart the PC/Laptop and also unplug and plug-in the device again.
+
 
 ### MD5 of files does not match data in flash. Error
 There could be several reason for the following error.  
