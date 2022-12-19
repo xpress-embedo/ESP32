@@ -1,0 +1,20 @@
+
+# InfluxDB based Data Logger
+
+## InfluxDB
+### InfluxDB Key Terms
+[Complete Glossary from InfluxDB Website](https://docs.influxdata.com/influxdb/v2.6/reference/glossary/)
+
+In **InfluxDB** a `bucket` is a named location where the time series data is stored. All `buckets` have a retention period, which defines the duration of time that a bucket retains data, on free cloud accounts on InfluxDB website the maximum retention time allowed is 30 days only.
+
+Data in InfluxDB is stored in tables within rows and columns. A set of data is known as `Point`. Each `Point` has a `mesurement`, a `tag set` and a `field`, a `field value` and a `timestamp`.
+
+Columns stores `tag sets` (indexed) and `field sets`. The only required column is `time`, which stores `timestamps` and is included in all InfluxDB tables.
+
+* **tag**: the key-value pair in InfluxDB’s data structure that records metadata. Tags are an optional part of InfluxDB’s data structure but they are useful for storing commonly-queried metadata; tags are indexed so queries on tags are performant.
+* **tag key**: tag keys are strings and store metadata. Tag keys are indexed so queries on tag keys are processed quickly.
+* **tag value**: tag values are strings and they store metadata. Tag values are indexed so queries on tag values are processed quickly.
+* **field**: the key-value pair in InfluxDB’s data structure that records metadata and the actual data value. Fields are required in InfluxDB’s data structure and they are not indexed – queries on field values scan all points that match the specified time range and, as a result, are not performant relative to tags.
+* **field key**: the key of the key-value pair. Field keys are strings and they store metadata.
+* **field value**: the value of a key-value pair. Field values are the actual data; they can be strings, floats, integers, or booleans. A field value is always associated with a timestamp. Field values are not indexed – queries on field values scan all points that match the specified time range and, as a result, are not performant.
+* **measurement**: the part of InfluxDB’s structure that describes the data stored in the associated fields.
