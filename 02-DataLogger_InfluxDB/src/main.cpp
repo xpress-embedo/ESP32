@@ -12,9 +12,10 @@
 #include <WiFiMulti.h>
 #include <InfluxDbClient.h>
 #include <InfluxDbCloud.h>
+#include <DHT.h>
+#include <DHT_U.h>
 
-WiFiMulti wifiMulti;
-
+// Project Macros
 #define WIFI_SSID             "????????????"
 #define WIFI_PASSWORD         "????????????"
 #define INFLUXDB_URL          "????????????"
@@ -30,18 +31,64 @@ WiFiMulti wifiMulti;
 //  Central Europe: "CET-1CEST,M3.5.0,M10.5.0/3"
 #define TZ_INFO "CET-1CEST,M3.5.0,M10.5.0/3"
 
+// DHT Sensor Configuration Macros
+#define DEVICE                          "ESP32"
+
+#define DHTPIN                          (12)
+#define DHTTYPE                         (DHT11)
+
+#define DHT11_REFRESH_TIME              (5000u)
+#define INFLUXDB_SEND_TIME              (10000u)
+
+// Priavate Variables
+
 // InfluxDB client instance with preconfigured InfluxCloud Certificate
 InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN, InfluxDbCloud2CACert);
 
-#define DEVICE "ESP32"
-
 // Data point
-Point sensor("wifi_status");
+Point sensor("Sensor_Data");
+
+WiFiMulti wifiMulti;
+
+static uint8_t dht11_temperature = 0;
+static uint8_t dht11_humidity = 0u;
+DHT dht(DHTPIN, DHTTYPE);
+
+// Task Time related Variables
+static uint32_t dht_refresh_timestamp = 0u;
+static uint32_t influxdb_send_timestamp = 0u;
+
+// Private Function Prototypes
+static void System_Init( void );
+static void WiFi_Setup( void );
+static void DHT11_TaskInit( void );
+static void DHT11_TaskMng( void );
+static void InfluxDB_TaskInit( void );
+static void InfluxDB_TaskMng( void );
 
 void setup()
 {
-  Serial.begin(115200);
+  System_Init();
+  WiFi_Setup();
+  DHT11_TaskInit();
+  InfluxDB_TaskInit();
+}
 
+void loop()
+{
+  DHT11_TaskMng();
+  InfluxDB_TaskMng();
+}
+
+// Private Function Definitions
+static void System_Init( void )
+{
+  Serial.begin( 115200 );
+  // TODO: XS
+}
+
+static void WiFi_Setup( void )
+{
   // Connect WiFi
   Serial.println("Connecting to WiFi");
   WiFi.mode(WIFI_STA);
@@ -52,10 +99,51 @@ void setup()
     delay(500);
   }
   Serial.println();
+}
 
+static void DHT11_TaskInit( void )
+{
+  dht.begin();
+  // delay(2000);
+  dht_refresh_timestamp = millis();
+}
+
+static void DHT11_TaskMng( void )
+{
+  uint32_t now = millis();
+  float temperature, humidity;
+  if( now - dht_refresh_timestamp >= DHT11_REFRESH_TIME )
+  {
+    dht_refresh_timestamp = now;
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    humidity = dht.readHumidity();
+    // Read temperature as Celsius (the default)
+    temperature = dht.readTemperature();
+    
+    // Check if any reads failed and exit early (to try again).
+    if (isnan(humidity) || isnan(temperature) ) 
+    {
+      Serial.println(F("Failed to read from DHT sensor!"));
+    }
+    else
+    {
+      Serial.print(F("Humidity: "));
+      Serial.print(humidity);
+      Serial.print(F("%  Temperature: "));
+      Serial.print(temperature);
+      Serial.println(F("°C "));
+      // store this in the global variables
+      dht11_humidity = (uint8_t)humidity;
+      dht11_temperature = (uint8_t)temperature;
+    }
+  }
+}
+
+static void InfluxDB_TaskInit( void )
+{
   // Add constant tags - only once
   sensor.addTag("device", DEVICE);
-  sensor.addTag("SSID", WiFi.SSID());
 
   // Accurate time is necessary for certificate validation and writing in batches
   // For the fastest time sync find NTP servers in your area: https://www.pool.ntp.org/zone/
@@ -75,28 +163,33 @@ void setup()
   }
 }
 
-void loop()
+static void InfluxDB_TaskMng( void )
 {
-  // Store measured value into point
-  sensor.clearFields();
-  // Report RSSI of currently connected network
-  sensor.addField("rssi", WiFi.RSSI());
-  // Print what are we exactly writing
-  Serial.print("Writing: ");
-  Serial.println(client.pointToLineProtocol(sensor));
-  // If no Wifi signal, try to reconnect it
-  if (wifiMulti.run() != WL_CONNECTED)
+  uint32_t now = millis();
+  if( now - influxdb_send_timestamp >= INFLUXDB_SEND_TIME )
   {
-    Serial.println("Wifi connection lost");
+    influxdb_send_timestamp = now;
+    // Store measured value into point
+    sensor.clearFields();
+    // Report RSSI of currently connected network
+    sensor.addField( "rssi", WiFi.RSSI() );
+    // add temperature and humidity values also
+    sensor.addField( "temperature", dht11_temperature );
+    sensor.addField( "humidity", dht11_humidity );
+    
+    // Print what are we exactly writing
+    Serial.print("Writing: ");
+    Serial.println(client.pointToLineProtocol(sensor));
+    // If no Wifi signal, try to reconnect it
+    if (wifiMulti.run() != WL_CONNECTED)
+    {
+      Serial.println("Wifi connection lost");
+    }
+    // Write point
+    if (!client.writePoint(sensor))
+    {
+      Serial.print("InfluxDB write failed: ");
+      Serial.println(client.getLastErrorMessage());
+    }
   }
-  // Write point
-  if (!client.writePoint(sensor))
-  {
-    Serial.print("InfluxDB write failed: ");
-    Serial.println(client.getLastErrorMessage());
-  }
-
-  //Wait 10s
-  Serial.println("Wait 10s");
-  delay(10000);
 }
