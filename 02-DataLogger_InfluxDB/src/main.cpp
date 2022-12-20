@@ -31,9 +31,9 @@
 //  Central Europe: "CET-1CEST,M3.5.0,M10.5.0/3"
 #define TZ_INFO "CET-1CEST,M3.5.0,M10.5.0/3"
 
-// DHT Sensor Configuration Macros
 #define DEVICE                          "ESP32"
 
+// DHT Sensor Configuration Macros
 #define DHTPIN                          (12)
 #define DHTTYPE                         (DHT11)
 
@@ -145,8 +145,9 @@ static void InfluxDB_TaskInit( void )
   // Add constant tags - only once
   sensor.addTag("device", DEVICE);
 
-  // Accurate time is necessary for certificate validation and writing in batches
-  // For the fastest time sync find NTP servers in your area: https://www.pool.ntp.org/zone/
+  // Accurate time is necessary for certificate validation & writing in batches
+  // For the fastest time sync find NTP servers in your area: 
+  // https://www.pool.ntp.org/zone/
   // Syncing progress and the time will be printed to Serial.
   timeSync(TZ_INFO, "pool.ntp.org", "time.nis.gov");
 
