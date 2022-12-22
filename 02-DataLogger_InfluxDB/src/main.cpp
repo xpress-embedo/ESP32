@@ -37,8 +37,10 @@
 #define DHTPIN                          (12)
 #define DHTTYPE                         (DHT11)
 
-#define DHT11_REFRESH_TIME              (5000u)
-#define INFLUXDB_SEND_TIME              (10000u)
+#define DHT11_REFRESH_TIME              (5000u)     // 5 seconds
+#define INFLUXDB_SEND_TIME              (60000u)    // 1 minute
+
+#define SENSOR_BUFFER_SIZE              (INFLUXDB_SEND_TIME/DHT11_REFRESH_TIME)
 
 // Priavate Variables
 
@@ -52,6 +54,9 @@ WiFiMulti wifiMulti;
 
 static uint8_t dht11_temperature = 0;
 static uint8_t dht11_humidity = 0u;
+static uint8_t temp_buffer[SENSOR_BUFFER_SIZE] = { 0 };
+static uint8_t humidity_buffer[SENSOR_BUFFER_SIZE] = { 0 };
+static uint16_t sensor_buffer_idx = 0;
 DHT dht(DHTPIN, DHTTYPE);
 
 // Task Time related Variables
@@ -65,6 +70,9 @@ static void DHT11_TaskInit( void );
 static void DHT11_TaskMng( void );
 static void InfluxDB_TaskInit( void );
 static void InfluxDB_TaskMng( void );
+
+static uint8_t Get_HumidityValue( void );
+static uint8_t Get_TemperatureValue( void );
 
 void setup()
 {
@@ -136,6 +144,13 @@ static void DHT11_TaskMng( void )
       // store this in the global variables
       dht11_humidity = (uint8_t)humidity;
       dht11_temperature = (uint8_t)temperature;
+      temp_buffer[sensor_buffer_idx] = dht11_temperature;
+      humidity_buffer[sensor_buffer_idx] = dht11_humidity;
+      sensor_buffer_idx++;
+      if( sensor_buffer_idx >= SENSOR_BUFFER_SIZE )
+      {
+        sensor_buffer_idx = 0;
+      }
     }
   }
 }
@@ -170,13 +185,18 @@ static void InfluxDB_TaskMng( void )
   if( now - influxdb_send_timestamp >= INFLUXDB_SEND_TIME )
   {
     influxdb_send_timestamp = now;
+    // Serial.print("Average Humdity = ");
+    // Serial.println( Get_HumidityValue() );
+    // Serial.print("Average Temperature = ");
+    // Serial.println( Get_TemperatureValue() );
+
     // Store measured value into point
     sensor.clearFields();
     // Report RSSI of currently connected network
     sensor.addField( "rssi", WiFi.RSSI() );
     // add temperature and humidity values also
-    sensor.addField( "temperature", dht11_temperature );
-    sensor.addField( "humidity", dht11_humidity );
+    sensor.addField( "temperature", Get_TemperatureValue() );
+    sensor.addField( "humidity", Get_HumidityValue() );
     
     // Print what are we exactly writing
     Serial.print("Writing: ");
@@ -193,4 +213,28 @@ static void InfluxDB_TaskMng( void )
       Serial.println(client.getLastErrorMessage());
     }
   }
+}
+
+static uint8_t Get_HumidityValue( void )
+{
+  uint16_t idx = 0u;
+  uint32_t temp = 0u;
+  for( idx=0; idx<SENSOR_BUFFER_SIZE; idx++ )
+  {
+    temp = temp + humidity_buffer[idx];
+  }
+  temp = temp/SENSOR_BUFFER_SIZE;
+  return (uint8_t)temp;
+}
+
+static uint8_t Get_TemperatureValue( void )
+{
+  uint16_t idx = 0u;
+  uint32_t temp = 0u;
+  for( idx=0; idx<SENSOR_BUFFER_SIZE; idx++ )
+  {
+    temp = temp + temp_buffer[idx];
+  }
+  temp = temp/SENSOR_BUFFER_SIZE;
+  return (uint8_t)temp;
 }
