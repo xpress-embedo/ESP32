@@ -2,7 +2,7 @@
 # for more information about component CMakeLists.txt files.
 
 idf_component_register(
-    SRCS main.c rgb_led.c
+    SRCS main.c rgb_led.c wifi_app.c
     INCLUDE_DIRS        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)

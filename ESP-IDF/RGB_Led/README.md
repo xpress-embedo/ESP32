@@ -1,11 +1,8 @@
 RGB LED
 ====================
 
-This is a template application to be used with [Espressif IoT Development Framework](https://github.com/espressif/esp-idf).
-
-Please check [ESP-IDF docs](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for getting started instructions.
-
-*Code in this repository is in the Public Domain (or CC0 licensed, at your option.)
-Unless required by applicable law or agreed to in writing, this
-software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied.*
+## WiFi Application (High-Level Perspective)
+* The ESP32 should start its Access Point so that other devices can connect to it.
+  * This enables users to access information e.g. sensor data, device info, connection status/information, user options to connect and disconnect from an Access Point, Display Local Time etc.
+* The WiFi application will start an HTTP server, which will support a web page.
+* The application will contain a FreeRTOS task that accepts FreeRTOS Queue message `xQueueCreate`, `xQueueSend` and `xQueueReceive` for event coordination.
