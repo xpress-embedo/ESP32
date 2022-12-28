@@ -1,0 +1,3 @@
+[submodule "ESP-IDF/HelloWorld/esp-idf-lib"]
+	path = ESP-IDF/HelloWorld/esp-idf-lib
+	url = git@github.com:UncleRus/esp-idf-lib.git
