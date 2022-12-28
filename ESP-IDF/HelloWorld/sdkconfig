@@ -306,11 +306,14 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# Example configuration
 #
-CONFIG_ESP_WIFI_SSID="myssid"
-CONFIG_ESP_WIFI_PASSWORD="mypassword"
-# end of Example Configuration
+CONFIG_EXAMPLE_TYPE_DHT11=y
+# CONFIG_EXAMPLE_TYPE_AM2301 is not set
+# CONFIG_EXAMPLE_TYPE_SI7021 is not set
+CONFIG_EXAMPLE_DATA_GPIO=12
+CONFIG_EXAMPLE_INTERNAL_PULLUP=y
+# end of Example configuration
 
 #
 # Compiler options

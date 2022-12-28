@@ -7,8 +7,17 @@
 
 #include <dht.h>
 
+#if defined(CONFIG_EXAMPLE_TYPE_DHT11)
 #define SENSOR_TYPE         (DHT_TYPE_DHT11)
-#define SENSOR_PIN          (GPIO_NUM_12)
+#endif
+#if defined(CONFIG_EXAMPLE_TYPE_AM2301)
+#define SENSOR_TYPE         (DHT_TYPE_AM2301)
+#endif
+#if defined(CONFIG_EXAMPLE_TYPE_SI7021)
+#define SENSOR_TYPE         (DHT_TYPE_SI7021)
+#endif
+
+#define SENSOR_PIN          (CONFIG_EXAMPLE_DATA_GPIO)
 
 static void DHT_Measure( void *pvParameters );
 
@@ -26,8 +35,12 @@ void app_main(void)
 static void DHT_Measure( void *pvParameters )
 {
   float temperature, humidity;
+
+  #ifdef CONFIG_EXAMPLE_INTERNAL_PULLUP
   // enable the pull-up on the data line if needed
   gpio_set_pull_mode( SENSOR_PIN, GPIO_PULLUP_ONLY );
+  #endif
+
   while(1)
   {
     if( dht_read_float_data( SENSOR_TYPE, SENSOR_PIN, &humidity, &temperature) == ESP_OK )
