@@ -14,6 +14,7 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+#include "driver/gpio.h"
 
 /* This Example use WiFi config. that you can set via project configuration menu
 
@@ -25,7 +26,11 @@
 #define EXAMPLE_ESP_WIFI_CHANNEL   CONFIG_ESP_WIFI_CHANNEL
 #define EXAMPLE_MAX_STA_CONN       CONFIG_ESP_MAX_STA_CONN
 
+#define RED_LED                    (GPIO_NUM_21)
+
 // Private Function Declaration
+static void led_configure( void );
+static void led_set_status( bool status );
 static void wifi_init_softap(void);
 
 static esp_err_t led_off_handler(httpd_req_t *req);
@@ -45,12 +50,81 @@ static void disconnect_handler(void* arg, esp_event_base_t event_base,
 
 // Private Constant Variables
 static const char *TAG = "WebServer";
+
+char led_on_html_code[] =
+  "<!DOCTYPE html>\
+  <html>\
+  <head>\
+  <style>\
+  .button {\
+    border: none;\
+    color: white;\
+    padding: 15px 32px;\
+    text-align: center;\
+    text-decoration: none;\
+    display: inline-block;\
+    font-size: 16px;\
+    margin: 4px 2px;\
+    cursor: pointer;\
+  }\
+  .led_button {background-color: #4CAF50;} /* Green */\
+  </style>\
+  </head>\
+  <body>\
+  <h1>ESP32 WebServer Application</h1>\
+  <p>On Board LED is OFF</p>\
+  <button class=\"button led_button\" onclick=\"window.location.href='/ledon'\">LED ON</button>\
+  </body>\
+  </html>";
+
+char led_off_html_code[] =
+  "<!DOCTYPE html>\
+  <html>\
+  <head>\
+  <style>\
+  .button {\
+    border: none;\
+    color: white;\
+    padding: 15px 32px;\
+    text-align: center;\
+    text-decoration: none;\
+    display: inline-block;\
+    font-size: 16px;\
+    margin: 4px 2px;\
+    cursor: pointer;\
+  }\
+  .led_button {background-color: #000000;} /* Black */\
+  </style>\
+  </head>\
+  <body>\
+  <h1>ESP32 WebServer Application</h1>\
+  <p>On Board LED is ON</p>\
+  <button class=\"button led_button\" onclick=\"window.location.href='/ledoff'\">LED OFF</button>\
+  </body>\
+  </html>";
+
 static const httpd_uri_t ledoff =
 {
   .uri       = "/ledoff",
   .method    = HTTP_GET,
   .handler   = led_off_handler,
-  .user_ctx  = "Hello World!"
+  .user_ctx  = led_on_html_code
+};
+
+static const httpd_uri_t ledon =
+{
+  .uri       = "/ledon",
+  .method    = HTTP_GET,
+  .handler   = led_on_handler,
+  .user_ctx  = led_off_html_code
+};
+
+static const httpd_uri_t root =
+{
+  .uri       = "/",
+  .method    = HTTP_GET,
+  .handler   = led_off_handler,
+  .user_ctx  = led_off_html_code
 };
 
 static httpd_handle_t server = NULL;
@@ -67,11 +141,32 @@ void app_main(void)
   }
   ESP_ERROR_CHECK(ret);
 
+  // Configure the LED
+  led_configure();
+
   ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
   wifi_init_softap();
 }
 
 // Private Function Definitions
+static void led_configure( void )
+{
+  gpio_reset_pin( RED_LED );
+  gpio_set_direction( RED_LED, GPIO_MODE_OUTPUT );
+}
+
+static void led_set_status( bool status )
+{
+  if( status )
+  {
+    gpio_set_level(RED_LED, 1);
+  }
+  else
+  {
+    gpio_set_level(RED_LED, 0);
+  }
+}
+
 static void wifi_init_softap( void )
 {
   /* Initialize the Network Interface or we can say initialize underlying TCP/IP
@@ -185,6 +280,8 @@ static httpd_handle_t start_webserver(void)
     // Set URI handlers
     ESP_LOGI(TAG, "Registering URI handlers");
     httpd_register_uri_handler(server, &ledoff);
+    httpd_register_uri_handler(server, &ledon);
+    httpd_register_uri_handler(server, &root);
     return server;
   }
 
@@ -232,6 +329,25 @@ static esp_err_t led_off_handler( httpd_req_t *req )
 {
   esp_err_t error;
   ESP_LOGI( TAG, "LED Turned OFF" );
+  led_set_status(0);
+  const char *response = (const char *)req->user_ctx;
+  error = httpd_resp_send(req, response, strlen(response) );
+  if( error != ESP_OK )
+  {
+    ESP_LOGI( TAG, "Error %d while sending Response", error );
+  }
+  else
+  {
+    ESP_LOGI( TAG, "Response Sent Successfully" );
+  }
+  return error;
+}
+
+static esp_err_t led_on_handler( httpd_req_t *req )
+{
+  esp_err_t error;
+  ESP_LOGI( TAG, "LED Turned ON" );
+  led_set_status(1);
   const char *response = (const char *)req->user_ctx;
   error = httpd_resp_send(req, response, strlen(response) );
   if( error != ESP_OK )
