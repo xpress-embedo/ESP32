@@ -54,13 +54,34 @@ void app_main(void)
 // Private Function Definitions
 static void wifi_init_softap( void )
 {
+  /* Initialize the Network Interface or we can say initialize underlying TCP/IP
+  stack, this function should be called exactly once, when the application
+  starts */
   ESP_ERROR_CHECK( esp_netif_init() );
+
+  // Create Default Event Loop
   ESP_ERROR_CHECK( esp_event_loop_create_default() );
+
+  /* This creates default WIFI AP. In case of any init error this API aborts.
+  The API creates esp_netif object with default WiFi access point config,
+  attaches the netif to wifi and registers default wifi handlers.*/
   esp_netif_create_default_wifi_ap();
 
+  /* Initialize WiFi Allocate resource for WiFi driver, such as WiFi control
+  structure, RX/TX buffer, WiFi NVS structure etc. This WiFi also starts WiFi
+  task.
+  Note: This API must be called before all other WiFi API can be called.
+  Note: Always use WIFI_INIT_CONFIG_DEFAULT macro to initialize the
+  configuration to default values, this can guarantee all the fields get correct
+  value when more fields are added into wifi_init_config_t in future release.
+  If you want to set your own initial values, overwrite the default values which
+  are set by WIFI_INIT_CONFIG_DEFAULT.
+  Please be notified that the field 'magic' of wifi_init_config_t should always
+  be WIFI_INIT_CONFIG_MAGIC! */
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
 
+  // Register an instance of event handler to the default loop.
   ESP_ERROR_CHECK(esp_event_handler_instance_register( WIFI_EVENT,\
                                                        ESP_EVENT_ANY_ID,\
                                                        &wifi_event_handler,\
@@ -92,8 +113,15 @@ static void wifi_init_softap( void )
     wifi_config.ap.authmode = WIFI_AUTH_OPEN;
   }
 
+  // Set the operating mode, here we are setting the Access Point Mode
   ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_AP) );
+
+  // Set the configuration of the ESP32 STA or AP
   ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_AP, &wifi_config) );
+  /* Start WiFi according to current configuration If mode is WIFI_MODE_STA, it
+  create station control block and start station If mode is WIFI_MODE_AP, it
+  create soft-AP control block and start soft-AP If mode is WIFI_MODE_APSTA,
+  it create soft-AP and station control block and start soft-AP and station */
   ESP_ERROR_CHECK( esp_wifi_start() );
 
   ESP_LOGI( TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d", \
