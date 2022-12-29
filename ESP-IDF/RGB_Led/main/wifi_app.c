@@ -19,7 +19,7 @@
 #include "wifi_app.h"
 
 // Tag used for ESP Serial console messages
-//static const char TAG[] = "WiFi APP";
+static const char APP_TAG[] = "WiFi APP";
 
 // Queue Handle used to Manipulate the Main Queue of events
 static QueueHandle_t wifi_app_queue_handle;
@@ -94,17 +94,17 @@ static void WiFi_App_Task(void *pvParameters)
     {
       switch( msg.msg_id )
       {
-//        case WIFI_APP_MSG_START_HTTP_SERVER:
-//          ESP_LOGI( TAG, "WIFI_APP_MSG_START_HTTP_SERVER" );
-//          // Start HTTP Server TODO
-//          RGB_HTTP_ServerStarted();
-//          break;
-//        case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
-//          ESP_LOGI( TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER");
-//          break;
-//        case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
-//          ESP_LOGI( TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP");
-//          break;
+        case WIFI_APP_MSG_START_HTTP_SERVER:
+          ESP_LOGI( APP_TAG, "WIFI_APP_MSG_START_HTTP_SERVER" );
+          // Start HTTP Server TODO
+          RGB_HTTP_ServerStarted();
+          break;
+        case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
+          ESP_LOGI( APP_TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER");
+          break;
+        case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
+          ESP_LOGI( APP_TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP");
+          break;
         default:
           break;
       }
@@ -230,37 +230,37 @@ static void WiFi_App_EventHandler( void *arg, \
 {
   if( event_base == WIFI_EVENT )
   {
-//    switch( event_id )
-//    {
-//      case WIFI_EVENT_AP_START:
-//        ESP_LOGI( TAG, "WIFI_EVENT_AP_START" );
-//        break;
-//      case WIFI_EVENT_AP_STOP:
-//        ESP_LOGI( TAG, "WIFI_EVENT_AP_STOP" );
-//        break;
-//      case WIFI_EVENT_AP_STACONNECTED:
-//        ESP_LOGI( TAG, "WIFI_EVENT_AP_STACONNECTED" );
-//        break;
-//      case WIFI_EVENT_AP_STADISCONNECTED:
-//        ESP_LOGI( TAG, "WIFI_EVENT_AP_STADISCONNECTED" );
-//        break;
-//      case WIFI_EVENT_STA_START:
-//        ESP_LOGI( TAG, "WIFI_EVENT_STA_START" );
-//        break;
-//      case WIFI_EVENT_STA_CONNECTED:
-//        ESP_LOGI( TAG, "WIFI_EVENT_STA_CONNECTED" );
-//        break;
-//      case WIFI_EVENT_STA_DISCONNECTED:
-//        ESP_LOGI( TAG, "WIFI_EVENT_STA_DISCONNECTED" );
-//        break;
-//    };
+    switch( event_id )
+    {
+      case WIFI_EVENT_AP_START:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_AP_START" );
+        break;
+      case WIFI_EVENT_AP_STOP:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_AP_STOP" );
+        break;
+      case WIFI_EVENT_AP_STACONNECTED:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_AP_STACONNECTED" );
+        break;
+      case WIFI_EVENT_AP_STADISCONNECTED:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_AP_STADISCONNECTED" );
+        break;
+      case WIFI_EVENT_STA_START:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_STA_START" );
+        break;
+      case WIFI_EVENT_STA_CONNECTED:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_STA_CONNECTED" );
+        break;
+      case WIFI_EVENT_STA_DISCONNECTED:
+        ESP_LOGI( APP_TAG, "WIFI_EVENT_STA_DISCONNECTED" );
+        break;
+    };
   }
   else if( event_base == IP_EVENT )
   {
     switch( event_id )
     {
       case IP_EVENT_STA_GOT_IP:
-//        ESP_LOGI( TAG, "IP_EVENT_STA_GOT_IP" );
+        ESP_LOGI( APP_TAG, "IP_EVENT_STA_GOT_IP" );
         break;
     };
   }
