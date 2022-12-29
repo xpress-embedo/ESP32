@@ -19,8 +19,12 @@ static float humidity = 0.0;
 DHT dht(DHTPIN, DHTTYPE);
 
 // Update these Information
-const char* ssid = "TestWiFi";                  // WiFi Name
-const char* password = "12345678";              // WiFi Password
+// const char* ssid = "TestWiFi";                  // WiFi Name
+// const char* password = "12345678";              // WiFi Password
+const char* ssid = "gigacube-D733";                     // WiFi Name
+const char* password = "5yR8m2B6Y4egrJQ5";              // WiFi Password
+// const char* ssid = "WLAN-214460";                       // WiFi Name
+// const char* password = "5139300621152829";              // WiFi Password
 const char* mqtt_server = "hairdresser.cloudmqtt.com";  // MQTT Server Name
 const int mqtt_port = 17259;                            // MQTT Server Port
 const char* user_name = "pyptiouq";                     // MQTT Server Instance User Name
