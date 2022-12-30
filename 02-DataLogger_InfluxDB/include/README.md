@@ -5,6 +5,8 @@
 
 In this post, I will demonstrate how we can use the ESP32 module to sense the temperature and humidity from the DHT11 sensor and send this data to the InfluxDB cloud database, and then using InfluxDB and Grafana Dashboard, we can visualize this data in the form of graphs and gauges. Below is the image of the dashboard created in InfluxDB.
 
+[![YouTube Video](../../Support/78-WeatherMonitoringUsingESP32.png)](https://www.youtube.com/watch?v%3DLatI7kNxGmc)
+
 Note: Grafana Dashboard post will be a separate topic else this will be a very long post.
 
 ![Dashboard Using InfluxDB](https://raw.githubusercontent.com/xpress-embedo/ESP32/master/Support/HomeDataLogger_InfluxDB.png)
