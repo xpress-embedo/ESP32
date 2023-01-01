@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include "main.h"
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <DHT.h>
@@ -37,6 +37,8 @@ TFT_eSPI tft = TFT_eSPI();
 static float temperature = 0.0;
 static float humidity = 0.0;
 DHT dht(DHT_PIN, DHT_TYPE);
+static uint8_t temp_sensor_1sec[260] = { 0 };   // 320-60
+static uint16_t temp_sensor_1sec_idx = 0u;
 
 // Private functions
 static void Disp_Init( void );
@@ -82,6 +84,11 @@ void loop()
 {
   DHT_TaskMng();
   LVGL_TaskMng();
+}
+
+uint8_t * Display_GetTempData( void )
+{
+  return temp_sensor_1sec;
 }
 
 // Private Function Definition
