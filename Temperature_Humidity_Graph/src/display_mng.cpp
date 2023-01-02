@@ -5,8 +5,8 @@
  *      Author: xpress_embedo
  */
 #include "display_mng.h"
-#include <Arduino.h>
 #include <lvgl.h>
+#include <TFT_eSPI.h>
 
 typedef enum _Display_State_e
 {
@@ -33,22 +33,79 @@ typedef struct _RGB_Mixer_s
 } RGB_Mixer_s;
 
 /*---------------------------Private Variables--------------------------------*/
+// Screen Resolution
+static const uint32_t screenWidth  = 320;
+static const uint32_t screenHeight = 240;
+// LVGL related stuff
+static lv_disp_draw_buf_t draw_buf;
+// Declare a buffer for 1/10 screen size
+static lv_color_t buf[ screenWidth * 10 ];
+// TFT Instance
+TFT_eSPI tft = TFT_eSPI();
+
+// Below Variables are Application Related Variables
 static Display_State_e disp_state = DISP_STATE_VIBGYOR;
 static RGB_Mixer_s red, green, blue;
 static lv_obj_t *rectangle;
 static lv_style_t style;
-// for temperature chart
+// for temperature and humidity chart
 static lv_obj_t * chart;
 static lv_chart_series_t * temp_series;
 
 /*--------------------------Private Function Prototypes-----------------------*/
+#if LV_USE_LOG != 0
+/* Serial debugging */
+void LVGL_Print(lv_log_level_t level, const char * file, uint32_t line, \
+                const char * fn_name, const char * dsc )
+#endif
+static void Display_Flush(lv_disp_drv_t *disp, const lv_area_t *area, \
+                          lv_color_t *color_p );
+static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data );
+
 static void Display_Vibgyor( void );
 static void Display_RGBMixer( void );
 static void Display_TemperatureChart( void );
 static void Display_TemperatureChartRefresh( void );
 static void Slider_Callback( lv_event_t *e );
 
+
 /*---------------------------Public Function Definitions----------------------*/
+void Display_Init( void )
+{
+  #if LV_USE_LOG != 0
+   // register print function for debugging
+  lv_log_register_print_cb( my_print );
+  #endif
+  // Initialize TFT
+  tft.begin();
+  // Set Orientation to Landscape
+  tft.setRotation(1);
+
+  // Calibration Values for my Setup
+  uint16_t calData[5] = { 393, 3484, 305, 3314, 7 };
+  tft.setTouch(calData);
+
+  // Initialize the display buffer
+  lv_disp_draw_buf_init( &draw_buf, buf, NULL, screenWidth * 10 );
+
+  // Initialize the display
+  static lv_disp_drv_t disp_drv;    /* Descriptor of a display driver */
+  lv_disp_drv_init( &disp_drv );    /* Basic Inialization */
+  /* Change the following line to your display resolution */
+  disp_drv.hor_res = screenWidth;   /* Set the horizonral resolution of the display */
+  disp_drv.ver_res = screenHeight;  /* Set the vertical resolution of the display */
+  disp_drv.flush_cb = Display_Flush;/* driver function to flush the display */
+  disp_drv.draw_buf = &draw_buf;    /* Assign the buffer to the display */
+  lv_disp_drv_register( &disp_drv );/* Finally register the driver */
+
+  /*Initialize the (dummy) input device driver*/
+  static lv_indev_drv_t indev_drv;
+  lv_indev_drv_init( &indev_drv );
+  indev_drv.type = LV_INDEV_TYPE_POINTER;
+  indev_drv.read_cb = Touch_Read;
+  lv_indev_drv_register( &indev_drv );
+}
+
 void Display_Mng( void )
 {
   static uint32_t wait_time = 0u;
@@ -61,7 +118,7 @@ void Display_Mng( void )
       break;
     case DISP_STATE_VIBGYOR_WAIT:
       // wait here for some time and then move to next state
-      if( millis()-wait_time > 4000u )
+      if( millis()-wait_time > 1000u )
       {
         disp_state = DISP_STATE_RGB_MIXER;
       }
@@ -91,6 +148,53 @@ void Display_Mng( void )
   };
 }
 
+static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
+{
+  uint16_t touchX, touchY;
+
+  bool touched = tft.getTouch( &touchX, &touchY, 600 );
+
+  if( !touched )
+  {
+    data->state = LV_INDEV_STATE_REL;
+  }
+  else
+  {
+    data->state = LV_INDEV_STATE_PR;
+    /*Set the coordinates*/
+    data->point.x = touchX;
+    data->point.y = touchY;
+    // uncomment to debug touch points
+    // Serial.print( "Data x " );
+    // Serial.println( touchX );
+    // Serial.print( "Data y " );
+    // Serial.println( touchY );
+  }
+}
+
+static void Display_Flush(  lv_disp_drv_t *disp, const lv_area_t *area, \
+                            lv_color_t *color_p )
+{
+  uint32_t w = ( area->x2 - area->x1 + 1 );
+  uint32_t h = ( area->y2 - area->y1 + 1 );
+  
+  tft.startWrite();
+  tft.setAddrWindow( area->x1, area->y1, w, h );
+  tft.pushColors( ( uint16_t * )&color_p->full, w * h, true );
+  tft.endWrite();
+  
+  lv_disp_flush_ready( disp );
+}
+
+#if LV_USE_LOG != 0
+/* Serial debugging */
+void LVGL_Print(  lv_log_level_t level, const char * file, uint32_t line, \
+                  const char * fn_name, const char * dsc )
+{
+  Serial.printf( "%s(%s)@%d->%s\r\n", file, fn_name, line, dsc );
+  Serial.flush();
+}
+#endif
 
 static void Display_Vibgyor( void )
 {
@@ -187,7 +291,7 @@ static void Display_RGBMixer( void )
   // intialize the styles
   lv_style_init(&style);
   // we have to enable other font sizes in menuconfig
-  lv_style_set_text_font(&style, &lv_font_montserrat_32);
+  lv_style_set_text_font(&style, &lv_font_montserrat_16);
 
   // RED, Green and Blue Slider Configuration
   lv_obj_t *slider_r = lv_slider_create( act_scr );     // create a red slider base object
@@ -206,8 +310,8 @@ static void Display_RGBMixer( void )
 
   // Align Sliders with Each Other
   lv_obj_align( slider_r, LV_ALIGN_TOP_MID, 0u, LV_PCT(20) );
-  lv_obj_align_to( slider_g, slider_r, LV_ALIGN_TOP_MID, 0u, 70u );
-  lv_obj_align_to( slider_b, slider_g, LV_ALIGN_TOP_MID, 0u, 70u );
+  lv_obj_align_to( slider_g, slider_r, LV_ALIGN_TOP_MID, 0u, 35u );
+  lv_obj_align_to( slider_b, slider_g, LV_ALIGN_TOP_MID, 0u, 35u );
 
   // set slider range also (by default it is 0 to 100 but we want till 255)
   lv_slider_set_range( slider_r, 0, 255 );
@@ -232,7 +336,7 @@ static void Display_RGBMixer( void )
 
   rectangle = lv_obj_create(act_scr);                   // Creates a base object Rectangle to display color
   lv_obj_set_size( rectangle, LV_PCT(93), LV_PCT(33) );
-  lv_obj_align_to( rectangle, slider_b, LV_ALIGN_TOP_MID, 0u, 50u );
+  lv_obj_align_to( rectangle, slider_b, LV_ALIGN_TOP_MID, 0u, 35u );
   lv_obj_set_style_border_color( rectangle, lv_color_black(), LV_PART_MAIN );   // add black border to rectangle
   lv_obj_set_style_border_width( rectangle, 2, LV_PART_MAIN );                  // increase the width of the border by 2px
   lv_obj_set_style_bg_color( rectangle, lv_color_make( 0, 0, 0), LV_PART_MAIN); // all sliders are at zero, so background color should be black
@@ -274,7 +378,7 @@ static void Slider_Callback( lv_event_t *e )
   // get the object (slider) for which the we received the event
   lv_obj_t *slider = lv_event_get_target(e);
   // extract the object (slider) user data
-  RGB_Mixer_s *user_data = lv_event_get_user_data(e);
+  RGB_Mixer_s *user_data = (RGB_Mixer_s*)lv_event_get_user_data(e);
   // get the current slider value
   slider_value = lv_slider_get_value(slider);
 
@@ -310,11 +414,13 @@ static void Slider_Callback( lv_event_t *e )
 
 static void Display_TemperatureChart( void )
 {
+  Sensor_Data_s *sensor_data;
   uint16_t idx = 0u;
   // this should match with the temperature buffer length
   uint16_t chart_hor_res = 260;
   uint16_t chart_ver_res = lv_disp_get_ver_res(NULL) - 100;
-  uint8_t *data = Display_GetTempData();
+  sensor_data = Get_TemperatureAndHumidity();
+  uint8_t *data = sensor_data->temperature;
 
   lv_obj_clean( lv_scr_act() );                         // Clean the screen
 
@@ -323,9 +429,9 @@ static void Display_TemperatureChart( void )
 
   // Create a label for Title text
   lv_obj_t * lbl_title = lv_label_create( lv_scr_act() );
-  lv_label_set_text( lbl_title, "Temperature Graph");
+  lv_label_set_text( lbl_title, "Temperature & Humidity Graph");
   lv_obj_set_style_text_align( lbl_title, LV_TEXT_ALIGN_CENTER, 0);
-  lv_obj_align( lbl_title, LV_ALIGN_TOP_MID, 0, 0 );
+  lv_obj_align( lbl_title, LV_ALIGN_TOP_MID, 0, 5 );
   lv_obj_add_style( lbl_title, &style, 0 );
 
   // Set the chart size (Size should be set properly because we wanted to display
@@ -366,8 +472,10 @@ static void Display_TemperatureChart( void )
 
 static void Display_TemperatureChartRefresh( void )
 {
+  Sensor_Data_s *sensor_data;
   uint16_t idx = 0u;
-  uint8_t *data = Display_GetTempData();
+  sensor_data = Get_TemperatureAndHumidity();
+  uint8_t *data = sensor_data->temperature;
   // this should match with the temperature buffer length
   uint16_t chart_hor_res = 260;
 
