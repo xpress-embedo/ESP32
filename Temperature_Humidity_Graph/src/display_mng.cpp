@@ -462,10 +462,10 @@ static void Display_TemperatureHumidityChart( void )
   // 6th is number of minor ticks between two major ticks
   // 7th is enable label drawing on major ticks
   // 8th is extra size required to draw labels and ticks
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
   // Specify Vertical Range for Humidity Y Axis
   lv_chart_set_range( chart, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 8, 2, true, 50);
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 9, 2, true, 50);
 
   // Add Data Series for Temperature on Primary Y-axis
   temp_series = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
@@ -479,6 +479,53 @@ static void Display_TemperatureHumidityChart( void )
   }
 
   lv_chart_refresh(chart); /*Required after direct set*/
+
+  // Showing Legends Code Starts from Here: this is temporary stuff, not the
+  // proper way of doing things, & library also doesn't support showing legends
+  // Create an array of Points for Lines
+  static lv_point_t temp_points[] = { {0,0}, {30,0} };
+  // Create Style for temperature and humidity legends
+  static lv_style_t style_line_temp;
+  lv_style_init(&style_line_temp);
+  lv_style_set_line_width(&style_line_temp, 4);
+  lv_style_set_line_color(&style_line_temp, lv_palette_main(LV_PALETTE_BLUE));
+  
+  static lv_style_t style_line_humid;
+  lv_style_init(&style_line_humid);
+  lv_style_set_line_width(&style_line_humid, 4);
+  lv_style_set_line_color(&style_line_humid, lv_palette_main(LV_PALETTE_GREEN));
+  
+  // Create a line and apply the style
+  lv_obj_t * temp_line;
+  lv_obj_t * humid_line;
+  temp_line = lv_line_create( lv_scr_act() );
+  humid_line = lv_line_create( lv_scr_act() );
+  // set the points for temperature legend
+  lv_line_set_points(temp_line, temp_points, 2);
+  lv_obj_add_style(temp_line, &style_line_temp, 0);
+  lv_obj_align_to(temp_line, chart, LV_ALIGN_BOTTOM_MID, 0, 30);
+  // set the points for humidity legend
+  lv_line_set_points(humid_line, temp_points, 2); // Using the same temp points
+  lv_obj_add_style(humid_line, &style_line_humid, 0);
+  lv_obj_align_to(humid_line, temp_line, LV_ALIGN_BOTTOM_MID, 0, 20);
+  
+  // // Writing Legend Text
+  // static lv_style_t style_legend_text;
+  // lv_style_init(&style_legend_text);
+  // lv_style_set_text_font(&style_legend_text, &lv_font_montserrat_14);
+  
+  lv_obj_t * lbl_legend_temp = lv_label_create( lv_scr_act() );
+  lv_obj_t * lbl_legend_humid = lv_label_create( lv_scr_act() );
+  
+  lv_label_set_text( lbl_legend_temp, "Temperature");
+  lv_obj_set_style_text_align( lbl_legend_temp, LV_TEXT_ALIGN_CENTER, 0);
+  lv_obj_align_to( lbl_legend_temp, chart, LV_ALIGN_BOTTOM_MID, 70, 33);
+  // lv_obj_add_style( lbl_legend_temp, &style_legend_text, 0);
+
+  lv_label_set_text( lbl_legend_humid, "Humidity");
+  lv_obj_set_style_text_align( lbl_legend_humid, LV_TEXT_ALIGN_CENTER, 0);
+  lv_obj_align_to( lbl_legend_humid, lbl_legend_temp, LV_ALIGN_LEFT_MID, 0, 20);
+  // lv_obj_add_style( lbl_legend_humid, &style_legend_text, 0);
 }
 
 static void Display_TemperatureHumidityChartRefresh( void )
