@@ -14,8 +14,8 @@ typedef enum _Display_State_e
   DISP_STATE_VIBGYOR_WAIT,
   DISP_STATE_RGB_MIXER,
   DISP_STATE_RGB_MIXER_WAIT,
-  DISP_STATE_TEMP_SENSOR,
-  DISP_STATE_TEMP_SENSOR_REFRESH,
+  DISP_STATE_TEMP_HUMID_SENSOR,
+  DISP_STATE_TEMP_HUMID_SENSOR_REFRESH,
   DISP_STATE_END,
 } Display_State_e;
 
@@ -44,13 +44,14 @@ static lv_color_t buf[ screenWidth * 10 ];
 TFT_eSPI tft = TFT_eSPI();
 
 // Below Variables are Application Related Variables
-static Display_State_e disp_state = DISP_STATE_VIBGYOR;
+static Display_State_e disp_state = DISP_STATE_TEMP_HUMID_SENSOR; //DISP_STATE_VIBGYOR;
 static RGB_Mixer_s red, green, blue;
 static lv_obj_t *rectangle;
 static lv_style_t style;
 // for temperature and humidity chart
 static lv_obj_t * chart;
 static lv_chart_series_t * temp_series;
+static lv_chart_series_t * humid_series;
 
 /*--------------------------Private Function Prototypes-----------------------*/
 #if LV_USE_LOG != 0
@@ -64,8 +65,8 @@ static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data );
 
 static void Display_Vibgyor( void );
 static void Display_RGBMixer( void );
-static void Display_TemperatureChart( void );
-static void Display_TemperatureChartRefresh( void );
+static void Display_TemperatureHumidityChart( void );
+static void Display_TemperatureHumidityChartRefresh( void );
 static void Slider_Callback( lv_event_t *e );
 
 
@@ -130,17 +131,17 @@ void Display_Mng( void )
     case DISP_STATE_RGB_MIXER_WAIT:
       // state will be switched to next state automatically from the callback function
       break;
-    case DISP_STATE_TEMP_SENSOR:
-      Display_TemperatureChart();
-      disp_state = DISP_STATE_TEMP_SENSOR_REFRESH;
+    case DISP_STATE_TEMP_HUMID_SENSOR:
+      Display_TemperatureHumidityChart();
+      disp_state = DISP_STATE_TEMP_HUMID_SENSOR_REFRESH;
       wait_time = millis();
       break;
-    case DISP_STATE_TEMP_SENSOR_REFRESH:
+    case DISP_STATE_TEMP_HUMID_SENSOR_REFRESH:
       if( millis()-wait_time > 1000u )
       {
         wait_time = millis();
         // Note: Charts are time consuming
-        Display_TemperatureChartRefresh();
+        Display_TemperatureHumidityChartRefresh();
       }
       break;
     case DISP_STATE_END:
@@ -408,19 +409,20 @@ static void Slider_Callback( lv_event_t *e )
 
   if( (red == 255) && (green == 255) && (blue == 255) )
   {
-    disp_state = DISP_STATE_TEMP_SENSOR;
+    disp_state = DISP_STATE_TEMP_HUMID_SENSOR;
   }
 }
 
-static void Display_TemperatureChart( void )
+static void Display_TemperatureHumidityChart( void )
 {
   Sensor_Data_s *sensor_data;
   uint16_t idx = 0u;
-  // this should match with the temperature buffer length
-  uint16_t chart_hor_res = 260;
+  // this should match with the temperature & humidity buffer length
+  uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
   uint16_t chart_ver_res = lv_disp_get_ver_res(NULL) - 100;
   sensor_data = Get_TemperatureAndHumidity();
-  uint8_t *data = sensor_data->temperature;
+  uint8_t *temp_data = sensor_data->temperature;
+  uint8_t *humid_data = sensor_data->humidity;
 
   lv_obj_clean( lv_scr_act() );                         // Clean the screen
 
@@ -431,17 +433,20 @@ static void Display_TemperatureChart( void )
   lv_obj_t * lbl_title = lv_label_create( lv_scr_act() );
   lv_label_set_text( lbl_title, "Temperature & Humidity Graph");
   lv_obj_set_style_text_align( lbl_title, LV_TEXT_ALIGN_CENTER, 0);
-  lv_obj_align( lbl_title, LV_ALIGN_TOP_MID, 0, 5 );
+  lv_obj_align( lbl_title, LV_ALIGN_TOP_MID, 0, 10 );
   lv_obj_add_style( lbl_title, &style, 0 );
 
   // Set the chart size (Size should be set properly because we wanted to display
   // chart title and some data on y-axis also)
   // display is 320x240
-  lv_obj_set_size( chart, (lv_disp_get_hor_res(NULL) - 100), chart_ver_res );
+  lv_obj_set_size( chart, (lv_disp_get_hor_res(NULL) - 80), chart_ver_res );
   // TODO: XS I don't want to center it, will check later
-  // lv_obj_center( chart );
-  lv_obj_align( chart, LV_ALIGN_CENTER, LV_PCT(5), 0 );
+  lv_obj_center( chart );
+  // lv_obj_align( chart, LV_ALIGN_CENTER, LV_PCT(5), 0 );
   // lv_obj_align( chart, LV_ALIGN_BOTTOM_RIGHT, 0, 0 );
+
+  // Do not display points on the data
+  lv_obj_set_style_size( chart, 0, LV_PART_INDICATOR);
 
   // Set Chart Type to Line Chart
   lv_chart_set_type( chart, LV_CHART_TYPE_LINE );
@@ -449,7 +454,7 @@ static void Display_TemperatureChart( void )
   lv_chart_set_point_count( chart, chart_hor_res );
   // Update mode shift or circular, here shift is selected
   lv_chart_set_update_mode( chart, LV_CHART_UPDATE_MODE_SHIFT );
-  // Specify Vertical Range
+  // Specify Vertical Range for Temperature Y Axis
   lv_chart_set_range( chart, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
   // Tick Marks and Labels
   // 2nd argument is axis, 3rd argument is major tick length, 4th is minor tick length
@@ -457,31 +462,39 @@ static void Display_TemperatureChart( void )
   // 6th is number of minor ticks between two major ticks
   // 7th is enable label drawing on major ticks
   // 8th is extra size required to draw labels and ticks
-  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 10, 2, true, 50);
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
+  // Specify Vertical Range for Humidity Y Axis
+  lv_chart_set_range( chart, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
+  lv_chart_set_axis_tick(chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 8, 2, true, 50);
 
-  // Add Data Series
-  temp_series = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_RED), LV_CHART_AXIS_PRIMARY_Y);
+  // Add Data Series for Temperature on Primary Y-axis
+  temp_series = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
+  // Add Data Series for Humidity on Secondary Y-axis
+  humid_series = lv_chart_add_series(chart, lv_palette_main(LV_PALETTE_GREEN), LV_CHART_AXIS_SECONDARY_Y);
 
   for( idx=0; idx<chart_hor_res; idx++ )
   {
-    temp_series->y_points[idx] = (lv_coord_t)*(data+idx);
+    temp_series->y_points[idx] = (lv_coord_t)*(temp_data+idx);
+    humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
   }
 
   lv_chart_refresh(chart); /*Required after direct set*/
 }
 
-static void Display_TemperatureChartRefresh( void )
+static void Display_TemperatureHumidityChartRefresh( void )
 {
   Sensor_Data_s *sensor_data;
   uint16_t idx = 0u;
   sensor_data = Get_TemperatureAndHumidity();
-  uint8_t *data = sensor_data->temperature;
+  uint8_t *temp_data = sensor_data->temperature;
+  uint8_t *humid_data = sensor_data->humidity;
   // this should match with the temperature buffer length
-  uint16_t chart_hor_res = 260;
+  uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
 
   for( idx=0; idx<chart_hor_res; idx++ )
   {
-    temp_series->y_points[idx] = (lv_coord_t)*(data+idx);
+    temp_series->y_points[idx] = (lv_coord_t)*(temp_data+idx);
+    humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
   }
 
   lv_chart_refresh(chart); /*Required after direct set*/
