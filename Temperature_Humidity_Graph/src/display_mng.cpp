@@ -44,7 +44,7 @@ static lv_color_t buf[ screenWidth * 10 ];
 TFT_eSPI tft = TFT_eSPI();
 
 // Below Variables are Application Related Variables
-static Display_State_e disp_state = DISP_STATE_TEMP_HUMID_SENSOR; //DISP_STATE_VIBGYOR;
+static Display_State_e disp_state = DISP_STATE_VIBGYOR;
 static RGB_Mixer_s red, green, blue;
 static lv_obj_t *rectangle;
 static lv_style_t style;
@@ -56,8 +56,9 @@ static lv_chart_series_t * humid_series;
 /*--------------------------Private Function Prototypes-----------------------*/
 #if LV_USE_LOG != 0
 /* Serial debugging */
-void LVGL_Print(lv_log_level_t level, const char * file, uint32_t line, \
-                const char * fn_name, const char * dsc )
+// void LVGL_Print(lv_log_level_t level, const char * file, uint32_t line, \
+//                 const char * fn_name, const char * dsc );
+void LVGL_Print( const char * buffer );
 #endif
 static void Display_Flush(lv_disp_drv_t *disp, const lv_area_t *area, \
                           lv_color_t *color_p );
@@ -75,7 +76,7 @@ void Display_Init( void )
 {
   #if LV_USE_LOG != 0
    // register print function for debugging
-  lv_log_register_print_cb( my_print );
+  lv_log_register_print_cb( LVGL_Print );
   #endif
   // Initialize TFT
   tft.begin();
@@ -119,7 +120,7 @@ void Display_Mng( void )
       break;
     case DISP_STATE_VIBGYOR_WAIT:
       // wait here for some time and then move to next state
-      if( millis()-wait_time > 1000u )
+      if( millis()-wait_time > 4000u )
       {
         disp_state = DISP_STATE_RGB_MIXER;
       }
@@ -189,17 +190,22 @@ static void Display_Flush(  lv_disp_drv_t *disp, const lv_area_t *area, \
 
 #if LV_USE_LOG != 0
 /* Serial debugging */
-void LVGL_Print(  lv_log_level_t level, const char * file, uint32_t line, \
-                  const char * fn_name, const char * dsc )
+// void LVGL_Print(  lv_log_level_t level, const char * file, uint32_t line, \
+//                   const char * fn_name, const char * dsc )
+// {
+//   Serial.printf( "%s(%s)@%d->%s\r\n", file, fn_name, line, dsc );
+//   Serial.flush();
+// }
+void LVGL_Print( const char * buffer )
 {
-  Serial.printf( "%s(%s)@%d->%s\r\n", file, fn_name, line, dsc );
+  Serial.printf( buffer );
   Serial.flush();
 }
 #endif
 
 static void Display_Vibgyor( void )
 {
-  static lv_style_t style;
+  static lv_style_t slider_style;
   lv_coord_t width = 0u;
   lv_coord_t length = 0u;
 
@@ -221,19 +227,19 @@ static void Display_Vibgyor( void )
   I_rectangle = lv_obj_create( act_scr );
   V_rectangle = lv_obj_create( act_scr );
 
-  lv_style_init(&style);
+  lv_style_init(&slider_style);
   // set the radius to zero
-  lv_style_set_radius(&style, 0);
+  lv_style_set_radius(&slider_style, 0);
   // by default the object which we created for rectangle has some radius component
   // and it looks bad for this particular example, hence updating style for all
   // created objects
-  lv_obj_add_style(R_rectangle, &style, 0);
-  lv_obj_add_style(O_rectangle, &style, 0);
-  lv_obj_add_style(Y_rectangle, &style, 0);
-  lv_obj_add_style(G_rectangle, &style, 0);
-  lv_obj_add_style(B_rectangle, &style, 0);
-  lv_obj_add_style(I_rectangle, &style, 0);
-  lv_obj_add_style(V_rectangle, &style, 0);
+  lv_obj_add_style(R_rectangle, &slider_style, 0);
+  lv_obj_add_style(O_rectangle, &slider_style, 0);
+  lv_obj_add_style(Y_rectangle, &slider_style, 0);
+  lv_obj_add_style(G_rectangle, &slider_style, 0);
+  lv_obj_add_style(B_rectangle, &slider_style, 0);
+  lv_obj_add_style(I_rectangle, &slider_style, 0);
+  lv_obj_add_style(V_rectangle, &slider_style, 0);
 
 
   length = lv_disp_get_hor_res(NULL);
@@ -509,10 +515,10 @@ static void Display_TemperatureHumidityChart( void )
   lv_obj_add_style(humid_line, &style_line_humid, 0);
   lv_obj_align_to(humid_line, temp_line, LV_ALIGN_BOTTOM_MID, 0, 20);
   
-  // // Writing Legend Text
-  // static lv_style_t style_legend_text;
-  // lv_style_init(&style_legend_text);
-  // lv_style_set_text_font(&style_legend_text, &lv_font_montserrat_14);
+  // Writing Legend Text
+  static lv_style_t style_legend_text;
+  lv_style_init(&style_legend_text);
+  lv_style_set_text_font(&style_legend_text, &lv_font_montserrat_12);
   
   lv_obj_t * lbl_legend_temp = lv_label_create( lv_scr_act() );
   lv_obj_t * lbl_legend_humid = lv_label_create( lv_scr_act() );
@@ -520,12 +526,12 @@ static void Display_TemperatureHumidityChart( void )
   lv_label_set_text( lbl_legend_temp, "Temperature");
   lv_obj_set_style_text_align( lbl_legend_temp, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_align_to( lbl_legend_temp, chart, LV_ALIGN_BOTTOM_MID, 70, 33);
-  // lv_obj_add_style( lbl_legend_temp, &style_legend_text, 0);
+  lv_obj_add_style( lbl_legend_temp, &style_legend_text, 0);
 
   lv_label_set_text( lbl_legend_humid, "Humidity");
   lv_obj_set_style_text_align( lbl_legend_humid, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_align_to( lbl_legend_humid, lbl_legend_temp, LV_ALIGN_LEFT_MID, 0, 20);
-  // lv_obj_add_style( lbl_legend_humid, &style_legend_text, 0);
+  lv_obj_add_style( lbl_legend_humid, &style_legend_text, 0);
 }
 
 static void Display_TemperatureHumidityChartRefresh( void )
