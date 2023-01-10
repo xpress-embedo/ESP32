@@ -22,8 +22,10 @@ extern "C" {
 #include "lvgl.h"
 #endif
 
-extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_SimpleLabel;
+extern lv_obj_t * ui_MainScreen;
+extern lv_obj_t * ui_Keyboard;
+extern lv_obj_t * ui_TextAreaPassword;
+extern lv_obj_t * ui_DopDownSSID;
 
 
 
