@@ -24,9 +24,13 @@ extern "C" {
 
 extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_Keyboard;
+void ui_event_TextAreaPassword(lv_event_t * e);
 extern lv_obj_t * ui_TextAreaPassword;
 extern lv_obj_t * ui_DopDownSSID;
+extern lv_obj_t * ui_WiFiSSIDLabel;
+extern lv_obj_t * ui_WiFiPasswordLabel;
 
+void ShowKeyBoard(lv_event_t * e);
 
 
 

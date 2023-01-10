@@ -9,8 +9,11 @@
 ///////////////////// VARIABLES ////////////////////
 lv_obj_t * ui_MainScreen;
 lv_obj_t * ui_Keyboard;
+void ui_event_TextAreaPassword(lv_event_t * e);
 lv_obj_t * ui_TextAreaPassword;
 lv_obj_t * ui_DopDownSSID;
+lv_obj_t * ui_WiFiSSIDLabel;
+lv_obj_t * ui_WiFiPasswordLabel;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -23,6 +26,14 @@ lv_obj_t * ui_DopDownSSID;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
+void ui_event_TextAreaPassword(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_CLICKED) {
+        ShowKeyBoard(e);
+    }
+}
 
 ///////////////////// SCREENS ////////////////////
 void ui_MainScreen_screen_init(void)
@@ -34,6 +45,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_Keyboard, lv_pct(95));
     lv_obj_set_height(ui_Keyboard, lv_pct(45));
     lv_obj_set_align(ui_Keyboard, LV_ALIGN_BOTTOM_MID);
+    lv_obj_add_flag(ui_Keyboard, LV_OBJ_FLAG_HIDDEN);     /// Flags
 
     ui_TextAreaPassword = lv_textarea_create(ui_MainScreen);
     lv_obj_set_width(ui_TextAreaPassword, lv_pct(50));
@@ -41,7 +53,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_TextAreaPassword, lv_pct(20));
     lv_obj_set_y(ui_TextAreaPassword, lv_pct(-10));
     lv_obj_set_align(ui_TextAreaPassword, LV_ALIGN_CENTER);
-    lv_textarea_set_placeholder_text(ui_TextAreaPassword, "********");
+    lv_textarea_set_placeholder_text(ui_TextAreaPassword, "Enter Password");
     lv_textarea_set_one_line(ui_TextAreaPassword, true);
     lv_textarea_set_password_mode(ui_TextAreaPassword, true);
 
@@ -54,7 +66,24 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_DopDownSSID, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_DopDownSSID, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
+    ui_WiFiSSIDLabel = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_WiFiSSIDLabel, lv_pct(35));
+    lv_obj_set_height(ui_WiFiSSIDLabel, LV_SIZE_CONTENT);    /// 10
+    lv_obj_set_x(ui_WiFiSSIDLabel, lv_pct(-30));
+    lv_obj_set_y(ui_WiFiSSIDLabel, lv_pct(-25));
+    lv_obj_set_align(ui_WiFiSSIDLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_WiFiSSIDLabel, "WiFi SSID");
+
+    ui_WiFiPasswordLabel = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_WiFiPasswordLabel, lv_pct(35));
+    lv_obj_set_height(ui_WiFiPasswordLabel, LV_SIZE_CONTENT);    /// 10
+    lv_obj_set_x(ui_WiFiPasswordLabel, lv_pct(-30));
+    lv_obj_set_y(ui_WiFiPasswordLabel, lv_pct(-10));
+    lv_obj_set_align(ui_WiFiPasswordLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_WiFiPasswordLabel, "WiFi Password");
+
     lv_keyboard_set_textarea(ui_Keyboard, ui_TextAreaPassword);
+    lv_obj_add_event_cb(ui_TextAreaPassword, ui_event_TextAreaPassword, LV_EVENT_ALL, NULL);
 
 }
 
