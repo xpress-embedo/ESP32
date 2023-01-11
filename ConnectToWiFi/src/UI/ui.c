@@ -11,7 +11,7 @@ lv_obj_t * ui_MainScreen;
 lv_obj_t * ui_Keyboard;
 void ui_event_TextAreaPassword(lv_event_t * e);
 lv_obj_t * ui_TextAreaPassword;
-lv_obj_t * ui_DopDownSSID;
+lv_obj_t * ui_DropDownSSID;
 lv_obj_t * ui_WiFiSSIDLabel;
 lv_obj_t * ui_WiFiPasswordLabel;
 
@@ -30,6 +30,15 @@ void ui_event_TextAreaPassword(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_FOCUSED) {
+        ShowKeyBoard(e);
+    }
+    if(event_code == LV_EVENT_DEFOCUSED) {
+        HideKeyBoard(e);
+    }
+    if(event_code == LV_EVENT_READY) {
+        HideKeyBoard(e);
+    }
     if(event_code == LV_EVENT_CLICKED) {
         ShowKeyBoard(e);
     }
@@ -44,6 +53,8 @@ void ui_MainScreen_screen_init(void)
     ui_Keyboard = lv_keyboard_create(ui_MainScreen);
     lv_obj_set_width(ui_Keyboard, lv_pct(95));
     lv_obj_set_height(ui_Keyboard, lv_pct(45));
+    lv_obj_set_x(ui_Keyboard, lv_pct(0));
+    lv_obj_set_y(ui_Keyboard, lv_pct(-5));
     lv_obj_set_align(ui_Keyboard, LV_ALIGN_BOTTOM_MID);
     lv_obj_add_flag(ui_Keyboard, LV_OBJ_FLAG_HIDDEN);     /// Flags
 
@@ -54,17 +65,16 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_TextAreaPassword, lv_pct(-10));
     lv_obj_set_align(ui_TextAreaPassword, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextAreaPassword, "Enter Password");
-    lv_textarea_set_one_line(ui_TextAreaPassword, true);
     lv_textarea_set_password_mode(ui_TextAreaPassword, true);
 
-    ui_DopDownSSID = lv_dropdown_create(ui_MainScreen);
-    lv_dropdown_set_options(ui_DopDownSSID, "todo-1\ntodo-2\n");
-    lv_obj_set_width(ui_DopDownSSID, lv_pct(50));
-    lv_obj_set_height(ui_DopDownSSID, LV_SIZE_CONTENT);    /// 10
-    lv_obj_set_x(ui_DopDownSSID, lv_pct(20));
-    lv_obj_set_y(ui_DopDownSSID, lv_pct(-25));
-    lv_obj_set_align(ui_DopDownSSID, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_DopDownSSID, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    ui_DropDownSSID = lv_dropdown_create(ui_MainScreen);
+    lv_dropdown_set_options(ui_DropDownSSID, "todo-1\ntodo-2\n");
+    lv_obj_set_width(ui_DropDownSSID, lv_pct(50));
+    lv_obj_set_height(ui_DropDownSSID, LV_SIZE_CONTENT);    /// 10
+    lv_obj_set_x(ui_DropDownSSID, lv_pct(20));
+    lv_obj_set_y(ui_DropDownSSID, lv_pct(-25));
+    lv_obj_set_align(ui_DropDownSSID, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_DropDownSSID, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
     ui_WiFiSSIDLabel = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_WiFiSSIDLabel, lv_pct(35));
