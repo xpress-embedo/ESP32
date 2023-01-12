@@ -12,8 +12,6 @@ static uint32_t lvgl_refresh_timestamp = 0u;
 static char wifi_dd_list[WIFI_MAX_SSID*20] = { 0 };
 
 // Private functions
-static void WiFi_Init( void );
-static void WiFi_ScanSSID( void );
 static void LVGL_TaskInit( void );
 static void LVGL_TaskMng( void );
 
@@ -44,14 +42,23 @@ char *Get_WiFiSSID_DD_List( void )
   return wifi_dd_list;
 }
 
-// Private Function Definitions
-static void WiFi_Init( void )
+/**
+ * @brief Initialize the WiFi mode to station mode and disconnect if connected
+ * @param  none
+ */
+void WiFi_Init( void )
 {
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(2000);
 }
-static void WiFi_ScanSSID( void )
+
+/**
+ * @brief Scans for the SSID and store the results in a WiFi drop down list
+ * "wifi_dd_list", this list is suitable to be used with the LVGL Drop Down
+ * @param  none
+ */
+void WiFi_ScanSSID( void )
 {
   String ssid_name;
   Serial.println("Start Scanning");
@@ -78,12 +85,15 @@ static void WiFi_ScanSSID( void )
       ssid_name = ssid_name + '\n';
       delay(10);
     }
+    // clear the array, it might be possible that we coming after rescanning
+    memset( wifi_dd_list, 0x00, sizeof(wifi_dd_list) );
     strcpy( wifi_dd_list, ssid_name.c_str() );
     Serial.println(wifi_dd_list);
   }
   Serial.println("Scanning Completed");
 }
 
+// Private Function Definitions
 static void LVGL_TaskInit( void )
 {
   lv_init();

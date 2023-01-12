@@ -29,11 +29,19 @@ extern lv_obj_t * ui_TextAreaPassword;
 extern lv_obj_t * ui_DropDownSSID;
 extern lv_obj_t * ui_WiFiSSIDLabel;
 extern lv_obj_t * ui_WiFiPasswordLabel;
+void ui_event_ConnectButton(lv_event_t * e);
+extern lv_obj_t * ui_ConnectButton;
+extern lv_obj_t * ui_ConnectButtonLabel;
+void ui_event_RescanButton(lv_event_t * e);
+extern lv_obj_t * ui_RescanButton;
+extern lv_obj_t * ui_RescanButtonLabel;
 
 void ShowKeyBoard(lv_event_t * e);
 void HideKeyBoard(lv_event_t * e);
 void HideKeyBoard(lv_event_t * e);
 void ShowKeyBoard(lv_event_t * e);
+void ConnectToRouter(lv_event_t * e);
+void ReScanWiFiSSID(lv_event_t * e);
 
 
 

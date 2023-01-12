@@ -70,6 +70,9 @@ void Display_Init( void )
 
   // update drop down list
   lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
+
+  // Hide the keyboard at power-up can be done by adding the hidden flag
+  lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
 }
 
 void Display_Mng( void )
