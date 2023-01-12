@@ -67,6 +67,9 @@ void Display_Init( void )
   lv_indev_drv_register( &indev_drv );
 
   ui_init();
+
+  // update drop down list
+  lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
 }
 
 void Display_Mng( void )

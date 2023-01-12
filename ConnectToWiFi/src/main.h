@@ -10,4 +10,6 @@
 
 #include <Arduino.h>
 
+char *Get_WiFiSSID_DD_List( void );
+
 #endif /* INC_MAIN_H_ */

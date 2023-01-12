@@ -68,7 +68,7 @@ void ui_MainScreen_screen_init(void)
     lv_textarea_set_password_mode(ui_TextAreaPassword, true);
 
     ui_DropDownSSID = lv_dropdown_create(ui_MainScreen);
-    lv_dropdown_set_options(ui_DropDownSSID, "todo-1\ntodo-2\n");
+    lv_dropdown_set_options(ui_DropDownSSID, "");
     lv_obj_set_width(ui_DropDownSSID, lv_pct(50));
     lv_obj_set_height(ui_DropDownSSID, LV_SIZE_CONTENT);    /// 10
     lv_obj_set_x(ui_DropDownSSID, lv_pct(20));
