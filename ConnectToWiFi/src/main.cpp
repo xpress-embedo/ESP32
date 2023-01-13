@@ -18,8 +18,6 @@ static void LVGL_TaskMng( void );
 void setup()
 {
   Serial.begin(115200);
-  WiFi_Init();
-  WiFi_ScanSSID();
 
   LVGL_TaskInit();
   Display_Init();
@@ -50,7 +48,6 @@ void WiFi_Init( void )
 {
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
-  delay(2000);
 }
 
 /**
