@@ -39,6 +39,10 @@ TFT_eSPI tft = TFT_eSPI();
 static Display_State_e disp_state = DISP_STATE_INIT;
 static uint32_t display_timestamp = 0u;
 
+// LVGL Objects
+static lv_obj_t *power_up_bar;
+static lv_anim_t power_up_bar_anim;
+
 /*--------------------------Private Function Prototypes-----------------------*/
 #if LV_USE_LOG != 0
 /* Serial debugging */
@@ -49,19 +53,19 @@ static void Display_Flush(lv_disp_drv_t *disp, const lv_area_t *area, \
 static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data );
 
 // display state machine related functions
-static void Display_StateInit();
+static void Display_StateInit( void );
+static void Display_StateWiFiLogin( void );
+static void PowerUp_BarAnimation( void *bar, int32_t bar_value );
 
-static void Display_StateInit()
+static void Display_StateWiFiLogin( void )
 {
-  static lv_obj_t *power_up_bar = lv_bar_create(lv_scr_act());
-  lv_obj_set_size( power_up_bar, LV_PCT(100), LV_PCT(10) );
-  lv_obj_align(power_up_bar, LV_ALIGN_BOTTOM_MID, 0, -20);
-  lv_bar_set_range( power_up_bar, 0, 100 );
-  lv_bar_set_value( power_up_bar, 10, LV_ANIM_OFF );
-  // make sure no delay after configuring station mode
-  WiFi_Init();
+  lv_obj_clean(lv_scr_act());
+  ui_init();
+  // update drop down list
+  lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
+  // Hide the keyboard at power-up can be done by adding the hidden flag
+  lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
 }
-
 
 /*---------------------------Public Function Definitions----------------------*/
 void Display_Init( void )
@@ -98,14 +102,6 @@ void Display_Init( void )
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = Touch_Read;
   lv_indev_drv_register( &indev_drv );
-
-  // ui_init();
-
-  // // update drop down list
-  // lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
-
-  // // Hide the keyboard at power-up can be done by adding the hidden flag
-  // lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
 }
 
 /**
@@ -127,12 +123,14 @@ void Display_Mng( void )
       if( (now - display_timestamp) >= DISP_STATE_INIT_WAIT_TIME )
       {
         display_timestamp = now;
-        // disp_state = DISP_STATE_SCAN_SSID;
+        disp_state = DISP_STATE_SCAN_SSID;
       }
     break;
     case DISP_STATE_SCAN_SSID:
       // This is blocking function, an can take upto 5 seconds
       WiFi_ScanSSID();
+      Display_StateWiFiLogin();
+      disp_state = DISP_STATE_CONNECT_MENU;
     break;
     case DISP_STATE_CONNECT_MENU:
     break;
@@ -141,6 +139,43 @@ void Display_Mng( void )
       disp_state = DISP_STATE_INIT;
     break;
   };
+}
+
+static void Display_StateInit()
+{
+  power_up_bar = lv_bar_create(lv_scr_act());
+
+  lv_obj_set_size( power_up_bar, LV_PCT(100), LV_PCT(10) );
+  lv_obj_align(power_up_bar, LV_ALIGN_BOTTOM_MID, 0, -20);
+  lv_bar_set_range( power_up_bar, 0, 100 );
+  lv_bar_set_value( power_up_bar, 10, LV_ANIM_OFF );
+
+  // Progress Bar Animation
+  lv_anim_init( &power_up_bar_anim );
+  lv_anim_set_exec_cb( &power_up_bar_anim, PowerUp_BarAnimation );
+  lv_anim_set_time( &power_up_bar_anim, DISP_STATE_INIT_WAIT_TIME );
+  // lv_anim_set_playback_time( &power_up_bar_anim, DISP_STATE_INIT_WAIT_TIME);
+  lv_anim_set_var(&power_up_bar_anim, power_up_bar);
+  lv_anim_set_values(&power_up_bar_anim, 0, 50);
+  lv_anim_set_repeat_count(&power_up_bar_anim, 0);
+  lv_anim_start(&power_up_bar_anim);
+
+  // make sure no delay after configuring station mode
+  WiFi_Init();
+}
+
+static void PowerUp_BarAnimation( void *bar, int32_t bar_value )
+{
+  LV_LOG_USER("Bar Value %d", bar_value);
+  if( bar_value == 50 )
+  {
+    lv_bar_set_value( (lv_obj_t*)bar, bar_value, LV_ANIM_OFF);
+
+  }
+  else
+  {
+    lv_bar_set_value( (lv_obj_t*)bar, bar_value, LV_ANIM_ON);
+  }
 }
 
 static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
