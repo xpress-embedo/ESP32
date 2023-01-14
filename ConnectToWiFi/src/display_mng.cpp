@@ -13,16 +13,8 @@
 
 /************************************Macros************************************/
 #define DISP_STATE_INIT_WAIT_TIME                     (2000u)
+#define DISP_STATE_WIFI_SSID_SCANNED_DONE_TIME        (1000u)
 
-
-typedef enum _Display_States_e
-{
-  DISP_STATE_INIT = 0,            // Configure Station Mode and Disconnect
-  DISP_STATE_INIT_WAIT,           // Wait for sometime after initializing WiFi
-  DISP_STATE_SCAN_SSID,           // Let the list of WiFi SSID's available
-  DISP_STATE_CONNECT_MENU,        // Show UI generated to connect to Router
-  DISP_STATE_MAX
-} Display_State_e;
 
 /*---------------------------Private Variables--------------------------------*/
 // Screen Resolution
@@ -54,18 +46,9 @@ static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data );
 
 // display state machine related functions
 static void Display_StateInit( void );
+static void Display_StateWiFiSSIDScanned( void );
 static void Display_StateWiFiLogin( void );
 static void PowerUp_BarAnimation( void *bar, int32_t bar_value );
-
-static void Display_StateWiFiLogin( void )
-{
-  lv_obj_clean(lv_scr_act());
-  ui_init();
-  // update drop down list
-  lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
-  // Hide the keyboard at power-up can be done by adding the hidden flag
-  lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
-}
 
 /*---------------------------Public Function Definitions----------------------*/
 void Display_Init( void )
@@ -117,38 +100,76 @@ void Display_Mng( void )
   {
     case DISP_STATE_INIT:
       Display_StateInit();
-      disp_state = DISP_STATE_INIT_WAIT;
+      Display_ChangeState(DISP_STATE_INIT_WAIT);
     break;
     case DISP_STATE_INIT_WAIT:
-      if( (now - display_timestamp) >= DISP_STATE_INIT_WAIT_TIME )
-      {
-        display_timestamp = now;
-        disp_state = DISP_STATE_SCAN_SSID;
-      }
+      // display state will move to next state in progress bar callback
     break;
     case DISP_STATE_SCAN_SSID:
       // This is blocking function, an can take upto 5 seconds
       WiFi_ScanSSID();
-      Display_StateWiFiLogin();
-      disp_state = DISP_STATE_CONNECT_MENU;
+      // after this call we will move the progress bar to 100% and then display
+      // the next login or WiFi connect screen
+      Display_StateWiFiSSIDScanned();
+      Display_ChangeState(DISP_STATE_SCAN_SSID_WAIT);
+    break;
+    case DISP_STATE_SCAN_SSID_WAIT:
+      // display state will move to next state in progress bar callback
     break;
     case DISP_STATE_CONNECT_MENU:
+      // show login screen
+      Display_StateWiFiLogin();
+      Display_ChangeState(DISP_STATE_CONNECT_MENU_WAIT);
+    break;
+    case DISP_STATE_CONNECT_MENU_WAIT:
+      // Wait here for User Inputs
+      // there are two options which should change the state, first is the
+      // connect button press and second is the re-scanning
+      // so display state will be changed in these functions
     break;
     case DISP_STATE_MAX:
     default:
-      disp_state = DISP_STATE_INIT;
+      Display_ChangeState(DISP_STATE_INIT);
     break;
   };
 }
+/**
+ * @brief Update Display State
+ * @param state Display State to Change
+ */
+void Display_ChangeState( Display_State_e state )
+{
+  Display_State_e prev_state = disp_state;
+  disp_state = state;
+  LV_LOG_USER("Prev. Disp State = %d, Current State = %d", prev_state, disp_state);
+}
 
+/**
+ * @brief Get the Display State
+ * @param  none
+ * @return current display state
+ */
+Display_State_e Display_GetDispState( void )
+{
+  return disp_state;
+}
+
+/*************************Private Function Definition**************************/
 static void Display_StateInit()
 {
+  // Selecting theme, this code is taken from ui_init function, and this is done
+  // to make theme same, at power-up and when square line studio auto generated
+  // code is executed
+  lv_disp_t * dispp = lv_disp_get_default();
+  lv_theme_t * theme = lv_theme_basic_init(dispp);
+  lv_disp_set_theme(dispp, theme);
+
   power_up_bar = lv_bar_create(lv_scr_act());
 
   lv_obj_set_size( power_up_bar, LV_PCT(100), LV_PCT(10) );
   lv_obj_align(power_up_bar, LV_ALIGN_BOTTOM_MID, 0, -20);
   lv_bar_set_range( power_up_bar, 0, 100 );
-  lv_bar_set_value( power_up_bar, 10, LV_ANIM_OFF );
+  lv_bar_set_value( power_up_bar, 0, LV_ANIM_OFF );
 
   // Progress Bar Animation
   lv_anim_init( &power_up_bar_anim );
@@ -164,13 +185,57 @@ static void Display_StateInit()
   WiFi_Init();
 }
 
+static void Display_StateWiFiSSIDScanned( void )
+{
+  lv_bar_set_value( power_up_bar, 50, LV_ANIM_OFF );
+
+  // Progress Bar animation
+  lv_anim_set_exec_cb( &power_up_bar_anim, PowerUp_BarAnimation );
+  lv_anim_set_time( &power_up_bar_anim, DISP_STATE_WIFI_SSID_SCANNED_DONE_TIME );
+  lv_anim_set_var(&power_up_bar_anim, power_up_bar);
+  lv_anim_set_values(&power_up_bar_anim, 50, 100);
+  lv_anim_set_repeat_count(&power_up_bar_anim, 0);
+  lv_anim_start(&power_up_bar_anim);
+}
+static void Display_StateWiFiLogin( void )
+{
+  lv_obj_clean(lv_scr_act());
+  ui_init();
+  // update drop down list
+  lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
+  // Hide the keyboard at power-up can be done by adding the hidden flag
+  lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
+}
+
+/**
+ * @brief Callback function to animate the progress bar at power-up
+ * @param bar pointer to bar object
+ * @param bar_value progress bar value
+ */
 static void PowerUp_BarAnimation( void *bar, int32_t bar_value )
 {
-  LV_LOG_USER("Bar Value %d", bar_value);
-  if( bar_value == 50 )
+  int32_t final_value = 0;
+  if( Display_GetDispState() == DISP_STATE_INIT_WAIT )
+  {
+    final_value = 50;
+  }
+  else if( Display_GetDispState() == DISP_STATE_SCAN_SSID_WAIT )
+  {
+    final_value = 100;
+  }
+  LV_LOG_USER("bar_value=%d, final_value=%d, disp_state=%d", bar_value, final_value, disp_state);
+  if( bar_value == final_value )
   {
     lv_bar_set_value( (lv_obj_t*)bar, bar_value, LV_ANIM_OFF);
-
+    if( Display_GetDispState() == DISP_STATE_INIT_WAIT )
+    {
+      // when progress bar reaches 50% move to next state
+      Display_ChangeState(DISP_STATE_SCAN_SSID);
+    }
+    else if( Display_GetDispState() == DISP_STATE_SCAN_SSID_WAIT )
+    {
+      Display_ChangeState( DISP_STATE_CONNECT_MENU );
+    }
   }
   else
   {
