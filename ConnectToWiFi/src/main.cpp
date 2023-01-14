@@ -5,7 +5,7 @@
 
 // Macros
 #define LVGL_REFRESH_TIME                   (5u)      // 5 milliseconds
-#define WIFI_MAX_SSID                       (5u)
+#define WIFI_MAX_SSID                       (7u)
 
 // Private Variables
 static uint32_t lvgl_refresh_timestamp = 0u;
@@ -67,8 +67,8 @@ void WiFi_ScanSSID( void )
   }
   else
   {
-    // I am restricting n to max 5 value
-    n = n <= 5 ? n : 5;
+    // I am restricting n to max WIFI_MAX_SSID value
+    n = n <= WIFI_MAX_SSID ? n : WIFI_MAX_SSID;
     for (int i = 0; i < n; i++) 
     {
       if( i == 0 )

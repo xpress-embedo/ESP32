@@ -20,6 +20,7 @@ lv_obj_t * ui_ConnectButtonLabel;
 void ui_event_RescanButton(lv_event_t * e);
 lv_obj_t * ui_RescanButton;
 lv_obj_t * ui_RescanButtonLabel;
+lv_obj_t * ui_ConnectingLabel;
 lv_obj_t * ui_ConnectedScreen;
 lv_obj_t * ui_ConnectedLabel;
 lv_obj_t * ui_IPAddressLabel;
@@ -149,6 +150,19 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_RescanButtonLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_RescanButtonLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_RescanButtonLabel, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ConnectingLabel = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_ConnectingLabel, lv_pct(40));
+    lv_obj_set_height(ui_ConnectingLabel, LV_SIZE_CONTENT);    /// 10
+    lv_obj_set_x(ui_ConnectingLabel, lv_pct(0));
+    lv_obj_set_y(ui_ConnectingLabel, lv_pct(5));
+    lv_obj_set_align(ui_ConnectingLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ConnectingLabel, "Connecting.............");
+    lv_obj_add_flag(ui_ConnectingLabel, LV_OBJ_FLAG_HIDDEN);     /// Flags
+    lv_obj_set_style_text_color(ui_ConnectingLabel, lv_color_hex(0xE10E0E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_ConnectingLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_ConnectingLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ConnectingLabel, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_keyboard_set_textarea(ui_Keyboard, ui_TextAreaPassword);
     lv_obj_add_event_cb(ui_TextAreaPassword, ui_event_TextAreaPassword, LV_EVENT_ALL, NULL);

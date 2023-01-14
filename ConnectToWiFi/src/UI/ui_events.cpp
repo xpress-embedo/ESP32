@@ -9,10 +9,8 @@
 #include "display_mng.h"
 
 #define WIFI_SSID_BUFFER_SIZE                     (20u)
-#define WIFI_CONNECT_MAX_RETRY                    (3u)
 
 static char wifi_ssid[WIFI_SSID_BUFFER_SIZE] = { 0 };
-static uint8_t wifi_connect_retry = 0;
 
 void ShowKeyBoard(lv_event_t * e)
 {
@@ -37,29 +35,10 @@ void ConnectToRouter(lv_event_t * e)
 
   // Try to Connect with the Router
   WiFi.begin( wifi_ssid, lv_textarea_get_text(ui_TextAreaPassword) );
-
-  while( WiFi.status() != WL_CONNECTED )
-  {
-    delay(1000);
-    wifi_connect_retry++;
-    if( wifi_connect_retry >= WIFI_CONNECT_MAX_RETRY )
-    {
-      wifi_connect_retry = 0;
-      WiFi.disconnect();
-    }
-  }
-  if( failed == 0 )
-  {
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-  }
-  else
-  {
-    Display_ChangeState(DISP_STATE_CONNECT_MENU);
-  }
-  
+  // enabling the connecting label, we can display a sort of animation also here
+  lv_obj_clear_flag( ui_ConnectingLabel, LV_OBJ_FLAG_HIDDEN );
+  // Change the state
+  Display_ChangeState(DISP_STATE_CONNECTING_MENU_WAIT);
 }
 
 void ReScanWiFiSSID(lv_event_t * e)

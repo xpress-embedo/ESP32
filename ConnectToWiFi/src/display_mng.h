@@ -18,6 +18,7 @@ typedef enum _Display_States_e
   DISP_STATE_SCAN_SSID_WAIT,      // Wait for sometime
   DISP_STATE_CONNECT_MENU,        // Show UI generated to connect to Router
   DISP_STATE_CONNECT_MENU_WAIT,   // Wait for user inputs to connect
+  DISP_STATE_CONNECTING_MENU_WAIT,// Connect button is pressed, and waiting for
   DISP_STATE_CONNECT_FAIL,        // If Connection to Router Fails
   DISP_STATE_CONNECTED,           // When Connected
   DISP_STATE_CONNECTED_WAIT,

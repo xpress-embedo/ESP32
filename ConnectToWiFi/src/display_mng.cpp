@@ -6,6 +6,7 @@
  */
 #include <lvgl.h>
 #include <TFT_eSPI.h>
+#include <WiFi.h>
 
 #include "display_mng.h"
 #include "ui.h"
@@ -14,6 +15,7 @@
 /************************************Macros************************************/
 #define DISP_STATE_INIT_WAIT_TIME                     (2000u)
 #define DISP_STATE_WIFI_SSID_SCANNED_DONE_TIME        (1000u)
+#define WIFI_CONNECT_MAX_RETRY                        (5u)
 
 
 /*---------------------------Private Variables--------------------------------*/
@@ -30,6 +32,7 @@ TFT_eSPI tft = TFT_eSPI();
 // Display State to track what to display
 static Display_State_e disp_state = DISP_STATE_INIT;
 static uint32_t display_timestamp = 0u;
+static uint8_t wifi_connect_retry = 0;
 
 // LVGL Objects
 static lv_obj_t *power_up_bar;
@@ -48,6 +51,9 @@ static void Touch_Read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data );
 static void Display_StateInit( void );
 static void Display_StateWiFiSSIDScanned( void );
 static void Display_StateWiFiLogin( void );
+static void Display_StateConnectingMenuWait( void );
+static void Display_StateConnectingFailed( void );
+static void Display_StateConnected( void );
 static void PowerUp_BarAnimation( void *bar, int32_t bar_value );
 
 /*---------------------------Public Function Definitions----------------------*/
@@ -127,6 +133,22 @@ void Display_Mng( void )
       // connect button press and second is the re-scanning
       // so display state will be changed in these functions
     break;
+    case DISP_STATE_CONNECTING_MENU_WAIT:
+      // connect button is pressed and now waiting for successfull connection
+      Display_StateConnectingMenuWait();
+    break;
+    case DISP_STATE_CONNECT_FAIL:
+      // connecting is failed
+      Display_StateConnectingFailed();
+    break;
+    case DISP_STATE_CONNECTED:
+      // connecting is passed and system will move to next screen, where IP
+      // address assigned to ESP32 is displayed
+      Display_StateConnected();
+    break;
+    case DISP_STATE_CONNECTED_WAIT:
+      // Will wait here, until next project 😊
+    break;
     case DISP_STATE_MAX:
     default:
       Display_ChangeState(DISP_STATE_INIT);
@@ -205,6 +227,60 @@ static void Display_StateWiFiLogin( void )
   lv_dropdown_set_options( ui_DropDownSSID, Get_WiFiSSID_DD_List() );
   // Hide the keyboard at power-up can be done by adding the hidden flag
   lv_obj_add_flag( ui_Keyboard, LV_OBJ_FLAG_HIDDEN );
+}
+
+static void Display_StateConnectingMenuWait( void )
+{
+  uint32_t now = millis();
+  if( (now - display_timestamp) >= 1000u )
+  {
+    display_timestamp = now;
+    if( WiFi.status() == WL_CONNECTED )
+    {
+      Display_ChangeState(DISP_STATE_CONNECTED);
+      // Clear the screen
+      lv_obj_clean( lv_scr_act() );
+      // Load the second screen
+      lv_disp_load_scr(ui_ConnectedScreen);
+    }
+    else
+    {
+      wifi_connect_retry++;
+      if( wifi_connect_retry >= WIFI_CONNECT_MAX_RETRY )
+      {
+        wifi_connect_retry = 0;
+        WiFi.disconnect();
+        lv_label_set_text(ui_ConnectingLabel, "Connecting Failed......");
+        Display_ChangeState(DISP_STATE_CONNECT_FAIL);
+      }
+    }
+  }
+}
+
+/**
+ * @brief This function waits for 1 second, as connecting failed is displayed in
+ *        in the previous state, and after 1 second it switches to connect menu
+ * @param  none
+ */
+static void Display_StateConnectingFailed( void )
+{
+  uint32_t now = millis();
+  if( (now - display_timestamp) >= 1000u )
+  {
+    display_timestamp = now;
+    lv_obj_add_flag( ui_ConnectingLabel, LV_OBJ_FLAG_HIDDEN);
+    Display_ChangeState(DISP_STATE_CONNECT_MENU);
+  }
+}
+
+/**
+ * @brief Display Connected State,here we only update the ESP32 address on label
+ * @param  
+ */
+static void Display_StateConnected( void )
+{
+  lv_label_set_text(ui_IPAddressLabel, WiFi.localIP().toString().c_str() );
+  Display_ChangeState(DISP_STATE_CONNECTED_WAIT);
 }
 
 /**

@@ -35,6 +35,7 @@ extern lv_obj_t * ui_ConnectButtonLabel;
 void ui_event_RescanButton(lv_event_t * e);
 extern lv_obj_t * ui_RescanButton;
 extern lv_obj_t * ui_RescanButtonLabel;
+extern lv_obj_t * ui_ConnectingLabel;
 extern lv_obj_t * ui_ConnectedScreen;
 extern lv_obj_t * ui_ConnectedLabel;
 extern lv_obj_t * ui_IPAddressLabel;
