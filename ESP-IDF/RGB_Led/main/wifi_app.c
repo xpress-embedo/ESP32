@@ -45,7 +45,7 @@ static void WiFi_App_EventHandler( void *arg, \
  */
 void WiFi_App_Start( void )
 {
-//  ESP_LOGI( TAG, "Starting WiFi Application");
+  ESP_LOGI( APP_TAG, "Starting WiFi Application");
   // Start WiFi Started LED
   RGB_WiFi_Started();
 
@@ -57,10 +57,14 @@ void WiFi_App_Start( void )
                                         sizeof(WiFi_App_Queue_Msg_s) );
 
   // Create Task
+  xTaskCreate( &WiFi_App_Task, "WiFi App Task", WIFI_APP_TASK_STACK_SIZE, \
+               NULL, WIFI_APP_TASK_PRIORIIRY, NULL );
+  /*
   xTaskCreatePinnedToCore( &WiFi_App_Task, "WiFi App Task", \
                            WIFI_APP_TASK_STACK_SIZE, NULL, \
                            WIFI_APP_TASK_PRIORIIRY, NULL, \
                            WIFI_APP_TASK_CORE_ID );
+  */
 }
 
 
@@ -86,7 +90,7 @@ static void WiFi_App_Task(void *pvParameters)
   ESP_ERROR_CHECK( esp_wifi_start() );
 
   // Send the first Event message
-  WiFi_App_SendMsg( WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER );
+  WiFi_App_SendMsg( WIFI_APP_MSG_START_HTTP_SERVER );
 
   for( ;; )
   {
@@ -136,12 +140,14 @@ static void WiFi_App_EventHandlerInit( void )
   // Event Handler for Connection
   esp_event_handler_instance_t instance_wifi_event;
   esp_event_handler_instance_t instance_ip_event;
-  esp_event_handler_instance_register( WIFI_EVENT, ESP_EVENT_ANY_ID, \
-                                       &WiFi_App_EventHandler, NULL, \
-                                       &instance_wifi_event );
-  esp_event_handler_instance_register( IP_EVENT, ESP_EVENT_ANY_ID, \
-                                       &WiFi_App_EventHandler, NULL, \
-                                       &instance_ip_event );
+  ESP_ERROR_CHECK(
+      esp_event_handler_instance_register( WIFI_EVENT, ESP_EVENT_ANY_ID, \
+                                           &WiFi_App_EventHandler, NULL, \
+                                           &instance_wifi_event ));
+  ESP_ERROR_CHECK(
+      esp_event_handler_instance_register( IP_EVENT, ESP_EVENT_ANY_ID, \
+                                           &WiFi_App_EventHandler, NULL, \
+                                           &instance_ip_event ) );
 }
 
 /*
