@@ -1,7 +1,7 @@
 /*
  * wifi_app.h
  *
- *  Created on: 16-Jan-2022
+ *  Created on: 16-Jan-2023
  *      Author: xpress_embedo
  */
 
@@ -30,9 +30,9 @@ typedef struct _HTTP_Server_Queue_Msg_s
 } HTTP_Server_Queue_Msg_s;
 
 // Public Function Prototypes
-BaseType_t HTTP_ServerMonitor_SendMsg( HTTP_Server_Msg_e msg_id );
-void HTTP_ServerStart( void );
-void HTTP_ServerStop( void );
+BaseType_t HTTP_Server_Monitor_SendMsg( HTTP_Server_Msg_e msg_id );
+void HTTP_Server_Start( void );
+void HTTP_Server_Stop( void );
 
 
 #endif /* HTTP_SERVER_H_ */

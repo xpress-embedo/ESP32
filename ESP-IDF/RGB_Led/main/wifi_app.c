@@ -17,6 +17,7 @@
 #include "rgb_led.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
+#include "http_server.h"
 
 // Tag used for ESP Serial console messages
 static const char APP_TAG[] = "WiFi APP";
@@ -100,7 +101,7 @@ static void WiFi_App_Task(void *pvParameters)
       {
         case WIFI_APP_MSG_START_HTTP_SERVER:
           ESP_LOGI( APP_TAG, "WIFI_APP_MSG_START_HTTP_SERVER" );
-          // Start HTTP Server TODO
+          HTTP_Server_Start();
           RGB_HTTP_ServerStarted();
           break;
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
