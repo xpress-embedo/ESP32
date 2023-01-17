@@ -17,8 +17,4 @@ void app_main(void)
 
   // Start WiFi
   WiFi_App_Start();
-
-  while (true)
-  {
-  }
 }
