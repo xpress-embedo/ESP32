@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <lvgl.h>
 #include <TFT_eSPI.h>
+#include "ui.h"
 
 // Macros
 #define LVGL_REFRESH_TIME                   (5u)      // 5 milliseconds
@@ -35,10 +36,12 @@ void setup()
 
   LVGL_TaskInit();
   Display_Init();
+  ui_init();
 }
 
 void loop()
 {
+  LVGL_TaskMng();
 }
 
 // Private Function Definitions
