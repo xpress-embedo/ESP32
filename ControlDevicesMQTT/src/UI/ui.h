@@ -1,10 +1,10 @@
 // SquareLine LVGL GENERATED FILE
-// EDITOR VERSION: SquareLine Studio 1.1.1
-// LVGL VERSION: 8.3.3
-// PROJECT: ConnectToWiFi
+// EDITOR VERSION: SquareLine Studio 1.2.0
+// LVGL VERSION: 8.2.0
+// PROJECT: ControlDevicesMQTT
 
-#ifndef _CONNECTTOWIFI_UI_H
-#define _CONNECTTOWIFI_UI_H
+#ifndef _CONTROLDEVICESMQTT_UI_H
+#define _CONTROLDEVICESMQTT_UI_H
 
 #ifdef __cplusplus
 extern "C" {

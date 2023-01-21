@@ -1,7 +1,7 @@
 // SquareLine LVGL GENERATED FILE
-// EDITOR VERSION: SquareLine Studio 1.1.1
-// LVGL VERSION: 8.3.3
-// PROJECT: ConnectToWiFi
+// EDITOR VERSION: SquareLine Studio 1.2.0
+// LVGL VERSION: 8.2.0
+// PROJECT: ControlDevicesMQTT
 
 #include "ui.h"
 #include "ui_helpers.h"
@@ -87,6 +87,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_TextAreaPassword, lv_pct(18));
     lv_obj_set_y(ui_TextAreaPassword, lv_pct(-27));
     lv_obj_set_align(ui_TextAreaPassword, LV_ALIGN_CENTER);
+    lv_textarea_set_max_length(ui_TextAreaPassword, 128);
     lv_textarea_set_placeholder_text(ui_TextAreaPassword, "Enter Password");
     lv_textarea_set_password_mode(ui_TextAreaPassword, true);
 

@@ -1,10 +1,10 @@
 // SquareLine LVGL GENERATED FILE
-// EDITOR VERSION: SquareLine Studio 1.1.1
-// LVGL VERSION: 8.3.3
-// PROJECT: ConnectToWiFi
+// EDITOR VERSION: SquareLine Studio 1.2.0
+// LVGL VERSION: 8.2.0
+// PROJECT: ControlDevicesMQTT
 
-#ifndef _CONNECTTOWIFI_UI_HELPERS_H
-#define _CONNECTTOWIFI_UI_HELPERS_H
+#ifndef _CONTROLDEVICESMQTT_UI_HELPERS_H
+#define _CONTROLDEVICESMQTT_UI_HELPERS_H
 
 #include "ui.h"
 
@@ -43,6 +43,8 @@ void _ui_arc_increment(lv_obj_t * target, int val);
 void _ui_bar_increment(lv_obj_t * target, int val, int anm);
 
 void _ui_slider_increment(lv_obj_t * target, int val, int anm);
+
+void _ui_keyboard_set_target(lv_obj_t * keyboard, lv_obj_t * textarea);
 
 #define _UI_MODIFY_FLAG_ADD 0
 #define _UI_MODIFY_FLAG_REMOVE 1
