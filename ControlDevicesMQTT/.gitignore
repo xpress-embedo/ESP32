@@ -3,3 +3,4 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+/build-MQTT_Application-Desktop_Qt_6_2_4_GCC_64bit-Debug/
