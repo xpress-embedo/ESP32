@@ -14,23 +14,33 @@
 #include "lwip/dns.h"
 
 #include "esp_system.h"
+#include "esp_http_client.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 
 // Macros
-#define WIFI_SUCCESS        (0x01<<0u)
-#define WIFI_FAILURE        (0x01<<1u)
-#define TCP_SUCCESS         (0x01<<0u)
-#define TCP_FAILURE         (0x01<<1u)
-#define MAX_FAILURES        (10u)
+#define WIFI_SUCCESS        				(0x01<<0u)
+#define WIFI_FAILURE        				(0x01<<1u)
+#define TCP_SUCCESS         				(0x01<<0u)
+#define TCP_FAILURE         				(0x01<<1u)
+#define MAX_FAILURES        				(10u)
+#define HTTP_RESPONSE_SIZE  				(1024u)
 
 // Private Variables
 // Event Group to contain status information
 static EventGroupHandle_t wifi_event_group;
 static int retry_num = 0;
 static const char *TAG = "WIFI";
+static const char *CLIENT_KEY = "Content-Type";
+static const char *CLIENT_VALUE = "application/x-www-form-urlencoded";
+static const char *CLIENT_REQ_PRE = "https://api.openweathermap.org/data/2.5/weather?q=";
+static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
+static const char *city = "manali";
+char *response_data = NULL;
+size_t response_len = 0;
+bool all_data_received = false;
 
 // Private Functions Prototypes
 // Connect to WiFi and Return the Results
@@ -41,6 +51,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 // Event Handler for IP Events
 static void ip_event_handler(void* arg, esp_event_base_t event_base,
                              int32_t event_id, void* event_data);
+static void openweather_task(void *pvParameters);
+static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event);
 
 // Main Program Starts from Here
 void app_main(void)
@@ -57,10 +69,10 @@ void app_main(void)
   ret = connect_wifi();
   if( ret )
   {
-//    ESP_LOGI(TAG, "Failed to associate AP");
-//    xTaskCreate( &openweather_api_http,
-//                 "openweather_api_http",
-//                 8192, NULL, 6, NULL);
+    ESP_LOGI(TAG, "Creating the Open Weather Map Task");
+    xTaskCreate( &openweather_task,
+                 "OpenWeatherMap",
+                 8192, NULL, 6, NULL);
   }
   while (true)
   {
@@ -202,4 +214,67 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base,
     retry_num = 0;
     xEventGroupSetBits(wifi_event_group, WIFI_SUCCESS);
   }
+}
+
+// OpenWeatherMap Task
+static void openweather_task(void *pvParameters)
+{
+  char openweathermap_url[200];
+  snprintf( openweathermap_url, sizeof(openweathermap_url), \
+            "%s%s%s", CLIENT_REQ_PRE, city, CLIENT_REQ_POST);
+
+  esp_http_client_config_t config =
+  {
+    .url = openweathermap_url,
+    .method = HTTP_METHOD_GET,
+    .event_handler = openweathermap_event_handler,
+  };
+
+  esp_http_client_handle_t client = esp_http_client_init(&config);
+  esp_http_client_set_header(client, CLIENT_KEY, CLIENT_VALUE);
+  esp_err_t err = esp_http_client_perform(client);
+  if( err == ESP_OK )
+  {
+    int status = esp_http_client_get_status_code(client);
+    if(status == 200)
+    {
+      ESP_LOGI(TAG, "Message Sent Successfully");
+    }
+    else
+    {
+      ESP_LOGI(TAG, "Message Sent Failed");
+    }
+  }
+  else
+  {
+    ESP_LOGI(TAG, "Message Sent Failed");
+  }
+  esp_http_client_cleanup(client);
+  vTaskDelete(NULL);
+}
+
+static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
+{
+  switch(event->event_id)
+  {
+    case HTTP_EVENT_ON_DATA:
+      // Resize the Buffer to fit the new chunk of the data
+      response_data = realloc(response_data, response_len + event->data_len);
+      // Copy the Data
+      memcpy(response_data+response_len, event->data, event->data_len);
+      // Update the Length
+      response_len += event->data_len;
+      ESP_LOGI("OpenWeatherAPI", "Partial Received Data: %d", event->data_len);
+      break;
+    case HTTP_EVENT_ON_FINISH:
+      all_data_received = true;
+      // NOTE: TAG is different here
+      ESP_LOGI("OpenWeatherAPI", "Received Data: %s", response_data);
+      // Next Step is to decode the weather data from the response data
+      // TODO
+      break;
+    default:
+      break;
+  }
+  return ESP_OK;
 }
