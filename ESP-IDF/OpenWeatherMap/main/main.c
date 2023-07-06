@@ -19,6 +19,7 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include <cJSON.h>
 
 // Macros
 #define WIFI_SUCCESS        				(0x01<<0u)
@@ -27,6 +28,14 @@
 #define TCP_FAILURE         				(0x01<<1u)
 #define MAX_FAILURES        				(10u)
 #define HTTP_RESPONSE_SIZE  				(1024u)
+
+// Structures
+typedef struct _weather_data_t
+{
+  float temperature;
+  int pressure;
+  int humidity;
+} weather_data_t;
 
 // Private Variables
 // Event Group to contain status information
@@ -38,6 +47,7 @@ static const char *CLIENT_VALUE = "application/x-www-form-urlencoded";
 static const char *CLIENT_REQ_PRE = "https://api.openweathermap.org/data/2.5/weather?q=";
 static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
 static const char *city = "manali";
+static weather_data_t city_weather;
 char *response_data = NULL;
 size_t response_len = 0;
 bool all_data_received = false;
@@ -53,6 +63,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base,
                              int32_t event_id, void* event_data);
 static void openweather_task(void *pvParameters);
 static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event);
+static void openweathermap_get_weather(const char *json_string, weather_data_t *weather_data);
 
 // Main Program Starts from Here
 void app_main(void)
@@ -270,11 +281,24 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       all_data_received = true;
       // NOTE: TAG is different here
       ESP_LOGI("OpenWeatherAPI", "Received Data: %s", response_data);
-      // Next Step is to decode the weather data from the response data
-      // TODO
+      // Decode/Parse the weather data from the response data
+      openweathermap_get_weather(response_data, &city_weather);
+      // free up the space
+      free(response_data);
+      ESP_LOGI("OpenWeatherAPI", "Temp=%f, Pressure=%d, Humidity=%d", city_weather.temperature, city_weather.pressure, city_weather.humidity);
       break;
     default:
       break;
   }
   return ESP_OK;
+}
+
+static void openweathermap_get_weather(const char *json_string, weather_data_t *weather_data)
+{
+  cJSON *root = cJSON_Parse(json_string);
+  cJSON *obj = cJSON_GetObjectItemCaseSensitive(root, "main");
+  weather_data->temperature = cJSON_GetObjectItemCaseSensitive(obj, "temp")->valuedouble;
+  weather_data->pressure = cJSON_GetObjectItemCaseSensitive(obj, "pressure")->valueint;
+  weather_data->humidity = cJSON_GetObjectItemCaseSensitive(obj, "humidity")->valueint;
+  cJSON_Delete(root);
 }
