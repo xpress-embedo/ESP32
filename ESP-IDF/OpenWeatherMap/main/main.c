@@ -26,12 +26,16 @@
 #define WIFI_FAILURE        				(0x01<<1u)
 #define TCP_SUCCESS         				(0x01<<0u)
 #define TCP_FAILURE         				(0x01<<1u)
-#define MAX_FAILURES        				(10u)
-#define HTTP_RESPONSE_SIZE  				(1024u)
+#define MAX_FAILURES        	      (10u)
+#define CITY_NAME_LEN               (10u)
+#define NUM_OF_CITIES  				      (4u)
+#define MAIN_TASK_EXEC_RATE         (2000u)
+#define HTTP_REQ_EXEC_RATE          (3000u)   // 3 seconds
 
 // Structures
 typedef struct _weather_data_t
 {
+  char city_name[CITY_NAME_LEN];   // assuming city name will not be more than CITY_NAME_LEN bytes
   float temperature;
   int pressure;
   int humidity;
@@ -45,9 +49,11 @@ static const char *TAG = "WIFI";
 static const char *CLIENT_KEY = "Content-Type";
 static const char *CLIENT_VALUE = "application/x-www-form-urlencoded";
 static const char *CLIENT_REQ_PRE = "https://api.openweathermap.org/data/2.5/weather?q=";
-static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
-static const char *city = "manali";
-static weather_data_t city_weather;
+// static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
+static const char *CLIENT_REQ_POST = "&APPID=fbd756d6387c660e650b533ff585c70e&units=metric";
+static weather_data_t city_weather[NUM_OF_CITIES];
+static uint8_t city_weather_index = 0;
+
 char *response_data = NULL;
 size_t response_len = 0;
 bool all_data_received = false;
@@ -61,7 +67,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 // Event Handler for IP Events
 static void ip_event_handler(void* arg, esp_event_base_t event_base,
                              int32_t event_id, void* event_data);
-static void openweather_task(void *pvParameters);
+static void openweathermap_task(void *pvParameters);
 static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event);
 static void openweathermap_get_weather(const char *json_string, weather_data_t *weather_data);
 
@@ -81,14 +87,14 @@ void app_main(void)
   if( ret )
   {
     ESP_LOGI(TAG, "Creating the Open Weather Map Task");
-    xTaskCreate( &openweather_task,
+    xTaskCreate( &openweathermap_task,
                  "OpenWeatherMap",
                  8192, NULL, 6, NULL);
   }
   while (true)
   {
-    printf("Hello from app_main!\n");
-    sleep(1);
+    ESP_LOGI(TAG, "Hello World from Main Task");
+    vTaskDelay(MAIN_TASK_EXEC_RATE / portTICK_PERIOD_MS);
   }
 }
 
@@ -134,8 +140,10 @@ esp_err_t connect_wifi(void)
   {
     .sta =
     {
-      .ssid = "ssid name",
-      .password = "password",
+      // .ssid = "ssid name",
+      // .password = "password",
+      .ssid = "gigacube-D733",
+      .password = "5yR8m2B6Y4egrJQ5",
       .threshold.authmode = WIFI_AUTH_WPA2_PSK,
       .pmf_cfg =
       {
@@ -228,39 +236,57 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base,
 }
 
 // OpenWeatherMap Task
-static void openweather_task(void *pvParameters)
+static void openweathermap_task(void *pvParameters)
 {
   char openweathermap_url[200];
-  snprintf( openweathermap_url, sizeof(openweathermap_url), \
-            "%s%s%s", CLIENT_REQ_PRE, city, CLIENT_REQ_POST);
-
-  esp_http_client_config_t config =
+  
+  // Initialize the City Names
+  strcpy(city_weather[0].city_name, "manali");
+  strcpy(city_weather[1].city_name, "kashmir");
+  strcpy(city_weather[2].city_name, "jaipur");
+  strcpy(city_weather[3].city_name, "delhi");
+  
+  for( ; ; )
   {
-    .url = openweathermap_url,
-    .method = HTTP_METHOD_GET,
-    .event_handler = openweathermap_event_handler,
-  };
+    snprintf( openweathermap_url, sizeof(openweathermap_url), \
+              "%s%s%s", CLIENT_REQ_PRE, city_weather[city_weather_index].city_name, CLIENT_REQ_POST);
 
-  esp_http_client_handle_t client = esp_http_client_init(&config);
-  esp_http_client_set_header(client, CLIENT_KEY, CLIENT_VALUE);
-  esp_err_t err = esp_http_client_perform(client);
-  if( err == ESP_OK )
-  {
-    int status = esp_http_client_get_status_code(client);
-    if(status == 200)
+    esp_http_client_config_t config =
     {
-      ESP_LOGI(TAG, "Message Sent Successfully");
+      .url = openweathermap_url,
+      .method = HTTP_METHOD_GET,
+      .event_handler = openweathermap_event_handler,
+    };
+
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_http_client_set_header(client, CLIENT_KEY, CLIENT_VALUE);
+    esp_err_t err = esp_http_client_perform(client);
+    if( err == ESP_OK )
+    {
+      int status = esp_http_client_get_status_code(client);
+      if(status == 200)
+      {
+        ESP_LOGI(TAG, "City=%s, Message Sent Successfully", city_weather[city_weather_index].city_name);
+        city_weather_index++;
+        // Reset back to Initial Position
+        if( city_weather_index >= NUM_OF_CITIES )
+        {
+          city_weather_index = 0;
+        }
+      }
+      else
+      {
+        ESP_LOGI(TAG, "City=%s, Message Sent Failed", city_weather[city_weather_index].city_name);
+      }
     }
     else
     {
-      ESP_LOGI(TAG, "Message Sent Failed");
+      ESP_LOGI(TAG, "City=%s, Message Sent Failed", city_weather[city_weather_index].city_name);
     }
+    esp_http_client_cleanup(client);
+    vTaskDelay(HTTP_REQ_EXEC_RATE / portTICK_PERIOD_MS);
   }
-  else
-  {
-    ESP_LOGI(TAG, "Message Sent Failed");
-  }
-  esp_http_client_cleanup(client);
+
   vTaskDelete(NULL);
 }
 
@@ -275,17 +301,23 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       memcpy(response_data+response_len, event->data, event->data_len);
       // Update the Length
       response_len += event->data_len;
-      ESP_LOGI("OpenWeatherAPI", "Partial Received Data: %d", event->data_len);
+      // Only used for debugging
+      // ESP_LOGI("OpenWeatherAPI", "Partial Received Data: %d", event->data_len);
       break;
     case HTTP_EVENT_ON_FINISH:
       all_data_received = true;
       // NOTE: TAG is different here
       ESP_LOGI("OpenWeatherAPI", "Received Data: %s", response_data);
       // Decode/Parse the weather data from the response data
-      openweathermap_get_weather(response_data, &city_weather);
-      // free up the space
+      openweathermap_get_weather(response_data, &city_weather[0]);
+      // free up the space, and reset the response length
       free(response_data);
-      ESP_LOGI("OpenWeatherAPI", "Temp=%f, Pressure=%d, Humidity=%d", city_weather.temperature, city_weather.pressure, city_weather.humidity);
+      response_len = 0;
+      ESP_LOGI("OpenWeatherAPI", "City=%s, Temp=%f, Pressure=%d, Humidity=%d", \
+                city_weather[city_weather_index].city_name,   \
+                city_weather[city_weather_index].temperature, \
+                city_weather[city_weather_index].pressure,    \
+                city_weather[city_weather_index].humidity);
       break;
     default:
       break;
