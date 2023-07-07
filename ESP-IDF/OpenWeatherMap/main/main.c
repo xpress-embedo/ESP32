@@ -37,7 +37,7 @@
 typedef struct _weather_data_t
 {
   char city_name[CITY_NAME_LEN];   // assuming city name will not be more than CITY_NAME_LEN bytes
-  float temperature;
+  int temperature;
   int pressure;
   int humidity;
 } weather_data_t;
@@ -243,7 +243,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base,
 static void openweathermap_task(void *pvParameters)
 {
   // Initialize the City Names
-  strcpy(city_weather[0].city_name, "manali");
+  strcpy(city_weather[0].city_name, "delhi");
   strcpy(city_weather[1].city_name, "shimla");
   strcpy(city_weather[2].city_name, "jaipur");
   strcpy(city_weather[3].city_name, "leh");
@@ -280,22 +280,16 @@ static void openweathermap_send_request(void)
     int status = esp_http_client_get_status_code(client);
     if(status == 200)
     {
-      ESP_LOGI(TAG, "City=%s, Message Sent Successfully", city_weather[city_weather_index].city_name);
-      city_weather_index++;
-      // Reset back to Initial Position
-      if( city_weather_index >= NUM_OF_CITIES )
-      {
-        city_weather_index = 0;
-      }
+      ESP_LOGI(TAG, "Message Sent Successfully");
     }
     else
     {
-      ESP_LOGI(TAG, "City=%s, Message Sent Failed", city_weather[city_weather_index].city_name);
+      ESP_LOGI(TAG, "Message Sent Failed");
     }
   }
   else
   {
-    ESP_LOGI(TAG, "City=%s, Message Sent Failed", city_weather[city_weather_index].city_name);
+    ESP_LOGI(TAG, "Message Sent Failed");
   }
   esp_http_client_cleanup(client);
 }
@@ -309,8 +303,6 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       memcpy(response_data+response_data_idx, event->data, event->data_len);
       // Update the Length
       response_data_idx += event->data_len;
-      // Only used for debugging
-      ESP_LOGI("OpenWeatherAPI", "Received Data Size: %d, Total Data: %d", event->data_len, response_data_idx);
       break;
     case HTTP_EVENT_ON_FINISH:
       all_data_received = true;
@@ -319,12 +311,17 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       // reset the response buffer and also the length to initial state
       memset(response_data, 0x00, sizeof(response_data));
       response_data_idx = 0;
-      ESP_LOGI("OpenWeatherAPI", "City=%s, Temp=%f, Pressure=%d, Humidity=%d", \
+      ESP_LOGI("OpenWeatherAPI", "City=%s, Temp=%d, Pressure=%d, Humidity=%d", \
                 city_weather[city_weather_index].city_name,   \
                 city_weather[city_weather_index].temperature, \
                 city_weather[city_weather_index].pressure,    \
                 city_weather[city_weather_index].humidity);
-      ESP_LOGI("OpenWeatherAPI", "Exiting Event Handler");
+      city_weather_index++;
+      // Reset back to Initial Position
+      if( city_weather_index >= NUM_OF_CITIES )
+      {
+        city_weather_index = 0;
+      }
       break;
     default:
       break;
@@ -336,7 +333,7 @@ static void openweathermap_get_weather(const char *json_string, weather_data_t *
 {
   cJSON *root = cJSON_Parse(json_string);
   cJSON *obj = cJSON_GetObjectItemCaseSensitive(root, "main");
-  weather_data->temperature = cJSON_GetObjectItemCaseSensitive(obj, "temp")->valuedouble;
+  weather_data->temperature = cJSON_GetObjectItemCaseSensitive(obj, "temp")->valueint;
   weather_data->pressure = cJSON_GetObjectItemCaseSensitive(obj, "pressure")->valueint;
   weather_data->humidity = cJSON_GetObjectItemCaseSensitive(obj, "humidity")->valueint;
   cJSON_Delete(root);
