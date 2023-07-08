@@ -14,8 +14,6 @@ void ui_Screen2_screen_init(void)
     lv_img_set_src(ui_shimlaImage, &ui_img_shimla_png);
     lv_obj_set_width(ui_shimlaImage, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_shimlaImage, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_shimlaImage, -61);
-    lv_obj_set_y(ui_shimlaImage, 32);
     lv_obj_set_align(ui_shimlaImage, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_shimlaImage, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_shimlaImage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags

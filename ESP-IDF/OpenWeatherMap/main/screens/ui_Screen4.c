@@ -14,8 +14,6 @@ void ui_Screen4_screen_init(void)
     lv_img_set_src(ui_lehImage, &ui_img_leh_png);
     lv_obj_set_width(ui_lehImage, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lehImage, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_lehImage, -84);
-    lv_obj_set_y(ui_lehImage, 35);
     lv_obj_set_align(ui_lehImage, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_lehImage, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_lehImage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags

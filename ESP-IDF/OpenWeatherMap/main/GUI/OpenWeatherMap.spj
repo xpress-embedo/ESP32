@@ -2314,8 +2314,7 @@
             "InheritedType": 11
           }
         ],
-        "saved_objtypeKey": "SCREEN",
-        "tree_closed": true
+        "saved_objtypeKey": "SCREEN"
       },
       {
         "guid": "GUID25814951-659105S4112189",
@@ -2360,8 +2359,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -61,
-                  32
+                  0,
+                  0
                 ],
                 "InheritedType": 7
               },
@@ -4673,8 +4672,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  6,
-                  1
+                  0,
+                  0
                 ],
                 "InheritedType": 7
               },
@@ -4902,7 +4901,7 @@
               {
                 "nid": 1392493054,
                 "strtype": "IMAGE/Scale",
-                "integer": 125,
+                "integer": 256,
                 "InheritedType": 6
               },
               {
@@ -6986,8 +6985,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -84,
-                  35
+                  0,
+                  0
                 ],
                 "InheritedType": 7
               },
@@ -9292,7 +9291,7 @@
     "theme_color2": 0,
     "exportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\OpenWeatherMap\\main\\GUI",
     "projectExportFolderPath": "",
-    "backup_cnt": 20,
+    "backup_cnt": 23,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": null,

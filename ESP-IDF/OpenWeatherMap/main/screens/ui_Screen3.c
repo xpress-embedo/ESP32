@@ -14,12 +14,9 @@ void ui_Screen3_screen_init(void)
     lv_img_set_src(ui_jaipurImage, &ui_img_jaipur_png);
     lv_obj_set_width(ui_jaipurImage, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_jaipurImage, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_jaipurImage, 6);
-    lv_obj_set_y(ui_jaipurImage, 1);
     lv_obj_set_align(ui_jaipurImage, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_jaipurImage, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_jaipurImage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_zoom(ui_jaipurImage, 125);
 
     ui_Temperature2 = lv_label_create(ui_Screen3);
     lv_obj_set_height(ui_Temperature2, 20);
