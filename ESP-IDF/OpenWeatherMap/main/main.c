@@ -46,9 +46,12 @@ void app_main(void)
   if( ret == WIFI_SUCCESS )
   {
     ESP_LOGI(TAG, "Creating the Open Weather Map Task");
-    xTaskCreate( &openweathermap_task,
-                 "OpenWeatherMap",
-                 8192, NULL, 6, NULL);
+    xTaskCreate( &openweathermap_task,            \
+                 OPENWEATHERMAP_TASK_NAME,        \
+                 OPENWEATHERMAP_TASK_STACK_SIZE,  \
+                 NULL,                            \
+                 OPENWEATHERMAP_TASK_PRIORITY,    \
+                 NULL);
     // Initialize Display Manager
     display_init();
     while (true)

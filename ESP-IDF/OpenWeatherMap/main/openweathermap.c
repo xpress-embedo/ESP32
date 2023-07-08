@@ -9,7 +9,7 @@
 #include <cJSON.h>
 
 // Macros
-#define HTTP_RESP_LEN               (750u)
+#define HTTP_RESP_LEN               (1024u)
 #define HTTP_REQ_EXEC_RATE          (10000u)    // 10 seconds
 #define CITY_NAME_LEN               (10u)
 #define NUM_OF_CITIES               (4u)

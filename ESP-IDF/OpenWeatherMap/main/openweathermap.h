@@ -10,6 +10,11 @@
 
 #include "main.h"
 
+// Macros
+#define OPENWEATHERMAP_TASK_NAME              "OpenWeatherMap"
+#define OPENWEATHERMAP_TASK_STACK_SIZE        (2048u)
+#define OPENWEATHERMAP_TASK_PRIORITY          (5u)
+
 // Public Function Prototypes
 void openweathermap_task(void *pvParameters);
 
