@@ -22,3 +22,8 @@ void display_init(void)
   lv_win_add_title(win, "ESP32-S2-Kaluga-Kit:\nBoard Support Package example");
   bsp_display_unlock();
 }
+
+void display_mng(void)
+{
+
+}

@@ -34,7 +34,7 @@ static weather_data_t city_weather[NUM_OF_CITIES];
 static uint8_t city_weather_index = 0;
 char response_data[HTTP_RESP_LEN] = {0};
 uint16_t response_data_idx = 0u;
-bool all_data_received = false;
+bool request_in_process = false;
 
 // Private Function Prototypes
 static void openweathermap_send_request(void);
@@ -42,21 +42,35 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event);
 static void openweathermap_get_weather(const char *json_string, weather_data_t *weather_data);
 
 // Public Function Definitions
-// OpenWeatherMap Task
-void openweathermap_task(void *pvParameters)
+void openweathermap_init(void)
 {
   // Initialize the City Names
   strcpy(city_weather[0].city_name, "delhi");
   strcpy(city_weather[1].city_name, "shimla");
   strcpy(city_weather[2].city_name, "jaipur");
   strcpy(city_weather[3].city_name, "leh");
+}
 
-  for( ; ; )
+// OpenWeatherMap Manager
+void openweathermap_mng(void)
+{
+  if( request_in_process == false )
   {
+    request_in_process = true;
     openweathermap_send_request();
-    vTaskDelay(HTTP_REQ_EXEC_RATE / portTICK_PERIOD_MS);
   }
+}
 
+// OpenWeatherMap Task (optional, if we don't want to use above two functions manually)
+void openweathermap_task(void *pvParameters)
+{
+  openweathermap_init();
+  for(;;)
+  {
+    openweathermap_mng();
+    vTaskDelay(HTTP_REQ_EXEC_RATE/portTICK_PERIOD_MS);
+
+  }
   vTaskDelete(NULL);
 }
 
@@ -109,7 +123,6 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       response_data_idx += event->data_len;
       break;
     case HTTP_EVENT_ON_FINISH:
-      all_data_received = true;
       // Decode/Parse the weather data from the response data
       openweathermap_get_weather(response_data, &city_weather[city_weather_index]);
       // reset the response buffer and also the length to initial state
@@ -126,6 +139,8 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       {
         city_weather_index = 0;
       }
+      // Free the system for next requests
+      request_in_process = false;
       break;
     default:
       break;

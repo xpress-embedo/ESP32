@@ -11,5 +11,6 @@
 #include "main.h"
 
 void display_init(void);
+void display_mng(void);
 
 #endif /* MAIN_DISPLAY_MNG_H_ */
