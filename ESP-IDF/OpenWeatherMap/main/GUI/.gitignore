@@ -1,0 +1,9 @@
+/backup/
+/cache/
+/components/
+/fonts/
+/images/
+/screens/
+*.c
+*.h
+*.txt
