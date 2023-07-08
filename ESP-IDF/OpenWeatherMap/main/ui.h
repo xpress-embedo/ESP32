@@ -14,26 +14,46 @@ extern "C" {
 
 #include "ui_helpers.h"
 #include "ui_events.h"
-// SCREEN: ui_Delhi
-void ui_Delhi_screen_init(void);
-extern lv_obj_t * ui_Delhi;
+// SCREEN: ui_Screen1
+void ui_Screen1_screen_init(void);
+extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_delhiImage;
-extern lv_obj_t * ui_Temperature;
-extern lv_obj_t * ui_Pressure;
-extern lv_obj_t * ui_tempValue;
-extern lv_obj_t * ui_pressureValue;
-// SCREEN: ui_Shimla
-void ui_Shimla_screen_init(void);
-extern lv_obj_t * ui_Shimla;
+extern lv_obj_t * ui_Temperature0;
+extern lv_obj_t * ui_Pressure0;
+extern lv_obj_t * ui_tempValue0;
+extern lv_obj_t * ui_pressureValue0;
+extern lv_obj_t * ui_Humidity0;
+extern lv_obj_t * ui_humidityValue0;
+// SCREEN: ui_Screen2
+void ui_Screen2_screen_init(void);
+extern lv_obj_t * ui_Screen2;
 extern lv_obj_t * ui_shimlaImage;
-// SCREEN: ui_Jaipur
-void ui_Jaipur_screen_init(void);
-extern lv_obj_t * ui_Jaipur;
+extern lv_obj_t * ui_Temperature1;
+extern lv_obj_t * ui_Pressure1;
+extern lv_obj_t * ui_tempValue1;
+extern lv_obj_t * ui_pressureValue1;
+extern lv_obj_t * ui_Humidity1;
+extern lv_obj_t * ui_humidityValue1;
+// SCREEN: ui_Screen3
+void ui_Screen3_screen_init(void);
+extern lv_obj_t * ui_Screen3;
 extern lv_obj_t * ui_jaipurImage;
-// SCREEN: ui_Leh
-void ui_Leh_screen_init(void);
-extern lv_obj_t * ui_Leh;
+extern lv_obj_t * ui_Temperature2;
+extern lv_obj_t * ui_Pressure2;
+extern lv_obj_t * ui_tempValue2;
+extern lv_obj_t * ui_pressureValue2;
+extern lv_obj_t * ui_Humidity2;
+extern lv_obj_t * ui_humidityValue2;
+// SCREEN: ui_Screen4
+void ui_Screen4_screen_init(void);
+extern lv_obj_t * ui_Screen4;
 extern lv_obj_t * ui_lehImage;
+extern lv_obj_t * ui_Temperature3;
+extern lv_obj_t * ui_Pressure3;
+extern lv_obj_t * ui_tempValue3;
+extern lv_obj_t * ui_pressureValue3;
+extern lv_obj_t * ui_Humidity3;
+extern lv_obj_t * ui_humidityValue3;
 extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_delhi_png);    // assets\Delhi.png

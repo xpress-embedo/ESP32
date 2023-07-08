@@ -8,29 +8,49 @@
 
 ///////////////////// VARIABLES ////////////////////
 
-// SCREEN: ui_Delhi
-void ui_Delhi_screen_init(void);
-lv_obj_t * ui_Delhi;
+// SCREEN: ui_Screen1
+void ui_Screen1_screen_init(void);
+lv_obj_t * ui_Screen1;
 lv_obj_t * ui_delhiImage;
-lv_obj_t * ui_Temperature;
-lv_obj_t * ui_Pressure;
-lv_obj_t * ui_tempValue;
-lv_obj_t * ui_pressureValue;
+lv_obj_t * ui_Temperature0;
+lv_obj_t * ui_Pressure0;
+lv_obj_t * ui_tempValue0;
+lv_obj_t * ui_pressureValue0;
+lv_obj_t * ui_Humidity0;
+lv_obj_t * ui_humidityValue0;
 
-// SCREEN: ui_Shimla
-void ui_Shimla_screen_init(void);
-lv_obj_t * ui_Shimla;
+// SCREEN: ui_Screen2
+void ui_Screen2_screen_init(void);
+lv_obj_t * ui_Screen2;
 lv_obj_t * ui_shimlaImage;
+lv_obj_t * ui_Temperature1;
+lv_obj_t * ui_Pressure1;
+lv_obj_t * ui_tempValue1;
+lv_obj_t * ui_pressureValue1;
+lv_obj_t * ui_Humidity1;
+lv_obj_t * ui_humidityValue1;
 
-// SCREEN: ui_Jaipur
-void ui_Jaipur_screen_init(void);
-lv_obj_t * ui_Jaipur;
+// SCREEN: ui_Screen3
+void ui_Screen3_screen_init(void);
+lv_obj_t * ui_Screen3;
 lv_obj_t * ui_jaipurImage;
+lv_obj_t * ui_Temperature2;
+lv_obj_t * ui_Pressure2;
+lv_obj_t * ui_tempValue2;
+lv_obj_t * ui_pressureValue2;
+lv_obj_t * ui_Humidity2;
+lv_obj_t * ui_humidityValue2;
 
-// SCREEN: ui_Leh
-void ui_Leh_screen_init(void);
-lv_obj_t * ui_Leh;
+// SCREEN: ui_Screen4
+void ui_Screen4_screen_init(void);
+lv_obj_t * ui_Screen4;
 lv_obj_t * ui_lehImage;
+lv_obj_t * ui_Temperature3;
+lv_obj_t * ui_Pressure3;
+lv_obj_t * ui_tempValue3;
+lv_obj_t * ui_pressureValue3;
+lv_obj_t * ui_Humidity3;
+lv_obj_t * ui_humidityValue3;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -53,10 +73,10 @@ void ui_init(void)
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
-    ui_Delhi_screen_init();
-    ui_Shimla_screen_init();
-    ui_Jaipur_screen_init();
-    ui_Leh_screen_init();
+    ui_Screen1_screen_init();
+    ui_Screen2_screen_init();
+    ui_Screen3_screen_init();
+    ui_Screen4_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_Delhi);
+    lv_disp_load_scr(ui_Screen1);
 }

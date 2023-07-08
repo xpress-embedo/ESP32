@@ -21,7 +21,7 @@ void ui_Delhi_screen_init(void)
     ui_Temperature = lv_label_create(ui_Delhi);
     lv_obj_set_height(ui_Temperature, 20);
     lv_obj_set_width(ui_Temperature, lv_pct(45));
-    lv_obj_set_x(ui_Temperature, -80);
+    lv_obj_set_x(ui_Temperature, -70);
     lv_obj_set_y(ui_Temperature, -100);
     lv_obj_set_align(ui_Temperature, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Temperature, "Temperature: ");
@@ -33,7 +33,7 @@ void ui_Delhi_screen_init(void)
     ui_Pressure = lv_label_create(ui_Delhi);
     lv_obj_set_height(ui_Pressure, 20);
     lv_obj_set_width(ui_Pressure, lv_pct(45));
-    lv_obj_set_x(ui_Pressure, -80);
+    lv_obj_set_x(ui_Pressure, -70);
     lv_obj_set_y(ui_Pressure, -80);
     lv_obj_set_align(ui_Pressure, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Pressure, "Pressure:");
@@ -65,5 +65,29 @@ void ui_Delhi_screen_init(void)
     lv_obj_set_style_text_opa(ui_pressureValue, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_pressureValue, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_pressureValue, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Humidity = lv_label_create(ui_Delhi);
+    lv_obj_set_height(ui_Humidity, 20);
+    lv_obj_set_width(ui_Humidity, lv_pct(45));
+    lv_obj_set_x(ui_Humidity, -70);
+    lv_obj_set_y(ui_Humidity, -60);
+    lv_obj_set_align(ui_Humidity, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Humidity, "Humidity:");
+    lv_obj_set_style_text_color(ui_Humidity, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Humidity, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_Humidity, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Humidity, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_humidityValue = lv_label_create(ui_Delhi);
+    lv_obj_set_height(ui_humidityValue, 20);
+    lv_obj_set_width(ui_humidityValue, lv_pct(45));
+    lv_obj_set_x(ui_humidityValue, 80);
+    lv_obj_set_y(ui_humidityValue, -60);
+    lv_obj_set_align(ui_humidityValue, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_humidityValue, "80 %");
+    lv_obj_set_style_text_color(ui_humidityValue, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_humidityValue, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_humidityValue, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_humidityValue, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

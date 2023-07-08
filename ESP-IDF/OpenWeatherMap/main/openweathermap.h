@@ -19,6 +19,11 @@
 void openweathermap_init(void);
 void openweathermap_mng(void);
 void openweathermap_task(void *pvParameters);
+int openweathermap_get_temperature(uint8_t city_idx);
+int openweathermap_get_pressure(uint8_t city_idx);
+int openweathermap_get_humidity(uint8_t city_idx);
+uint8_t openweathermap_get_numofcity(void);
+
 /*
 To Create Task use the following code
 xTaskCreate( &openweathermap_task,            \

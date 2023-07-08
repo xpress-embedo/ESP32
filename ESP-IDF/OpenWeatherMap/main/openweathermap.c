@@ -74,6 +74,42 @@ void openweathermap_task(void *pvParameters)
   vTaskDelete(NULL);
 }
 
+uint8_t openweathermap_get_numofcity(void)
+{
+  return NUM_OF_CITIES;
+}
+
+int openweathermap_get_temperature(uint8_t city_idx)
+{
+  int temperature = 0;
+  if( city_idx < NUM_OF_CITIES )
+  {
+    temperature = city_weather[city_idx].temperature;
+  }
+  return temperature;
+}
+
+int openweathermap_get_pressure(uint8_t city_idx)
+{
+  int pressure = 0;
+  if( city_idx < NUM_OF_CITIES )
+  {
+    pressure = city_weather[city_idx].pressure;
+  }
+  return pressure;
+}
+
+int openweathermap_get_humidity(uint8_t city_idx)
+{
+  int humidity = 0;
+  if( city_idx < NUM_OF_CITIES )
+  {
+    humidity = city_weather[city_idx].humidity;
+  }
+  return humidity;
+}
+
+
 // Private Function Definitions
 static void openweathermap_send_request(void)
 {
