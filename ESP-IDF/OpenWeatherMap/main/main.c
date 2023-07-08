@@ -1,5 +1,6 @@
 
 #include "main.h"
+#include "display_mng.h"
 #include "openweathermap.h"
 
 // Macros
@@ -48,6 +49,8 @@ void app_main(void)
     xTaskCreate( &openweathermap_task,
                  "OpenWeatherMap",
                  8192, NULL, 6, NULL);
+    // Initialize Display Manager
+    display_init();
     while (true)
     {
       // ESP_LOGI(TAG, "Hello World from Main Task");
