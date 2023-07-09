@@ -125,10 +125,8 @@ esp_err_t connect_wifi(void)
   {
     .sta =
     {
-      // .ssid = "ssid name",
-      // .password = "password",
-      .ssid = "gigacube-D733",
-      .password = "5yR8m2B6Y4egrJQ5",
+      .ssid = "ssid name",
+      .password = "password",
       .threshold.authmode = WIFI_AUTH_WPA2_PSK,
       .pmf_cfg =
       {
