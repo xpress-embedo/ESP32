@@ -22,6 +22,7 @@ void openweathermap_task(void *pvParameters);
 int openweathermap_get_temperature(uint8_t city_idx);
 int openweathermap_get_pressure(uint8_t city_idx);
 int openweathermap_get_humidity(uint8_t city_idx);
+char* openweathermap_get_city_name(uint8_t city_idx);
 uint8_t openweathermap_get_numofcity(void);
 
 /*

@@ -90,4 +90,28 @@ void ui_Screen2_screen_init(void)
     lv_obj_set_style_text_align(ui_humidityValue1, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_humidityValue1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_CityName1 = lv_label_create(ui_Screen2);
+    lv_obj_set_height(ui_CityName1, 20);
+    lv_obj_set_width(ui_CityName1, lv_pct(45));
+    lv_obj_set_x(ui_CityName1, -70);
+    lv_obj_set_y(ui_CityName1, -40);
+    lv_obj_set_align(ui_CityName1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CityName1, "City Name:");
+    lv_obj_set_style_text_color(ui_CityName1, lv_color_hex(0xCF1919), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_CityName1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_CityName1, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_CityName1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_cityNameValue1 = lv_label_create(ui_Screen2);
+    lv_obj_set_height(ui_cityNameValue1, 20);
+    lv_obj_set_width(ui_cityNameValue1, lv_pct(45));
+    lv_obj_set_x(ui_cityNameValue1, 80);
+    lv_obj_set_y(ui_cityNameValue1, -40);
+    lv_obj_set_align(ui_cityNameValue1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_cityNameValue1, "Shimla");
+    lv_obj_set_style_text_color(ui_cityNameValue1, lv_color_hex(0xCF1919), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_cityNameValue1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_cityNameValue1, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_cityNameValue1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
 }

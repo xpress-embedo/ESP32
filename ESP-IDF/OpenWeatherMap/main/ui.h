@@ -24,6 +24,8 @@ extern lv_obj_t * ui_tempValue0;
 extern lv_obj_t * ui_pressureValue0;
 extern lv_obj_t * ui_Humidity0;
 extern lv_obj_t * ui_humidityValue0;
+extern lv_obj_t * ui_CityName0;
+extern lv_obj_t * ui_cityNameValue0;
 // SCREEN: ui_Screen2
 void ui_Screen2_screen_init(void);
 extern lv_obj_t * ui_Screen2;
@@ -34,6 +36,8 @@ extern lv_obj_t * ui_tempValue1;
 extern lv_obj_t * ui_pressureValue1;
 extern lv_obj_t * ui_Humidity1;
 extern lv_obj_t * ui_humidityValue1;
+extern lv_obj_t * ui_CityName1;
+extern lv_obj_t * ui_cityNameValue1;
 // SCREEN: ui_Screen3
 void ui_Screen3_screen_init(void);
 extern lv_obj_t * ui_Screen3;
@@ -44,6 +48,8 @@ extern lv_obj_t * ui_tempValue2;
 extern lv_obj_t * ui_pressureValue2;
 extern lv_obj_t * ui_Humidity2;
 extern lv_obj_t * ui_humidityValue2;
+extern lv_obj_t * ui_CityName2;
+extern lv_obj_t * ui_cityNameValue2;
 // SCREEN: ui_Screen4
 void ui_Screen4_screen_init(void);
 extern lv_obj_t * ui_Screen4;
@@ -54,6 +60,8 @@ extern lv_obj_t * ui_tempValue3;
 extern lv_obj_t * ui_pressureValue3;
 extern lv_obj_t * ui_Humidity3;
 extern lv_obj_t * ui_humidityValue3;
+extern lv_obj_t * ui_CityName3;
+extern lv_obj_t * ui_cityNameValue3;
 extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_delhi_png);    // assets\Delhi.png

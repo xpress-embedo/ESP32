@@ -90,4 +90,28 @@ void ui_Screen4_screen_init(void)
     lv_obj_set_style_text_align(ui_humidityValue3, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_humidityValue3, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_CityName3 = lv_label_create(ui_Screen4);
+    lv_obj_set_height(ui_CityName3, 20);
+    lv_obj_set_width(ui_CityName3, lv_pct(45));
+    lv_obj_set_x(ui_CityName3, -70);
+    lv_obj_set_y(ui_CityName3, -40);
+    lv_obj_set_align(ui_CityName3, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CityName3, "City Name:");
+    lv_obj_set_style_text_color(ui_CityName3, lv_color_hex(0xCF1919), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_CityName3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_CityName3, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_CityName3, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_cityNameValue3 = lv_label_create(ui_Screen4);
+    lv_obj_set_height(ui_cityNameValue3, 20);
+    lv_obj_set_width(ui_cityNameValue3, lv_pct(45));
+    lv_obj_set_x(ui_cityNameValue3, 80);
+    lv_obj_set_y(ui_cityNameValue3, -40);
+    lv_obj_set_align(ui_cityNameValue3, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_cityNameValue3, "Leh");
+    lv_obj_set_style_text_color(ui_cityNameValue3, lv_color_hex(0xCF1919), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_cityNameValue3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_cityNameValue3, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_cityNameValue3, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
 }

@@ -18,6 +18,8 @@ lv_obj_t * ui_tempValue0;
 lv_obj_t * ui_pressureValue0;
 lv_obj_t * ui_Humidity0;
 lv_obj_t * ui_humidityValue0;
+lv_obj_t * ui_CityName0;
+lv_obj_t * ui_cityNameValue0;
 
 // SCREEN: ui_Screen2
 void ui_Screen2_screen_init(void);
@@ -29,6 +31,8 @@ lv_obj_t * ui_tempValue1;
 lv_obj_t * ui_pressureValue1;
 lv_obj_t * ui_Humidity1;
 lv_obj_t * ui_humidityValue1;
+lv_obj_t * ui_CityName1;
+lv_obj_t * ui_cityNameValue1;
 
 // SCREEN: ui_Screen3
 void ui_Screen3_screen_init(void);
@@ -40,6 +44,8 @@ lv_obj_t * ui_tempValue2;
 lv_obj_t * ui_pressureValue2;
 lv_obj_t * ui_Humidity2;
 lv_obj_t * ui_humidityValue2;
+lv_obj_t * ui_CityName2;
+lv_obj_t * ui_cityNameValue2;
 
 // SCREEN: ui_Screen4
 void ui_Screen4_screen_init(void);
@@ -51,6 +57,8 @@ lv_obj_t * ui_tempValue3;
 lv_obj_t * ui_pressureValue3;
 lv_obj_t * ui_Humidity3;
 lv_obj_t * ui_humidityValue3;
+lv_obj_t * ui_CityName3;
+lv_obj_t * ui_cityNameValue3;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////

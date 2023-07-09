@@ -12,15 +12,18 @@
 
 // Macros
 #define DISPLAY_REFRESH_RATE          (5u)    // display_mng is called after 1 second, using x means x seconds
+#define NUM_OF_DATA                   (4u)    // This must be aligned with NUM_OF_CITIES in OpenWeatherMap module
+                                              // and also should be equal to total_num_of_cities
 
 // Private Variables
 static uint8_t total_num_of_cities = 0u;
 static uint8_t city_idx = 0u;
 static uint8_t display_refresh = 0;
-lv_obj_t * ui_Screens[4];
-lv_obj_t * ui_temperature_values[4];
-lv_obj_t * ui_pressure_values[4];
-lv_obj_t * ui_humidity_values[4];
+lv_obj_t * ui_Screens[NUM_OF_DATA];
+lv_obj_t * ui_city_names[NUM_OF_DATA];
+lv_obj_t * ui_temperature_values[NUM_OF_DATA];
+lv_obj_t * ui_pressure_values[NUM_OF_DATA];
+lv_obj_t * ui_humidity_values[NUM_OF_DATA];
 
 // Public Function Definitions
 void display_init(void)
@@ -37,6 +40,11 @@ void display_init(void)
   ui_Screens[1] = ui_Screen2;
   ui_Screens[2] = ui_Screen3;
   ui_Screens[3] = ui_Screen4;
+  // Update Array of City Names with LVGL objects
+  ui_city_names[0] = ui_cityNameValue0;
+  ui_city_names[1] = ui_cityNameValue1;
+  ui_city_names[2] = ui_cityNameValue2;
+  ui_city_names[3] = ui_cityNameValue3;
   // Update Array of Temperature LVGL objects
   ui_temperature_values[0] = ui_tempValue0;
   ui_temperature_values[1] = ui_tempValue1;
@@ -87,5 +95,6 @@ void display_mng(void)
     _ui_label_set_property( ui_pressure_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
     snprintf(temp,10u, "%3d ", humidity);
     _ui_label_set_property( ui_humidity_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
+    _ui_label_set_property(ui_city_names[city_idx], _UI_LABEL_PROPERTY_TEXT, openweathermap_get_city_name(city_idx));
   }
 }

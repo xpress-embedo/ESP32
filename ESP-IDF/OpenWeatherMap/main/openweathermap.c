@@ -39,6 +39,7 @@ bool request_in_process = false;
 // Private Function Prototypes
 static void openweathermap_send_request(void);
 static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event);
+static void openweathermap_reset_buffer(void);
 static void openweathermap_get_weather(const char *json_string, weather_data_t *weather_data);
 
 // Public Function Definitions
@@ -77,6 +78,16 @@ void openweathermap_task(void *pvParameters)
 uint8_t openweathermap_get_numofcity(void)
 {
   return NUM_OF_CITIES;
+}
+
+char* openweathermap_get_city_name(uint8_t city_idx)
+{
+  char *city_ptr = NULL;
+  if( city_idx < NUM_OF_CITIES )
+  {
+    city_ptr = city_weather[city_idx].city_name;
+  }
+  return city_ptr;
 }
 
 int openweathermap_get_temperature(uint8_t city_idx)
@@ -125,6 +136,7 @@ static void openweathermap_send_request(void)
   };
 
   // ESP_LOGI(TAG, "URL:%s", openweathermap_url);
+  ESP_LOGI(TAG, "Free Heap: %lu", esp_get_free_heap_size() );
 
   esp_http_client_handle_t client = esp_http_client_init(&config);
   esp_http_client_set_header(client, CLIENT_KEY, CLIENT_VALUE);
@@ -162,8 +174,7 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       // Decode/Parse the weather data from the response data
       openweathermap_get_weather(response_data, &city_weather[city_weather_index]);
       // reset the response buffer and also the length to initial state
-      memset(response_data, 0x00, sizeof(response_data));
-      response_data_idx = 0;
+      openweathermap_reset_buffer();
       ESP_LOGI( TAG, "City=%s, Temp=%d, Pressure=%d, Humidity=%d", \
                 city_weather[city_weather_index].city_name,   \
                 city_weather[city_weather_index].temperature, \
@@ -175,6 +186,12 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
       {
         city_weather_index = 0;
       }
+      // Free the system for next requests
+      request_in_process = false;
+      break;
+    case HTTP_EVENT_ERROR:
+      // In case of Error, exit
+      openweathermap_reset_buffer();
       // Free the system for next requests
       request_in_process = false;
       break;
@@ -192,5 +209,12 @@ static void openweathermap_get_weather(const char *json_string, weather_data_t *
   weather_data->pressure = cJSON_GetObjectItemCaseSensitive(obj, "pressure")->valueint;
   weather_data->humidity = cJSON_GetObjectItemCaseSensitive(obj, "humidity")->valueint;
   cJSON_Delete(root);
+}
+
+static void openweathermap_reset_buffer(void)
+{
+  // reset the response buffer and also the length to initial state
+  memset(response_data, 0x00, sizeof(response_data));
+  response_data_idx = 0;
 }
 

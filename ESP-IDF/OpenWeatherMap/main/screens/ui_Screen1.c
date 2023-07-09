@@ -90,4 +90,28 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_text_align(ui_humidityValue0, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_humidityValue0, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_CityName0 = lv_label_create(ui_Screen1);
+    lv_obj_set_height(ui_CityName0, 20);
+    lv_obj_set_width(ui_CityName0, lv_pct(45));
+    lv_obj_set_x(ui_CityName0, -70);
+    lv_obj_set_y(ui_CityName0, -40);
+    lv_obj_set_align(ui_CityName0, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CityName0, "City Name:");
+    lv_obj_set_style_text_color(ui_CityName0, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_CityName0, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_CityName0, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_CityName0, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_cityNameValue0 = lv_label_create(ui_Screen1);
+    lv_obj_set_height(ui_cityNameValue0, 20);
+    lv_obj_set_width(ui_cityNameValue0, lv_pct(45));
+    lv_obj_set_x(ui_cityNameValue0, 80);
+    lv_obj_set_y(ui_cityNameValue0, -40);
+    lv_obj_set_align(ui_cityNameValue0, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_cityNameValue0, "Delhi");
+    lv_obj_set_style_text_color(ui_cityNameValue0, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_cityNameValue0, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_cityNameValue0, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_cityNameValue0, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
 }
