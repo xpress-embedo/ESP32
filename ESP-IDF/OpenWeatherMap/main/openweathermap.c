@@ -46,10 +46,10 @@ static void openweathermap_get_weather(const char *json_string, weather_data_t *
 void openweathermap_init(void)
 {
   // Initialize the City Names
-  strcpy(city_weather[0].city_name, "delhi");
-  strcpy(city_weather[1].city_name, "shimla");
-  strcpy(city_weather[2].city_name, "jaipur");
-  strcpy(city_weather[3].city_name, "leh");
+  strcpy(city_weather[0].city_name, "Delhi");
+  strcpy(city_weather[1].city_name, "Shimla");
+  strcpy(city_weather[2].city_name, "Jaipur");
+  strcpy(city_weather[3].city_name, "Leh");
 }
 
 // OpenWeatherMap Manager
@@ -136,7 +136,7 @@ static void openweathermap_send_request(void)
   };
 
   // ESP_LOGI(TAG, "URL:%s", openweathermap_url);
-  ESP_LOGI(TAG, "Free Heap: %lu", esp_get_free_heap_size() );
+  ESP_LOGI(TAG, "Free Heap: %lu, Minimum Heap: %lu", esp_get_free_heap_size(), esp_get_minimum_free_heap_size() );
 
   esp_http_client_handle_t client = esp_http_client_init(&config);
   esp_http_client_set_header(client, CLIENT_KEY, CLIENT_VALUE);

@@ -89,12 +89,17 @@ void display_mng(void)
     // load the screen
     lv_disp_load_scr( ui_Screens[city_idx] );
     // Update the Display
-    snprintf(temp,10u, "%2d C", temperature);
-    _ui_label_set_property( ui_temperature_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
+    // snprintf(temp,10u, "%2d \xB0 C", temperature);
+    // _ui_label_set_property( ui_temperature_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
+    // Update Temperature
+    lv_label_set_text_fmt(ui_temperature_values[city_idx], "%2d °C", temperature );
+    // Update Pressure
     snprintf(temp,10u, "%4d bar", pressure);
     _ui_label_set_property( ui_pressure_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
-    snprintf(temp,10u, "%3d ", humidity);
+    // Update Humidity
+    snprintf(temp,10u, "%3d %%", humidity);
     _ui_label_set_property( ui_humidity_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
+    // Update City Name
     _ui_label_set_property(ui_city_names[city_idx], _UI_LABEL_PROPERTY_TEXT, openweathermap_get_city_name(city_idx));
   }
 }
