@@ -1,18 +1,23 @@
 Sensor Less Weather Station using Open Weather Map Website and LVGL
 ====================
 
-![[PCBWay Discount](https://pcbway.com/g/a8XEUi)](docs/pcbway.png)
+<!-- ![[PCBWay Discount](https://pcbway.com/g/a8XEUi)](docs/pcbway.png) -->
+<a href="https://pcbway.com/g/a8XEUi"><img src="docs/pcbway.png" width="300"></a>
 
 
 In this post I will show you guys, how to make a Sensor less Weather Station using Open Weather Map website and display the temperature, humidity and pressure values on the LCD along with the city image and name, as shown in the below images.
 
-![Delhi City Weather Information](docs/Delhi.JPG)  
+<!-- ![Delhi City Weather Information](docs/Delhi.JPG)   -->
+<img src="docs/Delhi.JPG" width="400">  
 
-![Jaipur City Weather Information](docs/Jaipur.JPG)  
+<!-- ![Jaipur City Weather Information](docs/Jaipur.JPG)   -->
+<img src="docs/Jaipur.JPG" width="400">  
 
-![Leh City Weather Information](docs/Leh.JPG)  
+<!-- ![Leh City Weather Information](docs/Leh.JPG)   -->
+<img src="docs/Leh.JPG" width="400">  
 
-![Shimla City Weather Information](docs/Shimla.JPG)  
+<!-- ![Shimla City Weather Information](docs/Shimla.JPG)   -->
+<img src="docs/Shimla.JPG" width="400">  
 
 
 ## Open Weather Map
@@ -52,7 +57,8 @@ And the following is the response.
 And then using a JSON parser we can decode this data to extract the "temperature", "humidity" and pressure information, which can be displayed on the 3.2-inch LCD using the LVGL graphics library.
 
 ### Software Architecture
-![Alt text](docs/AppMain.png)
+<!-- ![Alt text](docs/AppMain.png) -->
+<img src="docs/AppMain.png" width="500">  
 
 The above Activity Diagram is used to explain the steps of this small project.
 
@@ -232,12 +238,13 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
 ```
 
 ### Display Refreshing
-![Alt text](docs/DisplayRefreshManager.png)
+<!-- ![Alt text](docs/DisplayRefreshManager.png) -->
+<img src="docs/DisplayRefreshManager.png" width="350">
 
 And then in another function "display_mng" is used to update the "Temperature", "Pressure", "Humidity" and "City Name" with the city image on the display using LVGL functions.
 
 ## References
-Took Some Help from the following Links:
+Took Some Help from the following Links:  
 [ESP IDF Open Weather Map](https://github.com/ESP32Tutorials/ESP32-ESP-IDF-OpenWeatherMap-API/tree/main/main)
 
 [ESP32 IDF Open Weather Map](https://esp32tutorials.com/esp32-esp-idf-openweathermap-api-sensorless-weather-station/#more-3008)
