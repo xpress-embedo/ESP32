@@ -21,9 +21,9 @@ In this post I will show you guys, how to make a Sensor less Weather Station usi
 
 
 ## Open Weather Map
-OpenWeatherMap is an online service, owned by OpenWeather Ltd, that provides global weather data via API, including current weather data, forecasts, nowcasts and historical weather data for any geographical location. 
+OpenWeatherMap is an online service, owned by OpenWeather Ltd, that provides global weather data via API, including current weather data, forecasts, now casts and historical weather data for any geographical location. 
 
-The company provides a minute-by-minute hyperlocal precipitation forecast for any location. The convolutional machine learning model is used to utilise meteorological broadcast services and data from airport weather stations, on-ground radar stations, weather satellites, remote sensing satellites, METAR and automated weather stations.
+The company provides a minute-by-minute hyper local precipitation forecast for any location. The convolution machine learning model is used to utilize meteorological broadcast services and data from airport weather stations, on-ground radar stations, weather satellites, remote sensing satellites, METAR and automated weather stations.
 
 The company has more than 2 million customers, ranging from independent developers to Fortune 500 companies.
 
@@ -239,7 +239,7 @@ static esp_err_t openweathermap_event_handler(esp_http_client_event_t *event)
 
 ### Display Refreshing
 <!-- ![Alt text](docs/DisplayRefreshManager.png) -->
-<img src="docs/DisplayRefreshManager.png" width="350">
+<img src="docs/DisplayRefreshManager.png" width="400">
 
 And then in another function "display_mng" is used to update the "Temperature", "Pressure", "Humidity" and "City Name" with the city image on the display using LVGL functions.
 
@@ -252,13 +252,29 @@ Took Some Help from the following Links:
 [HTTP Client ESP32](https://www.youtube.com/watch?v=_dRrarmQiAM)
 
 ### Issues
-Faced an issue
+The following are list of the issues which I faced while developing this project.
+
+#### ESP TLS CFG No Server Verification
+I get the following error message.
 ```
 esp-tls-mbedtls: No server verification option set in esp_tls_cfg_t structure
 ```
-Which is fixed using this link:  
-[ESP TLS MBEDTLS GitHub Issue Solution](https://github.com/zonmen/IndoorSolution-esp32/issues/1)
+But after googling little bit and applying the below mentioned solution, I am able to fix the issue.
+
+[ESP TLS MBEDTLS GitHub Issue Solution](https://github.com/zonmen/IndoorSolution-esp32/issues/1)  
+We have to basically update the configuration, with the following setting.  
 ```
 CONFIG_ESP_TLS_INSECURE=y
 CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y
 ```
+
+#### Error Reported by IDE for ESP_LOGI function/macro
+This issue is very basic and is basically due to the C/C++ indexer not able to index things properly.  
+The problem looks as follow.  
+![](docs/ESP_LOGI_FunctionRedUnderLine.png)
+
+And this can be fixed easily by selecting the following settings in `C/C++ Indexer` properties.  
+![](docs/ESP_LOGI_FunctionRedUnderLineIssueSolution.png)
+
+And after applying the fixing and building the project again, the problem is gone, as shown below.  
+![](docs/ESP_LOGI_FunctionRedUnderLineIssueFixed.png)
