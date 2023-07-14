@@ -1,40 +1,4 @@
 dependencies:
-  espressif/button:
-    component_hash: f15af2d7b022536fa1f1328a6a9cd48f4d893dbeed3b3e91d32566ad8002570e
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 2.5.1
-  espressif/cmake_utilities:
-    component_hash: 32d235c66d22f05ca3b5a3c2bdf273edd273b1e624b144fa8635066be50bae7b
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 0.4.8
-  espressif/es8311:
-    component_hash: eacbe7cb7f6993eb0f439121a56663cdfbf95925e7ddf5d2ed5aa640bed476fd
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 1.0.0
-  espressif/esp32-camera:
-    component_hash: 5ae1102097b6e2c99740c70f8ba25525cef7f451e82228b1914bef86de722090
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 2.0.4
-  espressif/esp32_s2_kaluga_kit:
-    component_hash: 2765b721739bdb29ad44c44219dea488da8353797016c2d1ed06989428c768ca
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 2.2.3
-  espressif/esp_lvgl_port:
-    component_hash: 5f7ec130fcfe1d5339cbd5b202766349e8614cd6504636d8902eb41823cb2ce7
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 1.2.0
   espressif/led_strip:
     component_hash: 1f8cc130ebd557fde64c02fe5fad0cb36d69947498c540ace6f425e1083d7773
     source:
@@ -46,12 +10,6 @@ dependencies:
     source:
       type: idf
     version: 5.0.2
-  lvgl/lvgl:
-    component_hash: 1b50316b27a2a46269a1334b90a2cfc690ac8173f346d6e4992188add7971b79
-    source:
-      service_url: https://api.components.espressif.com/
-      type: service
-    version: 8.3.7
-manifest_hash: c12f3a655e4d2fd23d3c534629e6aa0d65b71ef35efe4004f1d3163ad0d6144f
+manifest_hash: a9cfca33ead099a7bed61788ae0ab562f9f28d5e440bb09d115a3de63fbaf3c1
 target: esp32s2
 version: 1.0.0

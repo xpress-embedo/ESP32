@@ -1,3 +1,2 @@
 dependencies:
-  espressif/esp32_s2_kaluga_kit: "==2.2.3"
   espressif/led_strip: "^2.0.0"
