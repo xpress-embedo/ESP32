@@ -2,7 +2,7 @@ Sensor Less Weather Station using Open Weather Map Website and LVGL
 ====================
 
 <!-- ![[PCBWay Discount](https://pcbway.com/g/a8XEUi)](docs/pcbway.png) -->
-<a href="https://pcbway.com/g/a8XEUi"><img src="docs/pcbway.png" width="300"></a>
+<a href="https://pcbway.com/g/a8XEUi"><img src="docs/pcbway_banner.jpg" width="600"></a>
 
 
 In this post I will show you guys, how to make a Sensor less Weather Station using Open Weather Map website and display the temperature, humidity and pressure values on the LCD along with the city image and name, as shown in the below images.
