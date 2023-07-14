@@ -7,8 +7,8 @@
 #include "sdkconfig.h"
 
 // Macros
-#define BLINK_GPIO              (45)
-#define BLINK_GPIO_PERIOD       (500)
+#define LED_GPIO                (45)
+#define MAIN_TASK_PERIOD        (500)
 
 // Private Variables
 static const char *TAG = "APP";
@@ -31,7 +31,7 @@ void app_main(void)
     blink_led();
     /* Toggle the LED state */
     s_led_state = !s_led_state;
-    vTaskDelay(BLINK_GPIO_PERIOD / portTICK_PERIOD_MS);
+    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
 }
 
@@ -59,7 +59,7 @@ static void configure_led(void)
   /* LED strip initialization with the GPIO and pixels number*/
   led_strip_config_t strip_config =
   {
-    .strip_gpio_num = BLINK_GPIO,
+    .strip_gpio_num = LED_GPIO,
     .max_leds = 1, // at least one LED on board
   };
   led_strip_rmt_config_t rmt_config =
