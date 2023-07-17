@@ -16,6 +16,7 @@
 
 #include "led_mng.h"
 #include "tasks_common.h"
+#include "http_server.h"
 #include "wifi_app.h"
 
 // Macros
@@ -63,7 +64,7 @@ void wifi_app_start( void )
   LED_WIFI_APP_STARTED();
 
   // Disable default wifi logging messages
-  // esp_log_level_set("wifi", ESP_LOG_NONE);
+  esp_log_level_set("wifi", ESP_LOG_NONE);
 
   // Create Message Queue with length 3
   wifi_app_q_handle = xQueueCreate( 3, sizeof(wifi_app_q_msg_t));
@@ -102,8 +103,7 @@ static void wifi_app_task(void *pvParameter)
       {
         case WIFI_APP_MSG_START_HTTP_SERVER:
           ESP_LOGI(TAG,"WIFI_APP_MSG_START_HTTP_SERVER");
-          // TODO: later
-          // http_server_start();
+          http_server_start();
           LED_WIFI_HTTP_SERVER_STARTED();
           break;
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:

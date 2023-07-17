@@ -31,10 +31,10 @@ void app_main(void)
   // Start WiFi
   wifi_app_start();
 
-  while (true)
-  {
-    printf("Hello from app_main!\n");
-    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
-  }
+//  while (true)
+//  {
+//    printf("Hello from app_main!\n");
+//    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
+//  }
 }
 
