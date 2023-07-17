@@ -6,6 +6,9 @@
  */
 #include "esp_http_server.h"
 #include "esp_log.h"
+#include "esp_timer.h"
+#include "esp_ota_ops.h"
+#include "sys/param.h"
 
 #include "http_server.h"
 #include "tasks_common.h"
@@ -25,6 +28,17 @@ static httpd_handle_t http_server_handle = NULL;
 static TaskHandle_t task_http_server_monitor = NULL;
 // Queue Handle used to manipulate the main queue of events
 static QueueHandle_t http_server_monitor_q_handle;
+// Firmware Update Status
+static int fw_update_status = OTA_UPDATE_PENDING;
+// ESP32 Timer Configuration Passed to esp_timer_create
+static const esp_timer_create_args_t fw_update_reset_args =
+{
+  .callback = &http_fw_update_reset_cb,
+  .arg = NULL,
+  .dispatch_method = ESP_TIMER_TASK,
+  .name = "fw_update_reset"
+};
+esp_timer_handle_t fw_update_reset;
 
 // Embedded Files: JQuery, index.html, app.css, app.js, and favicon.ico files
 extern const uint8_t jquery_3_3_1_min_js_start[]      asm("_binary_jquery_3_3_1_min_js_start");
@@ -46,8 +60,9 @@ static esp_err_t http_server_index_html_handler(httpd_req_t *req);
 static esp_err_t http_server_app_css_handler(httpd_req_t *req);
 static esp_err_t http_server_app_js_handler(httpd_req_t *req);
 static esp_err_t http_server_favicon_handler(httpd_req_t *req);
-//static esp_err_t http_server_ota_update_handler(httpd_req_t *req);
-//static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
+static esp_err_t http_server_ota_update_handler(httpd_req_t *req);
+static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
+static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
 /*
@@ -79,6 +94,16 @@ void http_server_stop(void)
     ESP_LOGI(TAG,"http_server_stop: stopping HTTP server monitor");
     task_http_server_monitor = NULL;
   }
+}
+
+/*
+ * Timer Callback function which calls esp_restart function upon successful
+ * firmware update
+ */
+void http_fw_update_reset_cb(void *arg)
+{
+  ESP_LOGI(TAG, "http_fw_update_reset_cb: Timer timed-out, restarting the device");
+  esp_restart();
 }
 
 /*
@@ -120,14 +145,12 @@ static void http_server_monitor( void *pvParameter )
         break;
       case HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL:
         ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_SUCCESSFUL");
-//        g_fw_update_status = OTA_UPDATE_SUCCESSFUL;
+        fw_update_status = OTA_UPDATE_SUCCESSFUL;
+        http_server_fw_update_reset_timer();
         break;
       case HTTP_MSG_WIFI_OTA_UPDATE_FAILED:
         ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_FAILED");
-//        g_fw_update_status = OTA_UPDATE_FAILED;
-        break;
-      case HTTP_MSG_WIFI_OTA_UPDATE_INITIALIZED:
-        ESP_LOGI( TAG, "HTTP_MSG_WIFI_OTA_UPDATE_INITIALIZED");
+        fw_update_status = OTA_UPDATE_FAILED;
         break;
       default:
         break;
@@ -217,31 +240,31 @@ static httpd_handle_t http_server_configure(void)
       .handler   = http_server_favicon_handler,
       .user_ctx  = NULL
     };
-    //// Register OTA Update Handler
-    //static const httpd_uri_t ota_update =
-    //{
-    //  .uri       = "/OTAupdate",
-    //  .method    = HTTP_POST,
-    //  .handler   = http_server_ota_update_handler,
-    //  .user_ctx  = NULL
-    //};
-    //
-    //// Register OTA Status Handler
-    //static const httpd_uri_t ota_status =
-    //{
-    //  .uri       = "/OTAstatus",
-    //  .method    = HTTP_POST,
-    //  .handler   = http_server_ota_status_handler,
-    //  .user_ctx  = NULL
-    //};
+    // Register OTA Update Handler
+    httpd_uri_t ota_update =
+    {
+      .uri       = "/OTAupdate",
+      .method    = HTTP_POST,
+      .handler   = http_server_ota_update_handler,
+      .user_ctx  = NULL
+    };
+
+    // Register OTA Status Handler
+    httpd_uri_t ota_status =
+    {
+      .uri       = "/OTAstatus",
+      .method    = HTTP_POST,
+      .handler   = http_server_ota_status_handler,
+      .user_ctx  = NULL
+    };
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
     httpd_register_uri_handler(http_server_handle, &app_css);
     httpd_register_uri_handler(http_server_handle, &app_js);
     httpd_register_uri_handler(http_server_handle, &favicon_ico);
-//    httpd_register_uri_handler(http_server_handle, &ota_update);
-//    httpd_register_uri_handler(http_server_handle, &ota_status);
+    httpd_register_uri_handler(http_server_handle, &ota_update);
+    httpd_register_uri_handler(http_server_handle, &ota_status);
     return http_server_handle;
   }
 
@@ -364,27 +387,133 @@ static esp_err_t http_server_favicon_handler(httpd_req_t *req)
  * @param req HTTP request for which the uri needs to be handled
  * @return ESP_OK, other ESP_FAIL if timeout occurs and the update canot be started
  */
-//static esp_err_t http_server_ota_update_handler(httpd_req_t *req)
-//{
-//  esp_err_t error;
-//  esp_ota_handle_t ota_handle;
-//  char ota_buffer[1024];
-//  int content_len = req->content_len;
-//  int content_received = 0;
-//  int recv_len = 0;
-//  bool is_req_body_started = false;
-//  bool flash_successful = false;
-//
-//  const esp_partition_t *update_partition = esp_ota_get_next_update_partition(NULL);
-//
-//  do
-//  {
-//    /* code */
-//  } while ( (recv_len>0) && (content_received < content_len) );
-//  return ESP_OK;
-//}
-//
-//static esp_err_t http_server_ota_status_handler(httpd_req_t *req)
-//{
-//  return ESP_OK;
-//}
+static esp_err_t http_server_ota_update_handler(httpd_req_t *req)
+{
+  esp_err_t error;
+  esp_ota_handle_t ota_handle;
+  char ota_buffer[1024];
+  int content_len = req->content_len;
+  int content_received = 0;
+  int recv_len = 0;
+  bool is_req_body_started = false;
+  bool flash_successful = false;
+
+  const esp_partition_t *update_partition = esp_ota_get_next_update_partition(NULL);
+
+  do
+  {
+    // Read the data for the request
+    recv_len = httpd_req_recv(req, ota_buffer, MIN(content_len, sizeof(ota_buffer)));
+    if( recv_len < 0 )
+    {
+      // Check if timeout occur
+      if( recv_len == HTTPD_SOCK_ERR_TIMEOUT )
+      {
+        ESP_LOGI(TAG, "http_server_ota_update_handler: Socket Timeout");
+        continue;     // Retry Receiving if Timeout Occurred
+      }
+      ESP_LOGI(TAG, "http_server_ota_update_handler: OTA Other Error, %d", recv_len);
+      return ESP_FAIL;
+    }
+    ESP_LOGI(TAG, "http_server_ota_update_handler: OTA RX: %d of %d", content_received, content_len);
+
+    // Is this the first data we are receiving
+    // If so, it will have the information in the header that we need
+    if( !is_req_body_started )
+    {
+      is_req_body_started = true;
+      // Get the location of the *.bin file content (remove the web form data)
+      char *body_start_p = strstr(ota_buffer, "\r\n\r\n") + 4;
+      int body_part_len = recv_len - (body_start_p - ota_buffer);
+      ESP_LOGI(TAG, "http_server_ota_update_handler: OTA File Size: %d", content_len);
+      error = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &ota_handle);
+      if( error != ESP_OK )
+      {
+        ESP_LOGI(TAG, "http_server_ota_update_handler: Error with OTA Begin, Canceling OTA");
+        return ESP_FAIL;
+      }
+      else
+      {
+        // ESP_LOGI(TAG, "http_server_ota_update_handler: Writing to partition subtype %d at offset 0x%x", update_partition->subtype, update_partition->address);
+      }
+      // Write the first part of the data
+      esp_ota_write(ota_handle, body_start_p, body_part_len);
+      content_received += body_part_len;
+    }
+    else
+    {
+      // Write OTA data
+      esp_ota_write(ota_handle, ota_buffer, recv_len);
+      content_received += recv_len;
+    }
+
+  } while ( (recv_len>0) && (content_received < content_len) );
+
+  if( esp_ota_end(ota_handle) == ESP_OK )
+  {
+    // let's update the partition
+    if( esp_ota_set_boot_partition(update_partition) == ESP_OK )
+    {
+      const esp_partition_t *boot_partition = esp_ota_get_boot_partition();
+      // ESP_LOGI(TAG, "http_server_ota_update_handler: Next boot partition subtype %d at offset 0x%x", boot_partition->subtype, boot_partition->address);
+      flash_successful = true;
+    }
+    else
+    {
+      ESP_LOGI(TAG, "http_server_ota_update_handler: Flash Error");
+    }
+  }
+  else
+  {
+    ESP_LOGI(TAG, "http_server_ota_update_handler: esp_ota_end Error");
+  }
+
+  // We won't update the global variables throughout the file, so send the message about the status
+  if( flash_successful )
+  {
+    http_server_monitor_send_msg(HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL);
+  }
+  else
+  {
+    http_server_monitor_send_msg(HTTP_MSG_WIFI_OTA_UPDATE_FAILED);
+  }
+  return ESP_OK;
+}
+
+/*
+ * OTA status handler responds with the firmware update status after the OTA
+ * update is started and responds with the compile time/date when the page is
+ * requested
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_ota_status_handler(httpd_req_t *req)
+{
+  char ota_JSON[100];
+  ESP_LOGI(TAG, "OTA Status Requested");
+  sprintf(ota_JSON, "{\"ota_update_status\":%d,\"compile_time\":\"%s\",\"compile_date\":\"%s\"}", fw_update_status, __TIME__, __DATE__);
+
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, ota_JSON, strlen(ota_JSON));
+
+  return ESP_OK;
+}
+
+/*
+ * Check the fw_update_status and creates the fw_update_reset time if the
+ * fw_update_status is true
+ */
+static void http_server_fw_update_reset_timer(void)
+{
+  if( fw_update_status == OTA_UPDATE_SUCCESSFUL )
+  {
+    ESP_LOGI(TAG, "http_server_fw_update_reset_timer: FW Update successful starting FW update reset timer");
+    // Give the web page a chance to receive an acknowledge back and initialize the timer
+    ESP_ERROR_CHECK(esp_timer_create(&fw_update_reset_args, &fw_update_reset));
+    ESP_ERROR_CHECK(esp_timer_start_once(fw_update_reset, 8*1000*1000));
+  }
+  else
+  {
+    ESP_LOGI(TAG, "http_server_fw_update_reset_timer: FW Update unsuccessful");
+  }
+}
