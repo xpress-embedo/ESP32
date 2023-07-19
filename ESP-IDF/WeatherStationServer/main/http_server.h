@@ -38,6 +38,6 @@ typedef struct http_server_q_msg
 BaseType_t http_server_monitor_send_msg(http_server_msg_e msg_id);
 void http_server_start(void);
 void http_server_stop(void);
-void http_fw_update_reset_cb(void *arg);
+void http_server_fw_update_reset_cb(void *arg);
 
 #endif /* MAIN_HTTP_SERVER_H_ */
