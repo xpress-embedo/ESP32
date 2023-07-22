@@ -1,16 +1,21 @@
 #include "prj_refs.h"
 #include "nvs_flash.h"
-#include "led_mng.h"
-#include "wifi_app.h"
-
 #include "led_strip.h"
+#include "esp_random.h"         // Temporary Use, once I will receive the sensor, I will remove this
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
+#include "led_mng.h"
+#include "wifi_app.h"
 
 // Macros
 #define MAIN_TASK_PERIOD            (10000)
 
 // Private Variables
+static const char TAG[] = "main";
+static uint8_t humidity = 0u;
+static uint8_t temperature = 0u;
 
 // Private Function Prototypes
 
@@ -31,10 +36,12 @@ void app_main(void)
   // Start WiFi
   wifi_app_start();
 
-//  while (true)
-//  {
-//    printf("Hello from app_main!\n");
-//    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
-//  }
+  while (true)
+  {
+    temperature = 25u + (uint8_t)(esp_random() % 5);
+    temperature = 50u + (uint8_t)(esp_random() % 4);
+    ESP_LOGI(TAG, "Temperature: %d, Humidity: %d", temperature, humidity);
+    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
+  }
 }
 
