@@ -3,7 +3,8 @@
 body {
     background-color: #f1f1f1;
     font-family: HelveticaNeueRegular, HelveticaNeue-Regular, "Helvetica Neue Regular", HelveticaNeue, "Helvetica Neue", Helvetica, Arial;
-    color: #0272B7;
+    /* color: #0272B7; */
+    color: rgb(0, 0, 0);
 }
 
 h1 {
@@ -16,66 +17,79 @@ h1 {
 }
 
 h2 {
-	font-size: 1.4em;
+    font-size: 1.4em;
     color: #1d3557;
 }
 
 h3 {
-	font-size: 1.2em;
+    font-size: 1.2em;
     color: #1d3557;
 }
 
 h4 {
-	font-size: 1em;
+    font-size: 1em;
     color: #1d3557;
 }
 
 #latest_firmware, #latest_firmware_label {
-	display:inline;
+    display:inline;
 }
+
 #latest_firmware {
-	color: #1d3557;
+    color: #1d3557;
 }	
 
+#temperature_value {
+    display:inline;
+    color: #1d3557;
+}
+
+#humidity_value {
+    display:inline;
+    color: #1d3557;
+}
+
 .buttons {
-    padding: 5px;
+    padding: 0px;
 }
 
 input[type="button"] {
-	font-size: 12px;
-	border: 0;
+    font-size: 14px;
+    border: 0;
     line-height: 2;
-    padding: 0 5px;
+    padding: 6px 15px;
     text-align: center;
     color: #ffffff;
-    text-shadow: 1px 1px 1px #000;
-    border-radius: 10px;
-    background-color: RGBA(106,125,144,0.35);
+    /* text-shadow: 1px 1px 1px #000; */
+    border-radius: 5px;
+    /* background-color: RGBA(106,125,144,0.35); */
+    background-color: #4caf50;
     background-image: linear-gradient(to top left,
                                       rgba(0, 0, 0, .2),
                                       rgba(0, 0, 0, .2) 30%,
                                       rgba(0, 0, 0, 0));
-    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
-                inset -2px -2px 3px rgba(0, 0, 0, .6);
+    /* box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+                inset -2px -2px 3px rgba(0, 0, 0, .6); */
 }
 
 input[type="button"]:hover {
-    background-color: RGBA(112,164,222,0.68);
+    /* background-color: RGBA(112,164,222,0.68); */
+    background-color: darkgreen;
 }
 
-input[type="button"]:active {
+/* input[type="button"]:active {
     box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
                 inset 2px 2px 3px rgba(0, 0, 0, .6);
-}
+} */
 
-
-
-
-
-
-
-
-
-
-
+/* .buttons {
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+} */
 

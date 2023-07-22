@@ -1,4 +1,3 @@
-#include "prj_refs.h"
 #include "nvs_flash.h"
 #include "led_strip.h"
 #include "esp_random.h"         // Temporary Use, once I will receive the sensor, I will remove this
@@ -39,9 +38,29 @@ void app_main(void)
   while (true)
   {
     temperature = 25u + (uint8_t)(esp_random() % 5);
-    temperature = 50u + (uint8_t)(esp_random() % 4);
+    humidity = 50u + (uint8_t)(esp_random() % 4);
     ESP_LOGI(TAG, "Temperature: %d, Humidity: %d", temperature, humidity);
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
 }
 
+
+// Public Function Definition
+
+/*
+ * Get the Temperature Values
+ * @return temperature value
+ */
+uint8_t get_temperature(void)
+{
+  return temperature;
+}
+
+/*
+ * Get the Humidity Values
+ * @return humidity value
+ */
+uint8_t get_humidity(void)
+{
+  return humidity;
+}

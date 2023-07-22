@@ -10,6 +10,7 @@
 #include "esp_ota_ops.h"
 #include "sys/param.h"
 
+#include "main.h"
 #include "http_server.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
@@ -62,6 +63,7 @@ static esp_err_t http_server_app_js_handler(httpd_req_t *req);
 static esp_err_t http_server_favicon_handler(httpd_req_t *req);
 static esp_err_t http_server_ota_update_handler(httpd_req_t *req);
 static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
+static esp_err_t http_server_sensor_value_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -257,6 +259,15 @@ static httpd_handle_t http_server_configure(void)
       .handler   = http_server_ota_status_handler,
       .user_ctx  = NULL
     };
+
+    // Register Sensor.json handler
+    httpd_uri_t sensor_json =
+    {
+      .uri = "/Sensor",
+      .method    = HTTP_GET,
+      .handler   = http_server_sensor_value_handler,
+      .user_ctx  = NULL
+    };
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
@@ -265,6 +276,7 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &favicon_ico);
     httpd_register_uri_handler(http_server_handle, &ota_update);
     httpd_register_uri_handler(http_server_handle, &ota_status);
+    httpd_register_uri_handler(http_server_handle, &sensor_json);
     return http_server_handle;
   }
 
@@ -545,6 +557,23 @@ static esp_err_t http_server_ota_status_handler(httpd_req_t *req)
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, ota_JSON, strlen(ota_JSON));
+
+  return ESP_OK;
+}
+
+/*
+ * Sensor Readings JSON handler responds with the Sensor Data
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_sensor_value_handler(httpd_req_t *req)
+{
+  char sensor_JSON[100];
+  ESP_LOGI(TAG, "Sensor Readings Requested");
+  sprintf(sensor_JSON, "{\"temp\":%d,\"humidity\":\"%d\"}", get_temperature(), get_humidity() );
+
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, sensor_JSON, strlen(sensor_JSON));
 
   return ESP_OK;
 }
