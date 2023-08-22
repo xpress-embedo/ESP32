@@ -6,9 +6,12 @@
 #include "led_strip.h"
 #include "sdkconfig.h"
 
+#include "dht11.h"
+
 // Macros
 #define LED_GPIO                (45)
-#define MAIN_TASK_PERIOD        (500)
+#define MAIN_TASK_PERIOD        (4000)
+#define DHT11_GPIO_NUM          (GPIO_NUM_19)
 
 // Private Variables
 static const char *TAG = "APP";
@@ -25,12 +28,20 @@ void app_main(void)
   /* Configure the peripheral according to the LED type */
   configure_led();
 
+  /* Initialize the DHT11 Module */
+  dht11_init(DHT11_GPIO_NUM);
+
   while (1)
   {
     ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
     blink_led();
     /* Toggle the LED state */
     s_led_state = !s_led_state;
+
+    /* Get DHT11 Temperature and Humidity Values */
+    ESP_LOGI(TAG, "Temperature: %d", dht11_read().temperature);
+    ESP_LOGI(TAG, "Humidity: %d", dht11_read().humidity);
+    ESP_LOGI(TAG, "Status: %d", dht11_read().status);
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
 }
