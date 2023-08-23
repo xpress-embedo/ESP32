@@ -13,7 +13,7 @@
 /* Project Specific Enumerations */
 typedef enum _dht11_status_e
 {
-  DHT11_CRC_ERROR = -2,
+  DHT11_CHECKSUM_ERROR = -2,
   DHT11_TIMEOUT_ERROR = -1,
   DHT11_OK = 0,
 } dht11_status_e;
