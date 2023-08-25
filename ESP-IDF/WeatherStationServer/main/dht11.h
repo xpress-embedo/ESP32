@@ -21,7 +21,7 @@ typedef enum _dht11_status_e
 /* Project Specific Data Structure */
 typedef struct _dht11_reading_t
 {
-  int status;
+  dht11_status_e status;
   int temperature;
   int humidity;
 } dht11_reading_t;

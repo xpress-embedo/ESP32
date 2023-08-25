@@ -27,7 +27,7 @@ static dht11_reading_t last_read;
 
 /* Private Function Prototypes */
 static int dht11_wait_or_timeout(uint16_t useconds, int level);
-static int dht11_check_checksum(uint8_t data[]);
+static dht11_status_e dht11_check_checksum(uint8_t data[]);
 static void dht11_send_start_signal( void );
 static int dht11_check_response( void );
 static dht11_reading_t dht11_timeout_error( void );
@@ -120,14 +120,14 @@ static int dht11_wait_or_timeout(uint16_t useconds, int level)
   return micros_ticks;
 }
 
-static int dht11_check_checksum( uint8_t data[] )
+static dht11_status_e dht11_check_checksum( uint8_t data[] )
 {
   dht11_status_e dht_status = DHT11_CHECKSUM_ERROR;
   if(data[4] == (data[0] + data[1] + data[2] + data[3]))
   {
     dht_status = DHT11_OK;
   }
-  return (int)dht_status;
+  return dht_status;
 }
 
 static void dht11_send_start_signal( void )
