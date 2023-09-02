@@ -51,7 +51,7 @@ void app_main(void)
     {
       temperature = (uint8_t)dht11_value.temperature;
       humidity = (uint8_t)dht11_value.humidity;
-      ESP_LOGI(TAG, "Temperature: %d, Humidity: %d", temperature, humidity);
+      ESP_LOGI(TAG, "Temperature:%d, Humidity:%d", temperature, humidity);
     }
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }

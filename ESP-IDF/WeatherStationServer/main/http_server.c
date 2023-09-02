@@ -41,6 +41,9 @@ static const esp_timer_create_args_t fw_update_reset_args =
 };
 esp_timer_handle_t fw_update_reset;
 
+// WiFi Connect Status
+static http_server_wifi_connect_status_e g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_NONE;
+
 // Embedded Files: JQuery, index.html, app.css, app.js, and favicon.ico files
 extern const uint8_t jquery_3_3_1_min_js_start[]      asm("_binary_jquery_3_3_1_min_js_start");
 extern const uint8_t jquery_3_3_1_min_js_end[]        asm("_binary_jquery_3_3_1_min_js_end");
@@ -64,6 +67,8 @@ static esp_err_t http_server_favicon_handler(httpd_req_t *req);
 static esp_err_t http_server_ota_update_handler(httpd_req_t *req);
 static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
 static esp_err_t http_server_sensor_value_handler(httpd_req_t *req);
+static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req);
+static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -138,12 +143,15 @@ static void http_server_monitor( void *pvParameter )
       {
       case HTTP_MSG_WIFI_CONNECT_INIT:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_INIT");
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECTING;
         break;
       case HTTP_MSG_WIFI_CONNECT_SUCCESS:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_SUCCESS");
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_SUCCESS;
         break;
       case HTTP_MSG_WIFI_CONNECT_FAIL:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_FAIL");
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_FAILED;
         break;
       case HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL:
         ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_SUCCESSFUL");
@@ -268,6 +276,25 @@ static httpd_handle_t http_server_configure(void)
       .handler   = http_server_sensor_value_handler,
       .user_ctx  = NULL
     };
+
+    // Register wifiConnect.json handler
+    httpd_uri_t wifi_connect_json =
+    {
+      .uri = "/wifiConnect",
+      .method    = HTTP_POST,
+      .handler   = http_server_wifi_connect_handler,
+      .user_ctx  = NULL
+    };
+
+    // Register wifiConnectStatus.json handler
+    httpd_uri_t wifi_connect_status_json =
+    {
+      .uri = "/wifiConnectStatus",
+      .method    = HTTP_POST,
+      .handler   = http_server_wifi_connect_status_handler,
+      .user_ctx  = NULL
+    };
+
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
@@ -277,6 +304,8 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &ota_update);
     httpd_register_uri_handler(http_server_handle, &ota_status);
     httpd_register_uri_handler(http_server_handle, &sensor_json);
+    httpd_register_uri_handler(http_server_handle, &wifi_connect_json);
+    httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
     return http_server_handle;
   }
 
@@ -574,6 +603,76 @@ static esp_err_t http_server_sensor_value_handler(httpd_req_t *req)
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, sensor_JSON, strlen(sensor_JSON));
+
+  return ESP_OK;
+}
+
+/*
+ * wifiConnect.json handler is invoked after the connect button is pressed and
+ * it handles the receiving the SSID and Password entered by the user
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "/wifiConnect requested -> Connect button is pressed");
+
+  size_t len_ssid = 0, len_password = 0;
+  char *ssid_str = NULL, *password_str = NULL;
+
+  // Get the SSID Header
+  len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid" + 1);
+  if( len_ssid )
+  {
+    // allocate memory, but make to free it when it is no longer needed
+    ssid_str = malloc(len_ssid);
+    if( httpd_req_get_hdr_value_str(req, "my-connect-ssid", ssid_str, len_ssid) == ESP_OK )
+    {
+      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-ssid: %s", ssid_str );
+    }
+  }
+
+  // Get the Password Header
+  len_password = httpd_req_get_hdr_value_len(req, "my-connect-pswd" + 1);
+  if( len_password )
+  {
+    // allocate memory, but make to free it when it is no longer needed
+    password_str = malloc(len_password);
+    if( httpd_req_get_hdr_value_str(req, "my-connect-pswd", password_str, len_password) == ESP_OK )
+    {
+      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-pswd: %s", password_str );
+    }
+  }
+
+  // Update the WiFi Network Configuration and let the WiFi Application Know
+  wifi_config_t * wifi_config = wifi_app_get_wifi_config();
+  memset( wifi_config, 0x00, sizeof(wifi_config_t));
+  memcpy( wifi_config->sta.ssid, ssid_str, len_ssid );
+  memcpy( wifi_config->sta.password, password_str, len_password );
+
+  wifi_app_send_msg( WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER );
+
+  // free the allocated memory
+  free(ssid_str);
+  free(password_str);
+
+  return ESP_OK;
+}
+
+/*
+ * wifiConnectStatus handler updates the connection status for the web page
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "/wifiConnectStatus.json requested");
+  char status_JSON[100];
+
+  sprintf( status_JSON, "{\"wifi_connect_status\":%d}", g_wifi_connect_status );
+
+  httpd_resp_set_type(req, "application/json" );
+  httpd_resp_send(req, status_JSON, strlen(status_JSON) );
 
   return ESP_OK;
 }

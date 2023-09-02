@@ -3,6 +3,7 @@
  */
 var seconds = null;
 var otaTimerVar = null;
+var wifiConnectInterval = null;
 
 /**
  * Initialize functions here.
@@ -11,6 +12,10 @@ $(document).ready(function()
 {
   getUpdateStatus();
   startSensorInterval();
+
+  $("#connect_wifi").on("click", function() {
+    checkCredentials();
+  });
 });
 
 /**
@@ -134,3 +139,113 @@ function startSensorInterval()
   setInterval(getSensorValues, 5000);
 }
 
+// Clear the Connection Status Interval
+function stopWiFiConnectStatusInterval()
+{
+  if( wifiConnectInterval != null )
+  {
+    clearInterval(wifiConnectInterval);
+    wifiConnectInterval = null;
+  }
+}
+
+// Gets the WiFi Connection Status
+function getWiFiConnectStatus()
+{
+  var xhr = new XMLHttpRequest();
+  var requestURL = "/wifiConnectStatus";
+  xhr.open('POST', requestURL, false);
+  xhr.send('wifi_connect_status');
+  
+  if( (xhr.readyState == 4) && (xhr.status == 200) )
+  {
+    var response = JSON.parse(xhr.responseText);
+    document.getElementById("wifi_connect_status").innerHTML = "Connecting.....";
+
+    if( response.wifi_connect_status == 2 )
+    {
+      document.getElementById("wifi_connect_status").innerHTML = "<h4 class='rd'>Failed to Connect. Please check AP credentials and compatibility</h4>";
+      stopWiFiConnectStatusInterval();
+    }
+    else if( response.wifi_connect_status == 3 )
+    {
+      document.getElementById("wifi_connect_status").innerHTML = "<h4 class='gr'>Connection Success!</h4>";
+      stopWiFiConnectStatusInterval();
+    }
+  }
+}
+
+// Starts the interval for checking the connection status
+function startWiFiConnectStatusInterval()
+{
+  // call the function every 3 seconds
+  wifiConnectInterval = setInterval( getWiFiConnectStatus, 3000);
+}
+
+// Connect WiFi function called using the SSID and Password Entered into the text field
+function connectWiFi()
+{
+  // Get the SSID and Password
+  selectedSSID = $("#connect_ssid").val();
+  pswd = $("#connect_pswd").val();
+
+  $.ajax({
+    url: '/wifiConnect',
+    dataType: 'json',
+    method: "POST",
+    cache: false,
+    headers: { 'my-connect-ssid': selectedSSID, 'my-connect-pswd': pswd },
+    data: { 'timestamp': Date.now() }
+  });
+
+  startWiFiConnectStatusInterval();
+}
+
+// Check the Entered Connection when "Connect" button is pressed
+function checkCredentials()
+{
+  console.log("Connect Button is Pressed, now checking the Credentials");
+  errorList = "";
+  credsOk = true;
+
+  selectedSSID = $("#connect_ssid").val();
+  pswd = $("#connect_pswd").val();
+  console.log("SSID:" + selectedSSID);
+
+  // SSID shouldn't be blank
+  if( selectedSSID == "" )
+  {
+    errorList += "<h4 class='rd'>SSID Can't be Empty!</h4>";
+    credsOk = false;
+  }
+  if( pswd == "" )
+  {
+    errorList += "<h4 class='rd'>Password Can't be Empty!</h4>";
+    credsOk = false;
+  }
+
+  // if there is an error, then display it using errorList
+  if( credsOk == false )
+  {
+    $("#wifi_connect_credentials_errors").html(errorList);
+  }
+  else
+  {
+    $("#wifi_connect_credentials_errors").html("");
+    connectWiFi();
+  }
+}
+
+// Show the WiFi Password if the box is checked
+function showPassword()
+{
+  var x = document.getElementById("connect_pswd");
+  if( x.type === "password")
+  {
+    x.type = "text";
+  }
+  else
+  {
+    x.type = "password";
+  }
+}

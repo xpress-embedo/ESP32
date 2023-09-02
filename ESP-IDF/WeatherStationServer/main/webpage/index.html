@@ -24,6 +24,21 @@
     <label>%</label>
   </div>
   <hr>
+  
+  <div id="WiFiConnect">
+    <h2>ESP32 WiFi Connect</h2>
+    <section>
+      <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
+      <input id="connect_pswd" type="password" maxlength="64" placeholder="Password" value="">
+      <input type="checkbox" onclick="showPassword()">Show Password
+    </section>
+    <div class="buttons">
+      <input id="connect_wifi" type="button" value="Connect"/>
+    </div>
+    <div id="wifi_connect_credentials_errors"></div>
+    <h4 id="wifi_connect_status"></h4>
+  </div>
+  <hr>
 
   <div id="OTA">
     <h2>ESP32 Firmware Update</h2>

@@ -9,6 +9,7 @@
 #define MAIN_WIFI_APP_H_
 
 #include "esp_netif.h"
+#include "esp_wifi_types.h"
 
 // Macros
 // WiFi Application Settings
@@ -39,6 +40,7 @@ typedef enum wifi_app_msg
   WIFI_APP_MSG_START_HTTP_SERVER = 0,
   WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER,
   WIFI_APP_MSG_STA_CONNECTED_GOT_IP,
+  WIFI_APP_MSG_STA_DISCONNECTED,
 } wifi_app_msg_e;
 
 /*
@@ -52,5 +54,7 @@ typedef struct wifi_app_q_msg
 
 // Public Function Prototypes
 void wifi_app_start( void );
+BaseType_t wifi_app_send_msg( wifi_app_msg_e msg_id );
+wifi_config_t * wifi_app_get_wifi_config( void );
 
 #endif /* MAIN_WIFI_APP_H_ */

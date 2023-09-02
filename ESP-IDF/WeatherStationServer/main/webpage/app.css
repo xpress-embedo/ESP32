@@ -31,6 +31,14 @@ h4 {
     color: #1d3557;
 }
 
+.gr {
+    color: green;
+}
+
+.rd {
+    color: red;
+}
+
 #latest_firmware, #latest_firmware_label {
     display:inline;
 }
@@ -50,7 +58,7 @@ h4 {
 }
 
 .buttons {
-    padding: 0px;
+    padding-top: 10px;
 }
 
 input[type="button"] {
