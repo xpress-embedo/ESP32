@@ -5,6 +5,7 @@
  *      Author: xpress_embedo
  */
 #include "esp_http_server.h"
+#include "esp_wifi.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "esp_ota_ops.h"
@@ -69,6 +70,7 @@ static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
 static esp_err_t http_server_sensor_value_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
+static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -277,7 +279,7 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
-    // Register wifiConnect.json handler
+    // Register wifiConnect (.json) handler
     httpd_uri_t wifi_connect_json =
     {
       .uri = "/wifiConnect",
@@ -286,12 +288,21 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
-    // Register wifiConnectStatus.json handler
+    // Register wifiConnectStatus (.json) handler
     httpd_uri_t wifi_connect_status_json =
     {
       .uri = "/wifiConnectStatus",
       .method    = HTTP_POST,
       .handler   = http_server_wifi_connect_status_handler,
+      .user_ctx  = NULL
+    };
+
+    // Register wifiConnectInfo (.json) handler
+    httpd_uri_t wifi_connect_info_json =
+    {
+      .uri = "/wifiConnectInfo",
+      .method    = HTTP_GET,
+      .handler   = http_server_get_wifi_connect_info_handler,
       .user_ctx  = NULL
     };
 
@@ -306,6 +317,8 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &sensor_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
+    httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
+
     return http_server_handle;
   }
 
@@ -673,6 +686,52 @@ static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req)
 
   httpd_resp_set_type(req, "application/json" );
   httpd_resp_send(req, status_JSON, strlen(status_JSON) );
+
+  return ESP_OK;
+}
+
+/*
+ * wifiConnectInfo handler updates the web page with the connection information
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "/wifiConnectInfo.json Requested");
+
+  char ip_info_JSON[200] = { 0 };
+  // to be on safer size let's clear the local array, to make sure it doesn't
+  // contain any garbage data
+  memset(ip_info_JSON, 0x00, sizeof(ip_info_JSON));
+
+  // todo: this macro is already present in ip4_addr.h file, but somehow I am
+  // not able to include it, I will investigate it later
+  #define IP4ADDR_STRLEN_MAX  16
+
+  char ip[IP4ADDR_STRLEN_MAX];
+  char netmask[IP4ADDR_STRLEN_MAX];
+  char gateway[IP4ADDR_STRLEN_MAX];
+
+  if( g_wifi_connect_status == HTTP_WIFI_STATUS_CONNECT_SUCCESS )
+  {
+    wifi_ap_record_t wifi_data;
+    ESP_ERROR_CHECK( esp_wifi_sta_get_ap_info(&wifi_data) );
+    char *ssid = (char*)wifi_data.ssid;
+
+    esp_netif_ip_info_t ip_info;
+    // get interface's IP address information
+    ESP_ERROR_CHECK( esp_netif_get_ip_info(esp_netif_sta, &ip_info) );
+    // convert this to human readable form
+    esp_ip4addr_ntoa( &ip_info.ip, ip, IP4ADDR_STRLEN_MAX );
+    esp_ip4addr_ntoa( &ip_info.netmask, netmask, IP4ADDR_STRLEN_MAX );
+    esp_ip4addr_ntoa( &ip_info.gw, gateway, IP4ADDR_STRLEN_MAX );
+
+    sprintf(ip_info_JSON, "{\"ip\":\"%s\",\"netmask\":\"%s\",\"gw\":\"%s\",\"ap\":\"%s\"}", \
+            ip, netmask, gateway, ssid );
+  }
+
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, ip_info_JSON, strlen(ip_info_JSON));
 
   return ESP_OK;
 }

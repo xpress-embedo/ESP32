@@ -57,6 +57,38 @@ h4 {
     color: #1d3557;
 }
 
+#connected_ap_label, #connected_ap {
+    display: inline;
+}
+
+#ip_address_label, #netmask_label, #gateway_label {
+    display: inline;
+}
+
+#wifi_connect_ip, #wifi_connect_netmask, #wifi_connect_gateway {
+    display: inline;
+}
+
+#connected_ap {
+    color: #1d3557;
+}
+
+#wifi_connect_ip {
+    color: #1d3557;
+}
+
+#wifi_connect_netmask {
+    color: #1d3557;
+}
+
+#wifi_connect_gateway {
+    color: #1d3557;
+}
+
+#disconnect_wifi {
+    display: none;
+}
+
 .buttons {
     padding-top: 10px;
 }

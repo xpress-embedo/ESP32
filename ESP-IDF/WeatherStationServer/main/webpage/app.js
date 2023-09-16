@@ -12,6 +12,7 @@ $(document).ready(function()
 {
   getUpdateStatus();
   startSensorInterval();
+  // getConnectInfo();
 
   $("#connect_wifi").on("click", function() {
     checkCredentials();
@@ -171,6 +172,7 @@ function getWiFiConnectStatus()
     {
       document.getElementById("wifi_connect_status").innerHTML = "<h4 class='gr'>Connection Success!</h4>";
       stopWiFiConnectStatusInterval();
+      getConnectInfo();
     }
   }
 }
@@ -248,4 +250,24 @@ function showPassword()
   {
     x.type = "password";
   }
+}
+
+// Get the connection information for displaying on the web page
+function getConnectInfo()
+{
+  $.getJSON('/wifiConnectInfo', function(data) {
+    $("connected_ap_label").html("Connected to: ");
+    $("connected_ap").text(data["ap"]);
+
+    $("ip_address_label").html("IP Address ");
+    $("wifi_connect_ip").text(data["ip"]);
+
+    $("netmask_label").html("NetMask ");
+    $("wifi_connect_netmask").text(data["netmask"]);
+
+    $("gateway_label").html("Gateway ");
+    $("wifi_connect_gateway").text(data["gw"]);
+
+    document.getElementById('disconnect_wifi').style.display = 'block';
+  });
 }
