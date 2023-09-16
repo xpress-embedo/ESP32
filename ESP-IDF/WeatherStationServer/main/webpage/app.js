@@ -188,13 +188,13 @@ function connectWiFi()
   // Get the SSID and Password
   selectedSSID = $("#connect_ssid").val();
   pswd = $("#connect_pswd").val();
-
+  
   $.ajax({
     url: '/wifiConnect',
     dataType: 'json',
-    method: "POST",
+    method: 'POST',
     cache: false,
-    headers: { 'my-connect-ssid': selectedSSID, 'my-connect-pswd': pswd },
+    headers: {'my-connect-ssid': selectedSSID, 'my-connect-pswd': pswd},
     data: { 'timestamp': Date.now() }
   });
 

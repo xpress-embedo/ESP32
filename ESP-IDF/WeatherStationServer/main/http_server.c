@@ -621,7 +621,7 @@ static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req)
   char *ssid_str = NULL, *password_str = NULL;
 
   // Get the SSID Header
-  len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid" + 1);
+  len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid") + 1;
   if( len_ssid )
   {
     // allocate memory, but make to free it when it is no longer needed
@@ -633,7 +633,7 @@ static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req)
   }
 
   // Get the Password Header
-  len_password = httpd_req_get_hdr_value_len(req, "my-connect-pswd" + 1);
+  len_password = httpd_req_get_hdr_value_len(req, "my-connect-pswd") + 1;
   if( len_password )
   {
     // allocate memory, but make to free it when it is no longer needed
