@@ -12,7 +12,9 @@ $(document).ready(function()
 {
   getUpdateStatus();
   startSensorInterval();
-  // getConnectInfo();
+  // earlier I commented out this function, but this is also important
+  // for the scenarios when the user has refreshed the web page
+  getConnectInfo();
 
   $("#connect_wifi").on("click", function() {
     checkCredentials();
