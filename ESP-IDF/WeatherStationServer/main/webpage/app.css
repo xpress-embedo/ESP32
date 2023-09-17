@@ -70,19 +70,19 @@ h4 {
 }
 
 #connected_ap {
-    color: #1d3557;
+    color: darkgreen;
 }
 
 #wifi_connect_ip {
-    color: #1d3557;
+    color: darkgreen;
 }
 
 #wifi_connect_netmask {
-    color: #1d3557;
+    color: darkgreen;
 }
 
 #wifi_connect_gateway {
-    color: #1d3557;
+    color: darkgreen;
 }
 
 #disconnect_wifi {

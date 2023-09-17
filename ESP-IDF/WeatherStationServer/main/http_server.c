@@ -729,6 +729,10 @@ static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req)
     sprintf(ip_info_JSON, "{\"ip\":\"%s\",\"netmask\":\"%s\",\"gw\":\"%s\",\"ap\":\"%s\"}", \
             ip, netmask, gateway, ssid );
   }
+  else
+  {
+    ESP_LOGI(TAG, "WiFi Connection is not Successful");
+  }
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, ip_info_JSON, strlen(ip_info_JSON));

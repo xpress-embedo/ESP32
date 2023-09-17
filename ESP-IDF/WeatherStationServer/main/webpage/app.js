@@ -256,17 +256,22 @@ function showPassword()
 function getConnectInfo()
 {
   $.getJSON('/wifiConnectInfo', function(data) {
-    $("connected_ap_label").html("Connected to: ");
-    $("connected_ap").text(data["ap"]);
+    // console.log( data );
+    // console.log( data["ap"]);
+    // console.log( data["ip"]);
+    // console.log( data["netmask"]);
+    // console.log( data["gw"]);
+    $("#connected_ap_label").html("Connected to: ");
+    $("#connected_ap").text(data["ap"]);
 
-    $("ip_address_label").html("IP Address ");
-    $("wifi_connect_ip").text(data["ip"]);
+    $("#ip_address_label").html("IP Address: ");
+    $("#wifi_connect_ip").text(data["ip"]);
 
-    $("netmask_label").html("NetMask ");
-    $("wifi_connect_netmask").text(data["netmask"]);
+    $("#netmask_label").html("NetMask: ");
+    $("#wifi_connect_netmask").text(data["netmask"]);
 
-    $("gateway_label").html("Gateway ");
-    $("wifi_connect_gateway").text(data["gw"]);
+    $("#gateway_label").html("Gateway: ");
+    $("#wifi_connect_gateway").text(data["gw"]);
 
     document.getElementById('disconnect_wifi').style.display = 'block';
   });
