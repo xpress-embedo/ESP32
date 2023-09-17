@@ -71,6 +71,7 @@ static esp_err_t http_server_sensor_value_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
 static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req);
+static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -306,6 +307,15 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
+    // Register wifiDisconnect (.json) handler
+    httpd_uri_t wifi_disconnect_json =
+    {
+      .uri = "/wifiDisconnect",
+      .method    = HTTP_DELETE,
+      .handler   = http_server_wifi_disconnect_json_handler,
+      .user_ctx  = NULL
+    };
+
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
@@ -318,6 +328,7 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &wifi_connect_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
+    httpd_register_uri_handler(http_server_handle, &wifi_disconnect_json);
 
     return http_server_handle;
   }
@@ -737,6 +748,20 @@ static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req)
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, ip_info_JSON, strlen(ip_info_JSON));
 
+  return ESP_OK;
+}
+
+/*
+ * wifiDisconnect handler responds by sending a message to the WiFi Application
+ * to disconnect
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "wifiDisconnect.json requested");
+
+  wifi_app_send_msg(WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED);
   return ESP_OK;
 }
 

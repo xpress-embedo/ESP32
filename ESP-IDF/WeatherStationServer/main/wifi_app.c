@@ -142,6 +142,12 @@ static void wifi_app_task(void *pvParameter)
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
           break;
+        case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED:
+          ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED");
+          
+          g_retry_number = WIFI_MAX_CONN_RETRIES;
+          ESP_ERROR_CHECK( esp_wifi_disconnect() );
+          break;
         case WIFI_APP_MSG_STA_DISCONNECTED:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
           // send message to http server that esp32 is disconnected as station

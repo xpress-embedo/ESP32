@@ -16,8 +16,14 @@ $(document).ready(function()
   // for the scenarios when the user has refreshed the web page
   getConnectInfo();
 
+  // Connect Button Callback can be done in HTML code also
   $("#connect_wifi").on("click", function() {
     checkCredentials();
+  });
+
+  // Disconnect Button Callback can be done in HTML code also
+  $("#disconnect_wifi").on("click", function() {
+    disconnectWiFi();
   });
 });
 
@@ -277,4 +283,19 @@ function getConnectInfo()
 
     document.getElementById('disconnect_wifi').style.display = 'block';
   });
+}
+
+// Disconnects the WiFi once the disconnect button is pressed and reloads webpage
+function disconnectWiFi()
+{
+  $.ajax({
+    url: '/wifiDisconnect',
+    dataType: 'json',
+    method: 'DELETE',
+    cache: false,
+    data: { 'timestamp': Date.now() }
+  });
+
+  // Update the webpage
+  setTimeout("location.reload(true)", 2000);
 }
