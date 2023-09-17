@@ -8,6 +8,10 @@
 #ifndef MAIN_WIFI_APP_H_
 #define MAIN_WIFI_APP_H_
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+#include "freertos/task.h"
+
 #include "esp_netif.h"
 #include "esp_wifi_types.h"
 
@@ -40,8 +44,9 @@ typedef enum wifi_app_msg
   WIFI_APP_MSG_START_HTTP_SERVER = 0,
   WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER,
   WIFI_APP_MSG_STA_CONNECTED_GOT_IP,
-  WIFI_APP_MSG_STA_DISCONNECTED,
   WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED,
+  WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS,
+  WIFI_APP_MSG_STA_DISCONNECTED,
 } wifi_app_msg_e;
 
 /*

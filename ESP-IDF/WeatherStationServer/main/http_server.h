@@ -9,7 +9,7 @@
 #define MAIN_HTTP_SERVER_H_
 
 // Macros
-/* Check the getUpdateStatus in JavaScrip file, the value should match with them */
+/* Check the getUpdateStatus in JavaScript file, the value should match with them */
 #define OTA_UPDATE_PENDING                (0)
 #define OTA_UPDATE_SUCCESSFUL             (1)
 #define OTA_UPDATE_FAILED                 (-1)
@@ -22,6 +22,7 @@ typedef enum http_server_msg
   HTTP_MSG_WIFI_CONNECT_INIT = 0,
   HTTP_MSG_WIFI_CONNECT_SUCCESS,
   HTTP_MSG_WIFI_CONNECT_FAIL,
+  HTTP_MSG_WIFI_USER_DISCONNECT,
   HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL,
   HTTP_MSG_WIFI_OTA_UPDATE_FAILED,
 } http_server_msg_e;
@@ -35,6 +36,7 @@ typedef enum http_server_wifi_connect_status
   HTTP_WIFI_STATUS_CONNECTING,
   HTTP_WIFI_STATUS_CONNECT_FAILED,
   HTTP_WIFI_STATUS_CONNECT_SUCCESS,
+  HTTP_WIFI_STATUS_DISCONNECTED,
 } http_server_wifi_connect_status_e;
 
 /*

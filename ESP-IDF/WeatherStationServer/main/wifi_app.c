@@ -5,10 +5,6 @@
  *      Author: xpress_embedo
  */
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
-#include "freertos/task.h"
-
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_wifi.h"
@@ -18,6 +14,7 @@
 #include "tasks_common.h"
 #include "http_server.h"
 #include "wifi_app.h"
+#include "app_nvs.h"
 
 // Macros
 #define LED_WIFI_APP_STARTED()                  LED_RED_ON()
@@ -37,6 +34,12 @@ wifi_config_t * wifi_config = NULL;
 
 // used to track the number of retries when a connection attempt fails
 static int g_retry_number;
+
+// WiFi application Event group handle and status bits
+static EventGroupHandle_t wifi_app_event_group;
+const int WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT   = BIT0;
+const int WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT    = BIT1;
+const int WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT  = BIT2;
 
 // Private Function Definitions
 static void wifi_app_task(void *pvParameter);
@@ -79,6 +82,9 @@ void wifi_app_start( void )
   // Create Message Queue with length 3
   wifi_app_q_handle = xQueueCreate( 3, sizeof(wifi_app_q_msg_t));
 
+  // Create WiFi Application Event Group
+  // wifi_app_event_group = xEventCreateGroup()
+
   // Start the WiFi Application Task
   xTaskCreate(&wifi_app_task, "wifi_app_task", WIFI_APP_TASK_STACK_SIZE, NULL, WIFI_APP_TASK_PRIORITY, NULL);
 }
@@ -97,6 +103,7 @@ wifi_config_t * wifi_app_get_wifi_config( void )
 static void wifi_app_task(void *pvParameter)
 {
   wifi_app_q_msg_t msg;
+  EventBits_t eventBits;
 
   // Initialize the Event Handler
   wifi_app_event_handler_init();
@@ -111,7 +118,9 @@ static void wifi_app_task(void *pvParameter)
   ESP_ERROR_CHECK(esp_wifi_start());
 
   // Send First Event Message
-  wifi_app_send_msg(WIFI_APP_MSG_START_HTTP_SERVER);
+  // wifi_app_send_msg(WIFI_APP_MSG_START_HTTP_SERVER);
+  // Load the saved credentials from the NVS and to do that send the message
+  wifi_app_send_msg(WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS);
 
   for(;;)
   {
@@ -127,6 +136,8 @@ static void wifi_app_task(void *pvParameter)
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
           ESP_LOGI(TAG,"WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER");
 
+          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
+
           // Attempt a Connection
           wifi_app_connect_sta();
 
@@ -141,17 +152,83 @@ static void wifi_app_task(void *pvParameter)
           LED_WIFI_CONNECTED();
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
+
+          eventBits = xEventGroupGetBits(wifi_app_event_group);
+          // save Station credentials only when saving from the HTTP server
+          if( eventBits & WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT )
+          {
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+          }
+          else
+          {
+            // save credentials
+            app_nvs_save_sta_creds();
+          }
+
+          if( eventBits & WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT )
+          {
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
+          }
           break;
         case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED:
           ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED");
           
+          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
+
           g_retry_number = WIFI_MAX_CONN_RETRIES;
           ESP_ERROR_CHECK( esp_wifi_disconnect() );
+
+          // disconnected hence delete/clear the credentials also
+          app_nvs_clear_sta_creds();
           break;
         case WIFI_APP_MSG_STA_DISCONNECTED:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
-          // send message to http server that esp32 is disconnected as station
-          http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_FAIL );
+
+          eventBits = xEventGroupGetBits(wifi_app_event_group);
+
+          if( eventBits & WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Using Saved Credentials");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+            app_nvs_clear_sta_creds();
+          }
+          else if( eventBits & WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Using HTTP Server");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
+            // send message to http server that esp32 is disconnected as station
+            http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_FAIL );
+          }
+          else if( eventBits & WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: User Requested Disconnection");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
+            // send message to http server that esp32 is disconnected as station
+            http_server_monitor_send_msg( HTTP_MSG_WIFI_USER_DISCONNECT );
+          }
+          else
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Failed check WiFi Access Point availability");
+            // Adjust this case according to our needs (let's say retrying etc)
+          }
+
+          break;
+        case WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS:
+          ESP_LOGI(TAG, "WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS");
+
+          if( app_nvs_load_sta_creds() )
+          {
+            ESP_LOGI(TAG, "Loaded Station Credentials");
+            wifi_app_connect_sta();
+            xEventGroupSetBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+          }
+          else
+          {
+            ESP_LOGI(TAG, "Unable to Load Station Credentials");
+          }
+
+          // Next is to start the web server
+          wifi_app_send_msg(WIFI_APP_MSG_START_HTTP_SERVER);
           break;
         default:
           break;
