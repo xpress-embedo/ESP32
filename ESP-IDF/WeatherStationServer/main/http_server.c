@@ -15,6 +15,7 @@
 #include "http_server.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
+#include "sntp_time_sync.h"
 
 // Macros
 #define HTTP_SERVER_MAX_URI_HANDLERS                    (20u)
@@ -32,6 +33,9 @@ static TaskHandle_t task_http_server_monitor = NULL;
 static QueueHandle_t http_server_monitor_q_handle;
 // Firmware Update Status
 static int fw_update_status = OTA_UPDATE_PENDING;
+// Local Time Status
+static bool g_is_local_time_set = false;
+
 // ESP32 Timer Configuration Passed to esp_timer_create
 static const esp_timer_create_args_t fw_update_reset_args =
 {
@@ -72,6 +76,7 @@ static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
 static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req);
+static esp_err_t http_server_get_local_time_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -168,6 +173,10 @@ static void http_server_monitor( void *pvParameter )
       case HTTP_MSG_WIFI_OTA_UPDATE_FAILED:
         ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_FAILED");
         fw_update_status = OTA_UPDATE_FAILED;
+        break;
+      case HTTP_MSG_TIME_SERVICE_INITIALIZED:
+        ESP_LOGI( TAG, "HTTP_MSG_TIME_SERVICE_INITIALIZED");
+        g_is_local_time_set = true;
         break;
       default:
         break;
@@ -320,6 +329,15 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
+    // Register localTime.json handler
+    httpd_uri_t local_time_json =
+    {
+      .uri = "/localTime",
+      .method    = HTTP_GET,
+      .handler   = http_server_get_local_time_handler,
+      .user_ctx  = NULL
+    };
+
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
@@ -333,6 +351,7 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
     httpd_register_uri_handler(http_server_handle, &wifi_disconnect_json);
+    httpd_register_uri_handler(http_server_handle, &local_time_json);
 
     return http_server_handle;
   }
@@ -766,6 +785,28 @@ static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req)
   ESP_LOGI(TAG, "wifiDisconnect.json requested");
 
   wifi_app_send_msg(WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT);
+  return ESP_OK;
+}
+
+/*
+ * localTime handler responds by sending the local time
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_local_time_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "localTime.json requested");
+
+  char local_time_JSON[100] = { 0 };
+
+  if( g_is_local_time_set )
+  {
+    sprintf(local_time_JSON, "{\"time\":\"%s\"}", sntp_time_sync_get_time());
+  }
+
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, local_time_JSON, strlen(local_time_JSON));
+
   return ESP_OK;
 }
 
