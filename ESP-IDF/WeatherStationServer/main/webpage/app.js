@@ -12,6 +12,7 @@ $(document).ready(function()
 {
   getUpdateStatus();
   startSensorInterval();
+  startLocalTimeInterval();
   // earlier I commented out this function, but this is also important
   // for the scenarios when the user has refreshed the web page
   getConnectInfo();
@@ -298,4 +299,20 @@ function disconnectWiFi()
 
   // Update the webpage
   setTimeout("location.reload(true)", 2000);
+}
+
+// Sets the interval for displaying local time
+function startLocalTimeInterval()
+{
+  // call function getLocalTime every 10 seconds
+  setInterval(getLocalTime, 10000);
+}
+
+// Gets the Local Time
+// NOTE: Connect the ESP32 to the internet and the time will be updated
+function getLocalTime()
+{
+  $.getJSON('/localTime', function(data) {
+    $("#local_time").text(data["time"]);
+  });
 }

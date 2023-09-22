@@ -47,6 +47,11 @@ h4 {
     color: #1d3557;
 }	
 
+#local_time {
+    display:inline;
+    color: #1d3557;
+}
+
 #temperature_value {
     display:inline;
     color: #1d3557;
