@@ -8,6 +8,7 @@
 #include "led_mng.h"
 #include "wifi_app.h"
 #include "dht11.h"
+#include "wifi_reset_button.h"
 
 // Macros
 #define MAIN_TASK_PERIOD            (5000)
@@ -41,6 +42,9 @@ void app_main(void)
 
   // Start WiFi
   wifi_app_start();
+
+  // Configure the WiFi Reset Button
+  wifi_reset_button_config();
 
   while (true)
   {

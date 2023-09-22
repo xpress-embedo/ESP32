@@ -40,6 +40,9 @@ static EventGroupHandle_t wifi_app_event_group;
 const int WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT   = BIT0;
 const int WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT    = BIT1;
 const int WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT  = BIT2;
+// This bit is used to keep track whether the STA is connected or not, this will
+// prevent the reset button operation if WiFi is not connected
+const int WIFI_APP_STA_CONNECTED_GOT_IP_BIT           = BIT3;
 
 // Private Function Definitions
 static void wifi_app_task(void *pvParameter);
@@ -82,8 +85,8 @@ void wifi_app_start( void )
   // Create Message Queue with length 3
   wifi_app_q_handle = xQueueCreate( 3, sizeof(wifi_app_q_msg_t));
 
-  // Create WiFi Application Event Group
-  // wifi_app_event_group = xEventCreateGroup()
+  // Create Wifi application event group
+  wifi_app_event_group = xEventGroupCreate();
 
   // Start the WiFi Application Task
   xTaskCreate(&wifi_app_task, "wifi_app_task", WIFI_APP_TASK_STACK_SIZE, NULL, WIFI_APP_TASK_PRIORITY, NULL);
@@ -149,6 +152,9 @@ static void wifi_app_task(void *pvParameter)
           break;
         case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_CONNECTED_GOT_IP");
+
+          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_STA_CONNECTED_GOT_IP_BIT);
+
           LED_WIFI_CONNECTED();
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
@@ -170,16 +176,22 @@ static void wifi_app_task(void *pvParameter)
             xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
           }
           break;
-        case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED:
-          ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECTED");
+        case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT:
+          ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT");
           
-          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
+          eventBits = xEventGroupGetBits(wifi_app_event_group);
+          // If connected, then disconnect and clear the credentials
+          // NOTE: Disconnection User Req. is of two types first "Disconnect" button and "Reset/Boot" button on board.
+          if( eventBits & WIFI_APP_STA_CONNECTED_GOT_IP_BIT )
+          {
+            xEventGroupSetBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
 
-          g_retry_number = WIFI_MAX_CONN_RETRIES;
-          ESP_ERROR_CHECK( esp_wifi_disconnect() );
+            g_retry_number = WIFI_MAX_CONN_RETRIES;
+            ESP_ERROR_CHECK( esp_wifi_disconnect() );
 
-          // disconnected hence delete/clear the credentials also
-          app_nvs_clear_sta_creds();
+            // disconnected hence delete/clear the credentials also
+            app_nvs_clear_sta_creds();
+          }
           break;
         case WIFI_APP_MSG_STA_DISCONNECTED:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
@@ -190,6 +202,8 @@ static void wifi_app_task(void *pvParameter)
           {
             ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Using Saved Credentials");
             xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+            // At startup, the maximum retries is reached and the connection can't be established
+            // hence we will clear the flash
             app_nvs_clear_sta_creds();
           }
           else if( eventBits & WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT )
@@ -210,6 +224,12 @@ static void wifi_app_task(void *pvParameter)
           {
             ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Failed check WiFi Access Point availability");
             // Adjust this case according to our needs (let's say retrying etc)
+          }
+
+          // Clear the Event Bit Got IP, as the STA is disconnected now
+          if( eventBits & WIFI_APP_STA_CONNECTED_GOT_IP_BIT )
+          {
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_STA_CONNECTED_GOT_IP_BIT);
           }
 
           break;

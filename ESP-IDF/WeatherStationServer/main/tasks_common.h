@@ -20,5 +20,8 @@
 #define HTTP_SERVER_MONITOR_STACK_SIZE          (4*1024u)
 #define HTTP_SERVER_MONITOR_PRIORITY            (3u)
 
+// WiFi Reset Button Task
+#define WIFI_RESET_BUTTON_TASK_STACK_SIZE       (2*1024u)
+#define WIFI_RESET_BUTTON_TASK_PRIORITY         (6u)
 
 #endif /* MAIN_TASKS_COMMON_H_ */
