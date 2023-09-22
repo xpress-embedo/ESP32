@@ -215,13 +215,14 @@ function connectWiFi()
 // Check the Entered Connection when "Connect" button is pressed
 function checkCredentials()
 {
-  console.log("Connect Button is Pressed, now checking the Credentials");
+  // console prints are used for debugging
+  // console.log("Connect Button is Pressed, now checking the Credentials");
   errorList = "";
   credsOk = true;
 
   selectedSSID = $("#connect_ssid").val();
   pswd = $("#connect_pswd").val();
-  console.log("SSID:" + selectedSSID);
+  // console.log("SSID:" + selectedSSID);   // used for debugging
 
   // SSID shouldn't be blank
   if( selectedSSID == "" )
@@ -265,6 +266,7 @@ function showPassword()
 function getConnectInfo()
 {
   $.getJSON('/wifiConnectInfo', function(data) {
+    // Console prints were used for debugging
     // console.log( data );
     // console.log( data["ap"]);
     // console.log( data["ip"]);
@@ -313,6 +315,7 @@ function startLocalTimeInterval()
 function getLocalTime()
 {
   $.getJSON('/localTime', function(data) {
+    // console.log(data);   // used for debugging
     $("#local_time").text(data["time"]);
   });
 }

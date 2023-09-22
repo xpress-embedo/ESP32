@@ -51,6 +51,12 @@ char *sntp_time_sync_get_time( void )
   if( time_info.tm_year < (2016-1900) )
   {
     ESP_LOGI(TAG, "Time is not set yet");
+    // TODO: Problem for the time being putting some dummy data
+    // strftime(time_buffer, sizeof(time_buffer), "%d.%m.%Y %H:%M:%S", &time_info);
+    sprintf(time_buffer, "22.09.2023 10:10:00");
+  }
+  else
+  {
     strftime(time_buffer, sizeof(time_buffer), "%d.%m.%Y %H:%M:%S", &time_info);
     ESP_LOGI(TAG, "Current Time Info: %s", time_buffer);
   }
@@ -85,12 +91,17 @@ static void sntp_time_sync_obtain_time( void )
 
   localtime_r(&now, &time_info);
   // Check the time, in case we need to initialize/re-initialize
-  if( time_info.tm_year < (2016-1900) )
+  if( (sntp_op_mode_set == false) || (time_info.tm_year < (2016-1900)) )
   {
     sntp_time_synch_time_init_sntp();
     // Set the local time zone
-    setenv("TZ", "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00", 1);
+    setenv("TZ", "UTC-05:30", 1);
+    // setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
     tzset();
+  }
+  else
+  {
+    ESP_LOGI(TAG, "sntp_time_sync_obtain_time:" );
   }
 }
 

@@ -108,6 +108,7 @@ wifi_config_t * wifi_app_get_wifi_config( void )
  */
 void wifi_app_set_callback( wifi_connected_event_callback_t cb )
 {
+  // set the callback
   wifi_connected_event_cb = cb;
 }
 
@@ -116,6 +117,7 @@ void wifi_app_set_callback( wifi_connected_event_callback_t cb )
  */
 void wifi_app_call_callback( void )
 {
+  // execute or let's say call the function or callback
   wifi_connected_event_cb();
 }
 
@@ -195,9 +197,10 @@ static void wifi_app_task(void *pvParameter)
             xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
           }
 
-          // Check for the connection callback
+          // Check for the connection callback exist then execute the callback
           if( wifi_connected_event_cb )
           {
+            ESP_LOGI(TAG, "Callback function called");
             wifi_app_call_callback();
           }
 
