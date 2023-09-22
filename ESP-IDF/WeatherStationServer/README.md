@@ -13,3 +13,17 @@ Weather Station Server Application
 * When the interrupt occurs, a message will be sent to the WiFi Application about the user request to disconnect/clear credentials.
 * Upon receiving the message, the WiFi Application will check if there is really and active connection, prior to disconnecting and clearing the credentials.
 
+### Displaying Local Time on the Web Page (SNTP Time Synchronization)
+* SNTP Stands for Simple Network Time Protocol is a protocol designed to synchronize the clock of devices connected to the internet. The basic operation is as follows:
+  * The client device connects to the server using the UDP protocol on port 123.
+  * The client transmits a request packet to the server.
+  * The server responds with a time stamp packet.
+  * The client can then parse out the current date and time values.
+  * If the ESP32 is connected to the internet, it can get the date and time using the SNTP.
+* Once the ESP32 has an internet connection (connected to an AP/Router), the SNTP task start function will be called.
+* The task start function will set off the FreeRTOS time synchronization task, which will call a function to obtain the updated time. In this implementation, the task will keep synchronizing/checking the time is up-to date.
+* The obtain time function will initialize the SNTP service to query an SNTP server for the universal time, the obtain time function will reinitialize in the case the time is not up-to date.
+* The local time zone will be set after the SNTP service is initialized.
+* The web server will respond with the updated time once time service is initialized.
+
+

@@ -9,6 +9,7 @@ idf_component_register(
     dht11.c
     app_nvs.c
     wifi_reset_button.c
+    sntp_time_sync.c
     INCLUDE_DIRS        # optional, add here public include directories
     EMBED_FILES webpage/app.css webpage/app.js webpage/favicon.ico webpage/index.html webpage/jquery-3.3.1.min.js
     PRIV_INCLUDE_DIRS   # optional, add here private include directories

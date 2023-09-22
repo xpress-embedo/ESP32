@@ -24,4 +24,8 @@
 #define WIFI_RESET_BUTTON_TASK_STACK_SIZE       (2*1024u)
 #define WIFI_RESET_BUTTON_TASK_PRIORITY         (6u)
 
+// SNTP Time Sync Task
+#define SNTP_TIME_SYNC_TASK_STACK_SIZE          (4*1024u)
+#define SNTP_TIME_SYNC_TASK_PRIORIY             (4u)
+
 #endif /* MAIN_TASKS_COMMON_H_ */
