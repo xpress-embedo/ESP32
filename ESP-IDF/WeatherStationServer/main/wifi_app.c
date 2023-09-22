@@ -25,6 +25,9 @@
 static const char TAG[] = "WIFI_APP";     // Used for ESP Serial console Message
 static QueueHandle_t wifi_app_q_handle;   // Queue Handle used to Manipulate the main queue of events
 
+// WiFi Application Callback
+static wifi_connected_event_callback_t wifi_connected_event_cb;
+
 // netif objects for station and access point modes
 esp_netif_t* esp_netif_sta = NULL;
 esp_netif_t* esp_netif_ap = NULL;
@@ -98,6 +101,22 @@ void wifi_app_start( void )
 wifi_config_t * wifi_app_get_wifi_config( void )
 {
   return wifi_config;
+}
+
+/*
+ * Sets the callback function
+ */
+void wifi_app_set_callback( wifi_connected_event_callback_t cb )
+{
+  wifi_connected_event_cb = cb;
+}
+
+/*
+ * Calls the callback function
+ */
+void wifi_app_call_callback( void )
+{
+  wifi_connected_event_cb();
 }
 
 /*
@@ -175,6 +194,13 @@ static void wifi_app_task(void *pvParameter)
           {
             xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
           }
+
+          // Check for the connection callback
+          if( wifi_connected_event_cb )
+          {
+            wifi_app_call_callback();
+          }
+
           break;
         case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT:
           ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT");

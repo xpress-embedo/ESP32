@@ -9,6 +9,7 @@
 #include "wifi_app.h"
 #include "dht11.h"
 #include "wifi_reset_button.h"
+#include "sntp_time_sync.h"
 
 // Macros
 #define MAIN_TASK_PERIOD            (5000)
@@ -20,6 +21,7 @@ static uint8_t humidity = 0u;
 static uint8_t temperature = 0u;
 
 // Private Function Prototypes
+static void wifi_application_connected_events( void );
 
 void app_main(void)
 {
@@ -45,6 +47,9 @@ void app_main(void)
 
   // Configure the WiFi Reset Button
   wifi_reset_button_config();
+
+  // Set Connected Event Callbacks
+  wifi_app_set_callback(&wifi_application_connected_events);
 
   while (true)
   {
@@ -80,4 +85,11 @@ uint8_t get_temperature(void)
 uint8_t get_humidity(void)
 {
   return humidity;
+}
+
+// Private Function Prototypes
+static void wifi_application_connected_events( void )
+{
+  ESP_LOGI(TAG, "WiFi Application Connected!");
+  sntp_time_sync_task_start();
 }

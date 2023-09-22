@@ -15,6 +15,9 @@
 #include "esp_netif.h"
 #include "esp_wifi_types.h"
 
+// Callback Typedef
+typedef void (*wifi_connected_event_callback_t)(void);
+
 // Macros
 // WiFi Application Settings
 #define WIFI_AP_SSID                  "ESP32_AP"    			// Access Point Names
@@ -62,5 +65,7 @@ typedef struct wifi_app_q_msg
 void wifi_app_start( void );
 BaseType_t wifi_app_send_msg( wifi_app_msg_e msg_id );
 wifi_config_t * wifi_app_get_wifi_config( void );
+void wifi_app_set_callback( wifi_connected_event_callback_t cb );
+void wifi_app_call_callback( void );
 
 #endif /* MAIN_WIFI_APP_H_ */
