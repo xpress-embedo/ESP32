@@ -10,6 +10,7 @@ var wifiConnectInterval = null;
  */
 $(document).ready(function()
 {
+  getSSID();
   getUpdateStatus();
   startSensorInterval();
   startLocalTimeInterval();
@@ -317,5 +318,14 @@ function getLocalTime()
   $.getJSON('/localTime', function(data) {
     // console.log(data);   // used for debugging
     $("#local_time").text(data["time"]);
+  });
+}
+
+// Get the ESP32 Access Point SSID for displaying on the webpage
+function getSSID()
+{
+  $.getJSON('/apSSID', function(data) {
+    // console.log(data);   // used for debugging
+    $("#ap_ssid").text(data["ssid"]);
   });
 }

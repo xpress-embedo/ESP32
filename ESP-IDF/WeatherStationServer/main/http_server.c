@@ -77,6 +77,7 @@ static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
 static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req);
 static esp_err_t http_server_get_local_time_handler(httpd_req_t *req);
+static esp_err_t http_server_get_ap_ssid_handler(httpd_req_t *req);
 static void http_server_fw_update_reset_timer(void);
 
 // Public Function Definition
@@ -338,6 +339,15 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
+    // Register apSSID.json handler
+    httpd_uri_t ap_ssid_json =
+    {
+      .uri = "/apSSID",
+      .method    = HTTP_GET,
+      .handler   = http_server_get_ap_ssid_handler,
+      .user_ctx  = NULL
+    };
+
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
@@ -352,6 +362,7 @@ static httpd_handle_t http_server_configure(void)
     httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
     httpd_register_uri_handler(http_server_handle, &wifi_disconnect_json);
     httpd_register_uri_handler(http_server_handle, &local_time_json);
+    httpd_register_uri_handler(http_server_handle, &ap_ssid_json);
 
     return http_server_handle;
   }
@@ -806,6 +817,29 @@ static esp_err_t http_server_get_local_time_handler(httpd_req_t *req)
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, local_time_JSON, strlen(local_time_JSON));
+
+  return ESP_OK;
+}
+
+/*
+ * apSSID handler responds by sending the ESP32 Access Point SSID
+ * @param req HTTP request for which the URI needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_ap_ssid_handler(httpd_req_t *req)
+{
+  ESP_LOGI(TAG, "apSSID.json requested");
+
+  char ap_ssid_JSON[50] = { 0 };
+
+  wifi_config_t *wifi_config = wifi_app_get_wifi_config();
+  esp_wifi_get_config(ESP_IF_WIFI_AP, wifi_config);
+  char *ssid = (char*)wifi_config->ap.ssid;
+
+  sprintf(ap_ssid_JSON, "{\"ssid\":\"%s\"}", ssid);
+
+  httpd_resp_set_type(req, "application/json");
+  httpd_resp_send(req, ap_ssid_JSON, strlen(ap_ssid_JSON));
 
   return ESP_OK;
 }
