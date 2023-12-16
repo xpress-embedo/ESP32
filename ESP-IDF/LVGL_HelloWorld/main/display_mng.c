@@ -6,26 +6,19 @@
  */
 
 #include "esp_heap_caps.h"
+#include "driver/spi_master.h"
+#include "driver/gpio.h"
 #include "lvgl.h"
 #include "display_mng.h"
 
 // Private Macros
-// Display Related SPI Pins
-#define DISP_SPI_MOSI
-#define DISP_SPI_MISO
-#define DISP_SPI_SCLK
-#define DISP_SPI_CS
-// Touch Related SPI Pins (NOTE: Display and Touch SPI is considered as same,
-// only chip select is different for obvious reasons
-#define TOUCH_SPI_MOSI                (DISP_SPI_MOSI)
-#define TOUCH_SPI_MISO                (DISP_SPI_MISO)
-#define TOUCH_SPI_SCLK                (DISP_SPI_SCLK)
-#define TOUCH_SPI_CS
+#define DISP_SPI_HOST                 (SPI3_HOST)
+#define DISP_SPI_CLK_SPEED            (40*1000000)
 
 // Display Resolution
-#define DISP_HOR_RES_MAX              (320u)
-#define DISP_VER_RES_MAX              (240u)
-#define DISP_BUFFER_SIZE              (DISP_HOR_RES_MAX * 40u)
+#define DISP_HOR_RES_MAX              (320)
+#define DISP_VER_RES_MAX              (240)
+#define DISP_BUFFER_SIZE              (DISP_HOR_RES_MAX * 40)
 
 // Private Variables
 // ---------------------------LVGL Related Stuff-------------------------------
@@ -82,7 +75,43 @@ void display_mng( void )
 
 void display_driver_init( void )
 {
+  esp_err_t ret;
+  spi_dma_chan_t dma_channel = SPI_DMA_CH1;   // don't enable DMA on Channel-0
 
+  spi_bus_config_t bus_cfg =
+  {
+      .mosi_io_num = DISP_SPI_MOSI,
+      .miso_io_num = DISP_SPI_MISO,
+      .sclk_io_num = DISP_SPI_SCLK,
+      .max_transfer_sz = DISP_BUFFER_SIZE,  // maximum transfer size in bytes
+      .quadhd_io_num = -1,
+      .quadwp_io_num = -1,
+  };
+
+  // initialize the SPI bus
+  spi_bus_initialize(DISP_SPI_HOST, &bus_cfg, dma_channel);
+  assert(ret == ESP_OK);
+
+  spi_device_interface_config_t dev_config =
+  {
+      .clock_speed_hz = DISP_SPI_CLK_SPEED,
+      .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
+      .spics_io_num = DISP_SPI_CS,    // chip select for this device
+      .input_delay_ns = 0,            // todo
+      .queue_size = 50,               // Transaction queue size. This sets how
+                                      // many transactions can be 'in the air'
+                                      // (queued using spi_device_queue_trans
+                                      // but not yet finished using
+                                      // spi_device_get_trans_result) at the same time
+      .pre_cb = NULL,                 // callback to be called before transmission is started
+      .post_cb = NULL,                // callback to be called after transmission is completed
+      .flags = SPI_DEVICE_NO_DUMMY,
+  };
+
+  // define the SPI handle
+  spi_device_handle_t spi_disp_handle;
+  ret = spi_bus_add_device(DISP_SPI_HOST, &dev_config, &spi_disp_handle);
+  assert(ret == ESP_OK);
 }
 
 void display_driver_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
