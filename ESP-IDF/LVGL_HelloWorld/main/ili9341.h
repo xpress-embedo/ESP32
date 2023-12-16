@@ -1,8 +1,9 @@
-/**
- * @file lv_templ.h
+/*
+ * ili9341.h
  *
+ *  Created on: Dec 16, 2023
+ *      Author: xpress_embedo
  */
-
 #ifndef ILI9341_H
 #define ILI9341_H
 

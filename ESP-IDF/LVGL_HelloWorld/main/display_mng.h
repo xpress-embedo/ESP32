@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 // Defines
+#define DISP_SPI_HOST                 (SPI3_HOST)
 // Display Related Pins
 #define DISP_SPI_MOSI                 (GPIO_NUM_23)
 #define DISP_SPI_MISO                 (GPIO_NUM_19)
@@ -30,5 +31,7 @@
 // Public Functions
 void display_init( void );
 void display_mng( void );
+void display_send_cmd( uint8_t cmd );
+void display_send_data( const uint8_t *data, int len );
 
 #endif /* MAIN_DISPLAY_MNG_H_ */
