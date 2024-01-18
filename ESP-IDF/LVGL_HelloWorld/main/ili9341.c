@@ -13,7 +13,15 @@
 #include "freertos/task.h"
 
 // Defines
- #define TAG "ILI9341"
+#define TAG "ILI9341"
+
+#define ILI9341_MADCTL_MY           (0x80u)   // Bottom to top
+#define ILI9341_MADCTL_MX           (0x40u)   // Right to left
+#define ILI9341_MADCTL_MV           (0x20u)   // Reverse Mode
+#define ILI9341_MADCTL_ML           (0x10u)   // LCD refresh Bottom to top
+#define ILI9341_MADCTL_RGB          (0x00u)   // Led-Green-Blue pixel order
+#define ILI9341_MADCTL_BGR          (0x08u)   // Blue-Green-Red pixel order
+#define ILI9341_MADCTL_MH           (0x04u)   // LCD refresh right to left
 
 // structures
 // The LCD needs a bunch of command/argument values to be initialized. They are stored in this struct
@@ -25,12 +33,15 @@ typedef struct
 } lcd_init_cmd_t;
 
 // Private Function Prototypes
-static void ili9341_set_orientation(uint8_t orientation);
+static void ili9341_reset(void);
 static void ili9341_send_cmd(uint8_t cmd);
 static void ili9341_send_data(void * data, uint16_t length);
 static void ili9341_send_color(void * data, uint16_t length);
 
 // Private Variables
+static ili9341_orientation_e lcd_orientation = LCD_PORTRAIT;
+static uint16_t lcd_width = ILI9341_LCD_WIDTH;
+static uint16_t lcd_height = ILI9341_LCD_HEIGHT;
 
 // Public Function Definition
 void ili9341_init( void )
@@ -104,11 +115,7 @@ void ili9341_init( void )
 
 	//Initialize non-SPI GPIOs
 	gpio_config_t io_conf = {};
-#if (ILI9341_USE_RST == true )
-	io_conf.pin_bit_mask = ((1u<<ILI9341_DC) | (1u<<ILI9341_RST) );
-#else
 	io_conf.pin_bit_mask = (1u<<ILI9341_DC);
-#endif
 	io_conf.mode = GPIO_MODE_OUTPUT;
 	io_conf.pull_up_en = true;
 	gpio_config(&io_conf);
@@ -116,20 +123,13 @@ void ili9341_init( void )
 	// gpio_pad_select_gpio(ILI9341_DC);
 	// gpio_set_direction(ILI9341_DC, GPIO_MODE_OUTPUT);
 
-#if ILI9341_USE_RST
-	// gpio_pad_select_gpio(ILI9341_RST);
-	// gpio_set_direction(ILI9341_RST, GPIO_MODE_OUTPUT);
+	ili9341_reset();
 
-	//Reset the display
-	gpio_set_level(ILI9341_RST, 0);
-	vTaskDelay(100 / portTICK_RATE_MS);
-	gpio_set_level(ILI9341_RST, 1);
-	vTaskDelay(100 / portTICK_RATE_MS);
-#endif
+	vTaskDelay(500 / portTICK_PERIOD_MS);
 
 	ESP_LOGI(TAG, "LCD ILI9341 Initialization.");
 
-	//Send all the commands
+	// Send all the commands
 	uint16_t cmd = 0;
 	while (ili_init_cmds[cmd].databytes!=0xff)
 	{
@@ -137,21 +137,84 @@ void ili9341_init( void )
 		ili9341_send_data( ili_init_cmds[cmd].data, (ili_init_cmds[cmd].databytes & 0x1F) );
 		if (ili_init_cmds[cmd].databytes & 0x80)
 		{
-			vTaskDelay(100 / portTICK_PERIOD_MS);
+			vTaskDelay(200 / portTICK_PERIOD_MS);
 		}
 		cmd++;
 	}
-
-	// TODO: XE
-	// ili9341_set_orientation( 2 );
-
-//#if ILI9341_INVERT_COLORS == 1
-//	ili9341_send_cmd(0x21);
-//#else
-//	ili9341_send_cmd(0x20);
-//#endif
 }
 
+void ili9341_set_orientation( ili9341_orientation_e orientation )
+{
+  uint8_t data = 0x00;
+
+  switch (orientation)
+  {
+  case LCD_ORIENTATION_0:
+    data = (ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR);
+    lcd_width = ILI9341_LCD_WIDTH;
+    lcd_height = ILI9341_LCD_HEIGHT;
+    break;
+  case LCD_ORIENTATION_90:
+    data = (ILI9341_MADCTL_MV | ILI9341_MADCTL_BGR);
+    lcd_width = ILI9341_LCD_HEIGHT;
+    lcd_height = ILI9341_LCD_WIDTH;
+    break;
+  case LCD_ORIENTATION_180:
+    data = (ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR);
+    lcd_width = ILI9341_LCD_WIDTH;
+    lcd_height = ILI9341_LCD_HEIGHT;
+    break;
+  case LCD_ORIENTATION_270:
+    data = (ILI9341_MADCTL_MX | ILI9341_MADCTL_MY | ILI9341_MADCTL_MV | ILI9341_MADCTL_BGR);
+    lcd_width = ILI9341_LCD_HEIGHT;
+    lcd_height = ILI9341_LCD_WIDTH;
+    break;
+  default:
+    orientation = LCD_ORIENTATION_0;
+    data = (ILI9341_MADCTL_MY | ILI9341_MADCTL_BGR);
+    break;
+  }
+  lcd_orientation = orientation;
+  ili9341_send_cmd(ILI9341_MAC);
+  ili9341_send_data(&data, 1);
+}
+
+ili9341_orientation_e ili9341_get_orientation( void )
+{
+  return lcd_orientation;
+}
+
+// Set the display area
+void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end )
+{
+  uint8_t params[4] = { 0 };
+  // column address set
+  params[0] = x_start >> 8u;
+  params[1] = 0xFF & x_start;
+  params[2] = x_end >> 8u;
+  params[3] = 0xFF & x_end;
+  ili9341_send_cmd(ILI9341_CASET);
+  ili9341_send_data( params, 4u );
+
+  // Row Address Set (2B) also called as page address set
+  params[0] = y_start >> 8u;
+  params[1] = 0xFF & y_start;
+  params[2] = y_end >> 8u;
+  params[3] = 0xFF & y_end;
+  ili9341_send_cmd( ILI9341_RASET );
+  ili9341_send_data( params, 4u );
+}
+
+void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color )
+{
+  uint8_t data[2] = { (color>>8u), (color & 0xFF) };
+  ili9341_set_window( x, y, x, y);
+  // ILI9341_SendCommand(ILI9341_GRAM, 0u, 0u );
+  // ILI9341_SendData( data, 2u);
+  // OR
+  ili9341_send_cmd(ILI9341_GRAM);
+  ili9341_send_data(data, 2u );
+}
 
 //void ili9341_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
 //{
@@ -179,72 +242,25 @@ void ili9341_init( void )
 //	ili9341_send_color((void*)color_map, size * 2);
 //}
 
-void ili9341_sleep_in( void )
-{
-	uint8_t data[] = {0x08};
-	ili9341_send_cmd(0x10);
-	ili9341_send_data(&data, 1);
-}
-
-void ili9341_sleep_out( void )
-{
-	uint8_t data[] = {0x08};
-	ili9341_send_cmd(0x11);
-	ili9341_send_data(&data, 1);
-}
 
 // Private Function Definitions
+static void ili9341_reset(void)
+{
+  // ili9341 software reset command
+  ili9341_send_cmd(0x01);
+}
+
 static void ili9341_send_cmd(uint8_t cmd)
 {
   display_send_cmd( cmd );
-  // TODO: XE
-  // disp_wait_for_pending_transactions();
-  // gpio_set_level(ILI9341_DC, 0);	  // command mode
-  // disp_spi_send_data(&cmd, 1);
 }
 
 static void ili9341_send_data(void * data, uint16_t length)
 {
   display_send_data(data, length);
-  // TODO: XE
-  // disp_wait_for_pending_transactions();
-  // gpio_set_level(ILI9341_DC, 1);	  // data mode
-  // disp_spi_send_data(data, length);
 }
 
 static void ili9341_send_color(void * data, uint16_t length)
 {
-  // TODO: XE
-  // disp_wait_for_pending_transactions();
-  // gpio_set_level(ILI9341_DC, 1);    // Data Mode
-  // disp_spi_send_colors(data, length);
 }
 
-static void ili9341_set_orientation(uint8_t orientation)
-{
-  // ESP_ASSERT(orientation < 4);
-  const char *orientation_str[] =
-  {
-    "PORTRAIT", "PORTRAIT_INVERTED", "LANDSCAPE", "LANDSCAPE_INVERTED"
-  };
-
-  ESP_LOGI(TAG, "Display orientation: %s", orientation_str[orientation]);
-
-  uint8_t data[] = {0x48, 0x68, 0x08, 0x08};
-#if defined CONFIG_LV_PREDEFINED_DISPLAY_M5STACK
-  uint8_t data[] = {0x68, 0x68, 0x08, 0x08};
-#elif defined (CONFIG_LV_PREDEFINED_DISPLAY_M5CORE2)
-	uint8_t data[] = {0x08, 0x88, 0x28, 0xE8};
-#elif defined (CONFIG_LV_PREDEFINED_DISPLAY_WROVER4)
-  uint8_t data[] = {0x6C, 0xEC, 0xCC, 0x4C};
-#elif defined (CONFIG_LV_PREDEFINED_DISPLAY_NONE)
-  uint8_t data[] = {0x48, 0x88, 0x28, 0xE8};
-#endif
-
-  // TODO: XE
-  // ESP_LOGI(TAG, "0x36 command value: 0x%02X", data[orientation]);
-
-  ili9341_send_cmd(0x36);
-  // TODO: XE
-  ili9341_send_data((void *) &data[orientation], 1);
-}

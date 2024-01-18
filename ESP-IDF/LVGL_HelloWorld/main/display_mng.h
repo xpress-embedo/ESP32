@@ -14,6 +14,10 @@
 #include <string.h>
 
 // Defines
+// Display Resolution
+#define DISP_HOR_RES_MAX              (240)
+#define DISP_VER_RES_MAX              (320)
+
 #define DISP_SPI_HOST                 (SPI3_HOST)
 // Display Related Pins
 #define DISP_SPI_MOSI                 (GPIO_NUM_23)

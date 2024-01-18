@@ -14,9 +14,6 @@
 // Private Macros
 #define DISP_SPI_CLK_SPEED            (40*1000)
 
-// Display Resolution
-#define DISP_HOR_RES_MAX              (320)
-#define DISP_VER_RES_MAX              (240)
 #define DISP_BUFFER_SIZE              (DISP_HOR_RES_MAX * 40)
 
 // Private Variables
@@ -24,13 +21,20 @@ spi_device_handle_t spi_disp_handle;
 // ---------------------------LVGL Related Stuff-------------------------------
 
 // Private Function Prototypes
+static void display_driver_init( void );
 static void display_pre_tx_cb( spi_transaction_t *t );
 
 
 // Public Function Definitions
 void display_init( void )
 {
+  sleep(1);
+  display_driver_init();
+  sleep(1);
   ili9341_init();
+  sleep(1);
+  ili9341_set_orientation(LCD_PORTRAIT);
+  printf("Should display Red Color!\n");
 }
 
 void display_mng( void )
@@ -120,9 +124,6 @@ static void display_driver_init( void )
   // attach the LCD to the SPI bus
   ret = spi_bus_add_device(DISP_SPI_HOST, &dev_config, &spi_disp_handle);
   assert(ret == ESP_OK);
-
-  // initialize the display
-  ili9341_init();
 }
 
 /*
