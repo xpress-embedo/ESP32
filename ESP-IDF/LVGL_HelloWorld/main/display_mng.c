@@ -30,11 +30,12 @@ void display_init( void )
 {
   sleep(1);
   display_driver_init();
-  sleep(1);
   ili9341_init();
-  sleep(1);
-  ili9341_set_orientation(LCD_PORTRAIT);
-  printf("Should display Red Color!\n");
+  ili9341_set_orientation(LCD_ORIENTATION_180);
+  ili9341_draw_pixel(0, 0, ILI9341_RED);
+  printf("Should display Red Color-1!\n");
+  ili9341_draw_pixel(10, 10, ILI9341_BLUE);
+  printf("Should display Blue Color-1!\n");
 }
 
 void display_mng( void )
