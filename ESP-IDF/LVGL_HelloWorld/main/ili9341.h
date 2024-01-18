@@ -16,7 +16,7 @@ extern "C" {
  *********************/
 #include <stdbool.h>
 
-#include "lvgl.h"
+//#include "lvgl.h"
 
 // Defines
 #define ILI9341_DC              (DISP_PIN_DC)
@@ -26,7 +26,7 @@ extern "C" {
 
 // Public Prototypes
 void ili9341_init( void );
-void ili9341_flush( lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map );
+// void ili9341_flush( lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map );
 void ili9341_sleep_in( void );
 void ili9341_sleep_out( void );
 

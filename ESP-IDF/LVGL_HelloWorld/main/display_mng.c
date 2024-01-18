@@ -8,12 +8,12 @@
 #include "esp_heap_caps.h"
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
-#include "lvgl.h"
+// #include "lvgl.h"
 #include "ili9341.h"
 #include "display_mng.h"
 
 // Private Macros
-#define DISP_SPI_CLK_SPEED            (40*1000000)
+#define DISP_SPI_CLK_SPEED            (40*1000)
 
 // Display Resolution
 #define DISP_HOR_RES_MAX              (320)
@@ -27,6 +27,7 @@ spi_device_handle_t spi_disp_handle;
 // Private Function Prototypes
 static void display_driver_init( void );
 static void display_driver_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map);
+static void display_driver_flush_slow(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map);
 static void display_pre_tx_cb( spi_transaction_t *t );
 
 // Public Function Definitions
@@ -58,7 +59,8 @@ void display_init( void )
   disp_drv.hor_res = DISP_HOR_RES_MAX;      // horizontal resolution
   disp_drv.ver_res = DISP_VER_RES_MAX;      // vertical resolution
   disp_drv.draw_buf = &draw_buf;            // assign the buffer to the display
-  disp_drv.flush_cb = display_driver_flush; // driver function to flush display
+  // disp_drv.flush_cb = display_driver_flush; // driver function to flush display
+  disp_drv.flush_cb = display_driver_flush_slow; // driver function to flush display
   disp_drv.rotated = 0;                     // 0:=landscape & landscape inverted
   // disp_drv.rotated = 1;                     // 1:=portrait & portrait inverted
   lv_disp_drv_register( &disp_drv );        // finally register the driver
@@ -161,6 +163,12 @@ static void display_driver_init( void )
 
 static void display_driver_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
 {
+}
+
+static void display_driver_flush_slow(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
+{
+  ili9341_flush(drv, area, color_map);
+  lv_disp_flush_ready(drv);
 }
 
 /*

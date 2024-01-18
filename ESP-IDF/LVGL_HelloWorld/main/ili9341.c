@@ -89,6 +89,8 @@ void ili9341_init( void )
 		{0xB7, {0x07}, 1},
 		/* Display function control */
 		{0xB6, {0x0A, 0x82, 0x27, 0x00}, 4},
+		/* test command, need analysis */
+		{0x36, {0x48}, 1},
 		/* Sleep out */
 		{0x11, {0}, 0x80},
 		/* Display on */
@@ -137,41 +139,41 @@ void ili9341_init( void )
 	}
 
 	// TODO: XE
-	ili9341_set_orientation( 2 );
+	// ili9341_set_orientation( 2 );
 
-#if ILI9341_INVERT_COLORS == 1
-	ili9341_send_cmd(0x21);
-#else
-	ili9341_send_cmd(0x20);
-#endif
+//#if ILI9341_INVERT_COLORS == 1
+//	ili9341_send_cmd(0x21);
+//#else
+//	ili9341_send_cmd(0x20);
+//#endif
 }
 
 
-void ili9341_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
-{
-	uint8_t data[4];
-
-	// Column addresses
-	ili9341_send_cmd(0x2A);
-	data[0] = (area->x1 >> 8) & 0xFF;
-	data[1] = area->x1 & 0xFF;
-	data[2] = (area->x2 >> 8) & 0xFF;
-	data[3] = area->x2 & 0xFF;
-	ili9341_send_data(data, 4);
-
-	// Page addresses
-	ili9341_send_cmd(0x2B);
-	data[0] = (area->y1 >> 8) & 0xFF;
-	data[1] = area->y1 & 0xFF;
-	data[2] = (area->y2 >> 8) & 0xFF;
-	data[3] = area->y2 & 0xFF;
-	ili9341_send_data(data, 4);
-
-	// Memory write
-	ili9341_send_cmd(0x2C);
-	uint32_t size = lv_area_get_width(area) * lv_area_get_height(area);
-	ili9341_send_color((void*)color_map, size * 2);
-}
+//void ili9341_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
+//{
+//	uint8_t data[4];
+//
+//	// Column addresses
+//	ili9341_send_cmd(0x2A);
+//	data[0] = (area->x1 >> 8) & 0xFF;
+//	data[1] = area->x1 & 0xFF;
+//	data[2] = (area->x2 >> 8) & 0xFF;
+//	data[3] = area->x2 & 0xFF;
+//	ili9341_send_data(data, 4);
+//
+//	// Page addresses
+//	ili9341_send_cmd(0x2B);
+//	data[0] = (area->y1 >> 8) & 0xFF;
+//	data[1] = area->y1 & 0xFF;
+//	data[2] = (area->y2 >> 8) & 0xFF;
+//	data[3] = area->y2 & 0xFF;
+//	ili9341_send_data(data, 4);
+//
+//	// Memory write
+//	ili9341_send_cmd(0x2C);
+//	uint32_t size = lv_area_get_width(area) * lv_area_get_height(area);
+//	ili9341_send_color((void*)color_map, size * 2);
+//}
 
 void ili9341_sleep_in( void )
 {
@@ -224,6 +226,7 @@ static void ili9341_set_orientation(uint8_t orientation)
 
   ESP_LOGI(TAG, "Display orientation: %s", orientation_str[orientation]);
 
+  uint8_t data[] = {0x48, 0x68, 0x08, 0x08};
 #if defined CONFIG_LV_PREDEFINED_DISPLAY_M5STACK
   uint8_t data[] = {0x68, 0x68, 0x08, 0x08};
 #elif defined (CONFIG_LV_PREDEFINED_DISPLAY_M5CORE2)
@@ -239,5 +242,5 @@ static void ili9341_set_orientation(uint8_t orientation)
 
   ili9341_send_cmd(0x36);
   // TODO: XE
-  // ili9341_send_data((void *) &data[orientation], 1);
+  ili9341_send_data((void *) &data[orientation], 1);
 }
