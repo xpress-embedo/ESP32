@@ -37,6 +37,10 @@ void ili9341_init( void )
 {
 	lcd_init_cmd_t ili_init_cmds[]=
 	{
+    /* This is an un-documented command
+    https://forums.adafruit.com/viewtopic.php?f=47&t=63229&p=320378&hilit=0xef+ili9341#p320378
+    */
+    {0xEF, {0x03, 0x80, 0x02}, 3},
 	  /* Power contorl B, power control = 0, DC_ENA = 1 */
 		{0xCF, {0x00, 0x83, 0X30}, 3},
     /* Power on sequence control,
