@@ -8,6 +8,8 @@
 #include "esp_heap_caps.h"
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "ili9341.h"
 #include "display_mng.h"
 
@@ -28,16 +30,43 @@ static void display_pre_tx_cb( spi_transaction_t *t );
 // Public Function Definitions
 void display_init( void )
 {
-  sleep(1);
   display_driver_init();
   ili9341_init();
-  // ili9341_set_orientation(LCD_ORIENTATION_180);
-  ili9341_draw_pixel(0, 0, ILI9341_RED);
-  printf("Should display Red Color-1!\n");
-  ili9341_draw_pixel(10, 10, ILI9341_BLUE);
-  printf("Should display Blue Color-1!\n");
-  ili9341_fill(ILI9341_BLUE);
-  printf("Screen should be filled\n");
+  ili9341_set_orientation(LCD_LANDSCAPE);
+  ili9341_set_orientation(LCD_ORIENTATION_180);
+  ili9341_set_orientation(LCD_PORTRAIT);
+  // Some Test Code Starts
+  ili9341_draw_pixel( 0u, 0u, ILI9341_RED );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_set_orientation( LCD_ORIENTATION_0 );
+  ili9341_fill( ILI9341_RED );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_set_orientation( LCD_ORIENTATION_90 );
+  ili9341_fill( ILI9341_ORANGE );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_set_orientation( LCD_ORIENTATION_180 );
+  ili9341_fill( ILI9341_PINK );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_set_orientation( LCD_ORIENTATION_270 );
+  ili9341_fill( ILI9341_DARKGREEN );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_fill( ILI9341_DARKCYAN );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_fill_rectangle( 0u, 0u, 50u, 50u, ILI9341_WHITE );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_fill_rectangle( 50u, 50u, 100u, 100u, ILI9341_ORANGE );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_fill_rectangle( 100u, 100u, 150u, 150u, ILI9341_DARKGREEN );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_draw_circle( 20, 20, 20, ILI9341_PINK);
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_draw_line( 0u, 0u, ili9341_get_width(), ili9341_get_height(), ILI9341_DARKGREEN);
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_draw_h_line( 10u, 10u, 50u, ILI9341_ORANGE );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  ili9341_draw_v_line( 10u, 10u, 50u, ILI9341_ORANGE );
+  vTaskDelay(500 / portTICK_PERIOD_MS);
+  // Some Test Code Ends
 }
 
 void display_mng( void )

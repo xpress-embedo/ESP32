@@ -6,8 +6,6 @@
  */
 #include "ili9341.h"
 #include "display_mng.h"
-#include "driver/gpio.h"
-#include "rom/gpio.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -167,6 +165,16 @@ ili9341_orientation_e ili9341_get_orientation( void )
   return lcd_orientation;
 }
 
+uint16_t ili9341_get_width( void )
+{
+  return lcd_width;
+}
+
+uint16_t ili9341_get_height( void )
+{
+  return lcd_height;
+}
+
 // Set the display area
 void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end )
 {
@@ -204,9 +212,239 @@ void ili9341_fill( uint16_t color )
   {
     ili9341_send_data( data, 2u );
     total_pixel_counts--;
-    vTaskDelay(1 / portTICK_PERIOD_MS);
+    // Added this due to watchdog issue
+    // vTaskDelay(1 / portTICK_PERIOD_MS);
   }
 }
+
+/**
+ * @brief Draws a rectangle on lcd.
+ * 
+ * Draws a rectangle on lcd by using the specified parameters.
+ * 
+ * @param x_upper_left: x coordinate of the upper left rectangle corner. 
+ * @param y_upper_left: y coordinate of the upper left rectangle corner. 
+ * @param x_bottom_right: x coordinate of the lower right rectangle corner. 
+ * @param y_bottom_right: y coordinate of the lower right rectangle corner. 
+ * @param color: color parameter
+ */
+void ili9341_rectangle( int16_t x_upper_left, int16_t y_upper_left, int16_t x_bottom_right, int16_t y_bottom_right, uint16_t color)
+{
+  ili9341_draw_v_line( y_upper_left, y_bottom_right, x_upper_left, color);
+  ili9341_draw_h_line( x_upper_left, x_bottom_right, y_bottom_right, color);
+  ili9341_draw_v_line( y_upper_left, y_bottom_right, x_bottom_right, color);
+  ili9341_draw_h_line( x_upper_left, x_bottom_right, y_upper_left, color);
+}
+
+void ili9341_fill_rectangle( int16_t x_start, int16_t y_start, int16_t x_end, int16_t y_end, uint16_t color )
+{
+  uint32_t total_pixels_to_write = 0u;
+  uint8_t data[2] = { (color >> 8u), (color & 0xFF) };
+
+  total_pixels_to_write = ((x_end+1u)-x_start) * ((y_end+1u)-y_start);
+  if( total_pixels_to_write > ILI9341_PIXEL_COUNT )
+  {
+    total_pixels_to_write = ILI9341_PIXEL_COUNT;
+  }
+
+  ili9341_set_window( x_start, y_start, x_end, y_end );
+  ili9341_send_cmd(ILI9341_GRAM, 0u, 0u );
+
+  while( total_pixels_to_write )
+  {
+    ili9341_send_data( data, 2u );
+    total_pixels_to_write--;
+  }
+}
+
+/**
+ * @brief Draws a Circle on ILI9341 LCD.
+ * 
+ * Draws a Circle on Glcd by using the specified parameters.
+ * <a href="https://en.wikipedia.org/wiki/Midpoint_circle_algorithm">
+ * Mid Point Circle Algorithm Weblink</a>
+ * 
+ * @param x_center: x coordinate of the circle center.
+ * @param y_center: y coordinate of the circle center.
+ * @param radius: radius of the circle.
+ * @param color: color parameter. Valid values in format RGB565
+ */
+void ili9341_draw_circle( int16_t x_center, int16_t y_center, int16_t radius, uint16_t color)
+{
+  int16_t x = radius;
+  int16_t y = 0;
+  int16_t err = 0;
+  int16_t temp1, temp2;
+  
+  while (x >= y)
+  {
+    temp1 = x_center + x;
+    temp2 = y_center + y;
+    if( (temp1 >=0) && (temp1 < lcd_width ) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel( temp1, temp2, color);
+    }
+    temp1 = x_center + y;
+    temp2 = y_center + x;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center - y;
+    temp2 = y_center + x;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center - x;
+    temp2 = y_center + y;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center - x;
+    temp2 = y_center - y;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center - y;
+    temp2 = y_center - x;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center + y;
+    temp2 = y_center - x;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    temp1 = x_center + x;
+    temp2 = y_center - y;
+    if( (temp1 >=0) && (temp1 < lcd_width) && \
+        (temp2 >= 0) && (temp2 < lcd_height) )
+    {
+      ili9341_draw_pixel(temp1, temp2, color);
+    }
+    
+    y += 1;
+    err += 1 + 2*y;
+    if (2*(err-x) + 1 > 0)
+    {
+      x -= 1;
+      err += 1 - 2*x;
+    }
+  }
+}
+
+/**
+ * @brief Draws a line on LCD.
+ * 
+ * Draws a line on LCD by using the specified parameters.
+ * <a href="https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm">
+ * Algorithm Used</a>
+ * <a href="http://www.edaboard.com/thread68526.html#post302856"> Program Used
+ * </a>
+ * 
+ * @param x_start: x coordinate of start point.
+ * @param y_start: x coordinate of start point.
+ * @param x_end: x coordinate of end point.
+ * @param y_end: y coordinate of end point.
+ * @param color: color parameter.
+ */
+void ili9341_draw_line( int16_t x_start, int16_t y_start, int16_t x_end, int16_t y_end, uint16_t color )
+{
+  int16_t x, y, addx, addy, dx, dy;
+  int32_t P;
+  int16_t i;
+  dx = abs((int16_t)(x_end - x_start));
+  dy = abs((int16_t)(y_end - y_start));
+  x = x_start;
+  y = y_start;
+  
+  if(x_start > x_end)
+    addx = -1;
+  else
+    addx = 1;
+  
+  if(y_start > y_end)
+    addy = -1;
+  else
+    addy = 1;
+  
+  if(dx >= dy)
+  {
+    P = 2*dy - dx;
+    
+    for(i=0; i<=dx; ++i)
+    {
+      ili9341_draw_pixel( x, y, color );
+      if(P < 0)
+      {
+        P += 2*dy;
+        x += addx;
+      }
+      else
+      {
+        P += 2*dy - 2*dx;
+        x += addx;
+        y += addy;
+      }
+    }
+  }
+  else
+  {
+    P = 2*dx - dy;
+    for(i=0; i<=dy; ++i)
+    {
+      ili9341_draw_pixel( x, y, color );
+      
+      if(P < 0)
+      {
+        P += 2*dx;
+        y += addy;
+      }
+      else
+      {
+        P += 2*dx - 2*dy;
+        x += addx;
+        y += addy;
+      }
+    }
+  }
+}
+
+void ili9341_draw_h_line( int16_t x_start, int16_t y_start, int16_t width, uint16_t color )
+{
+  ili9341_draw_line( x_start, y_start, (x_start+width-1u), y_start, color);
+}
+
+void ili9341_draw_v_line( int16_t x_start, int16_t y_start, int16_t height, uint16_t color )
+{
+  ili9341_draw_line( x_start, y_start, x_start, (y_start+height-1u), color);
+}
+
+void ili9341_draw_triangle( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+{
+  ili9341_draw_line(x0, y0, x1, y1, color);
+  ili9341_draw_line(x1, y1, x2, y2, color);
+  ili9341_draw_line(x2, y2, x0, y0, color);
+}
+
 
 // Private Function Definitions
 static void ili9341_reset(void)

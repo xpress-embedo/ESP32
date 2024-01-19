@@ -148,11 +148,19 @@ typedef enum _ili9341_orientation_e
 void ili9341_init( void );
 void ili9341_set_orientation( ili9341_orientation_e orientation );
 ili9341_orientation_e ili9341_get_orientation( void );
+uint16_t ili9341_get_width( void );
+uint16_t ili9341_get_height( void );
 
 void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end );
 void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color );
 void ili9341_fill( uint16_t color );
-
+void ili9341_rectangle( int16_t x_upper_left, int16_t y_upper_left, int16_t x_bottom_right, int16_t y_bottom_right, uint16_t color);
+void ili9341_fill_rectangle( int16_t x_start, int16_t y_start, int16_t x_end, int16_t y_end, uint16_t color );
+void ili9341_draw_circle( int16_t x_center, int16_t y_center, int16_t radius, uint16_t color);
+void ili9341_draw_line( int16_t x_start, int16_t y_start, int16_t x_end, int16_t y_end, uint16_t color );
+void ili9341_draw_h_line( int16_t x_start, int16_t y_start, int16_t width, uint16_t color );
+void ili9341_draw_v_line( int16_t x_start, int16_t y_start, int16_t height, uint16_t color );
+void ili9341_draw_triangle( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 
 #ifdef __cplusplus
 } /* extern "C" */
