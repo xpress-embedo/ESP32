@@ -31,12 +31,17 @@
 #define TOUCH_SPI_MOSI                (DISP_SPI_MOSI)
 #define TOUCH_SPI_MISO                (DISP_SPI_MISO)
 #define TOUCH_SPI_SCLK                (DISP_SPI_SCLK)
-#define TOUCH_SPI_CS
+#define TOUCH_SPI_CS                  (DISP_SPI_CS)
+
+#define DISP_CS_LOW()                 gpio_set_level(DISP_SPI_CS, 0)
+#define DISP_CS_HIGH()                gpio_set_level(DISP_SPI_CS, 1)
+#define DISP_DC_LOW()                 gpio_set_level(DISP_PIN_DC, 0)
+#define DISP_DC_HIGH()                gpio_set_level(DISP_PIN_DC, 1)
 
 // Public Functions
 void display_init( void );
 void display_mng( void );
-void display_send_cmd( uint8_t cmd );
+void display_send_cmd( uint8_t cmd, const uint8_t *data, int len );
 void display_send_data( const uint8_t *data, int len );
 
 #endif /* MAIN_DISPLAY_MNG_H_ */

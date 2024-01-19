@@ -17,16 +17,12 @@ extern "C" {
 #include <stdbool.h>
 #include <unistd.h>
 
-//#include "lvgl.h"
-
 // Defines
-#define ILI9341_DC                    (DISP_PIN_DC)
-#define ILI9341_USE_RST               (false)
-#define ILI9341_RST                   (DISP_PIN_RESET)
-#define ILI9341_INVERT_COLORS         (false)
 // LCD Height and Width
 #define ILI9341_LCD_WIDTH             (DISP_HOR_RES_MAX)
 #define ILI9341_LCD_HEIGHT            (DISP_VER_RES_MAX)
+
+#define ILI9341_PIXEL_COUNT           (ILI9341_LCD_WIDTH*ILI9341_LCD_HEIGHT)
 
 // Colors in RGB565 Format
 #define ILI9341_BLACK               0x0000      ///<   0,   0,   0
@@ -155,6 +151,7 @@ ili9341_orientation_e ili9341_get_orientation( void );
 
 void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end );
 void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color );
+void ili9341_fill( uint16_t color );
 
 
 #ifdef __cplusplus

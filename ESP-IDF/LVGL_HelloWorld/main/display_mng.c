@@ -12,7 +12,7 @@
 #include "display_mng.h"
 
 // Private Macros
-#define DISP_SPI_CLK_SPEED            (40*1000)
+#define DISP_SPI_CLK_SPEED            (40*1000*1000)
 
 #define DISP_BUFFER_SIZE              (DISP_HOR_RES_MAX * 40)
 
@@ -31,11 +31,13 @@ void display_init( void )
   sleep(1);
   display_driver_init();
   ili9341_init();
-  ili9341_set_orientation(LCD_ORIENTATION_180);
+  // ili9341_set_orientation(LCD_ORIENTATION_180);
   ili9341_draw_pixel(0, 0, ILI9341_RED);
   printf("Should display Red Color-1!\n");
   ili9341_draw_pixel(10, 10, ILI9341_BLUE);
   printf("Should display Blue Color-1!\n");
+  ili9341_fill(ILI9341_BLUE);
+  printf("Screen should be filled\n");
 }
 
 void display_mng( void )
@@ -50,17 +52,31 @@ void display_mng( void )
  * mode for higher speed. The overhead of interrupt transaction is more than
  * just waiting for the transaction to complete.
  */
-void display_send_cmd( uint8_t cmd )
+void display_send_cmd( uint8_t cmd, const uint8_t *data, int len )
 {
   esp_err_t ret;
   spi_transaction_t t;
+
+  DISP_CS_LOW();
+  DISP_DC_LOW();
+  // Send Command
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
   t.length = 8;                     // Commands are 8-bits
   t.tx_buffer = &cmd;               // The data is command itself
-  t.user = (void*)0;                // transaction id, keep it zero for command mode
-                                    // check display_pre_tx_cb callback
   ret = spi_device_polling_transmit(spi_disp_handle, &t); // transmit
   assert(ret == ESP_OK);            // should have no issues
+  DISP_DC_HIGH();
+  // if there is some data with command
+  if( len )
+  {
+    memset( &t, 0x00, sizeof(t) );    // zero out the transaction
+    t.length = len*8;                 // length is in bytes while transaction length is in bits
+    t.tx_buffer = data;               // The data is command itself
+    ret = spi_device_polling_transmit(spi_disp_handle, &t); // transmit
+    DISP_CS_HIGH();
+    assert(ret == ESP_OK);            // should have no issues
+  }
+  DISP_CS_HIGH();
 }
 
 /*
@@ -76,11 +92,16 @@ void display_send_data( const uint8_t *data, int len )
   spi_transaction_t t;
   if( len == 0 )
     return;                         // no need to send anything
+
+  DISP_CS_LOW();
+  DISP_DC_HIGH();
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
   t.length = len*8;                 // length is in bytes while transaction length is in bits
   t.tx_buffer = data;               // Data
-  t.user = (void*)1;                // transaction id, keep it 1 for data mode
+  // Not used any more
+  // t.user = (void*)1;                // transaction id, keep it 1 for data mode
   ret = spi_device_polling_transmit(spi_disp_handle, &t); // transmit
+  DISP_CS_HIGH();
   assert(ret == ESP_OK);            // should have no issues
 }
 
@@ -106,14 +127,16 @@ static void display_driver_init( void )
   {
     .clock_speed_hz = DISP_SPI_CLK_SPEED,
     .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
-    .spics_io_num = DISP_SPI_CS,    // chip select for this device
+    // .spics_io_num = DISP_SPI_CS,    // chip select for this device
+    .spics_io_num = -1,             // chip select for this device (manual control)
     .input_delay_ns = 0,            // todo
     .queue_size = 50,               // Transaction queue size. This sets how
                                     // many transactions can be 'in the air'
                                     // (queued using spi_device_queue_trans
                                     // but not yet finished using
                                     // spi_device_get_trans_result) at the same time
-    .pre_cb = display_pre_tx_cb,    // callback to be called before transmission is started
+    // .pre_cb = display_pre_tx_cb,    // callback to be called before transmission is started
+    .pre_cb = NULL,                 // callback to be called before transmission is started
     .post_cb = NULL,                // callback to be called after transmission is completed
     .flags = SPI_DEVICE_NO_DUMMY,
   };
@@ -125,6 +148,16 @@ static void display_driver_init( void )
   // attach the LCD to the SPI bus
   ret = spi_bus_add_device(DISP_SPI_HOST, &dev_config, &spi_disp_handle);
   assert(ret == ESP_OK);
+
+  //Initialize non-SPI GPIOs
+  gpio_config_t io_conf = {};
+  io_conf.pin_bit_mask = (1u<<DISP_PIN_DC) | (1u<<DISP_SPI_CS);
+  io_conf.mode = GPIO_MODE_OUTPUT;
+  io_conf.pull_up_en = true;
+  gpio_config(&io_conf);
+
+  DISP_CS_LOW();
+  DISP_CS_HIGH();
 }
 
 /*

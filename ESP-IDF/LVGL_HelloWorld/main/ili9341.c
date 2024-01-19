@@ -35,7 +35,7 @@ typedef struct
 // Private Function Prototypes
 static void ili9341_reset(void);
 static void ili9341_sleep_out(void);
-static void ili9341_send_cmd(uint8_t cmd);
+static void ili9341_send_cmd(uint8_t cmd, void * data, uint16_t length);
 static void ili9341_send_data(void * data, uint16_t length);
 
 // Private Variables
@@ -46,13 +46,14 @@ static uint16_t lcd_height = ILI9341_LCD_HEIGHT;
 // Public Function Definition
 void ili9341_init( void )
 {
-	lcd_init_cmd_t ili_init_cmds[]=
-	{
+  lcd_init_cmd_t ili_init_cmds[]=
+  {
     /* This is an un-documented command
     https://forums.adafruit.com/viewtopic.php?f=47&t=63229&p=320378&hilit=0xef+ili9341#p320378
     */
     // {0xEF, {0x03, 0x80, 0x02}, 3},
-	  //  {cmd, { data }, data_size}
+    //  {cmd, { data }, data_size}
+    {ILI9341_MAC, {0x08}, 1},
     {ILI9341_PIXEL_FORMAT, {0x55}, 1},
     /* Power contorl B, power control = 0, DC_ENA = 1 */
     {0xCF, {0x00, 0xAA, 0XE0}, 3},
@@ -97,44 +98,34 @@ void ili9341_init( void )
     /* Entry mode set, Low vol detect disabled, normal display */
     {0xB7, {0x07}, 1},
     /* Display function control */
-    {0xB6, {0x08, 0x82, 0x27}, 3},		/* Display on */
-		{0x29, {0}, 0x80},
-		{0x00, {0}, 0xff},
-	};
+    {0xB6, {0x08, 0x82, 0x27}, 3},    /* Display on */
+    {ILI9341_MAC, {0x48}, 1},
+    {0x29, {0}, 0x80},
+    {0x00, {0}, 0xff},
+  };
 
-	//Initialize non-SPI GPIOs
-	gpio_config_t io_conf = {};
-	io_conf.pin_bit_mask = (1u<<ILI9341_DC);
-	io_conf.mode = GPIO_MODE_OUTPUT;
-	io_conf.pull_up_en = true;
-	gpio_config(&io_conf);
-	// TODO: XE to be removed, alternative solution is written above
-	// gpio_pad_select_gpio(ILI9341_DC);
-	// gpio_set_direction(ILI9341_DC, GPIO_MODE_OUTPUT);
+  ili9341_reset();
 
-	ili9341_reset();
+  vTaskDelay(250 / portTICK_PERIOD_MS);
 
-	vTaskDelay(250 / portTICK_PERIOD_MS);
+  ili9341_sleep_out();
 
-	ili9341_sleep_out();
+  vTaskDelay(250 / portTICK_PERIOD_MS);
 
-	vTaskDelay(250 / portTICK_PERIOD_MS);
+  ESP_LOGI(TAG, "LCD ILI9341 Initialization.");
 
-	ESP_LOGI(TAG, "LCD ILI9341 Initialization.");
-
-	// Send all the commands
-	uint16_t cmd = 0;
-	while (ili_init_cmds[cmd].databytes!=0xff)
-	{
-		ili9341_send_cmd( ili_init_cmds[cmd].cmd );
-		ili9341_send_data( ili_init_cmds[cmd].data, (ili_init_cmds[cmd].databytes & 0x1F) );
-		if (ili_init_cmds[cmd].databytes & 0x80)
-		{
-			vTaskDelay(200 / portTICK_PERIOD_MS);
-		}
-		cmd++;
-	}
-}
+  // Send all the commands
+  uint16_t cmd = 0;
+  while (ili_init_cmds[cmd].databytes!=0xff)
+  {
+    ili9341_send_cmd( ili_init_cmds[cmd].cmd, ili_init_cmds[cmd].data, (ili_init_cmds[cmd].databytes & 0x1F) );
+    if (ili_init_cmds[cmd].databytes & 0x80)
+    {
+      vTaskDelay(200 / portTICK_PERIOD_MS);
+    }
+    cmd++;
+    }
+  }
 
 void ili9341_set_orientation( ili9341_orientation_e orientation )
 {
@@ -168,8 +159,7 @@ void ili9341_set_orientation( ili9341_orientation_e orientation )
     break;
   }
   lcd_orientation = orientation;
-  ili9341_send_cmd(ILI9341_MAC);
-  ili9341_send_data(&data, 1);
+  ili9341_send_cmd(ILI9341_MAC, &data, 1);
 }
 
 ili9341_orientation_e ili9341_get_orientation( void )
@@ -186,71 +176,54 @@ void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uin
   params[1] = 0xFF & x_start;
   params[2] = x_end >> 8u;
   params[3] = 0xFF & x_end;
-  ili9341_send_cmd(ILI9341_CASET);
-  ili9341_send_data( params, 4u );
+  ili9341_send_cmd(ILI9341_CASET, params, 4u );
 
   // Row Address Set (2B) also called as page address set
   params[0] = y_start >> 8u;
   params[1] = 0xFF & y_start;
   params[2] = y_end >> 8u;
   params[3] = 0xFF & y_end;
-  ili9341_send_cmd( ILI9341_RASET );
-  ili9341_send_data( params, 4u );
+  ili9341_send_cmd( ILI9341_RASET, params, 4u );
 }
 
 void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color )
 {
   uint8_t data[2] = { (color>>8u), (color & 0xFF) };
   ili9341_set_window( x, y, x, y);
-  // ILI9341_SendCommand(ILI9341_GRAM, 0u, 0u );
-  // ILI9341_SendData( data, 2u);
-  // OR
-  ili9341_send_cmd(ILI9341_GRAM);
-  ili9341_send_data(data, 2u );
+  ili9341_send_cmd(ILI9341_GRAM, data, 2u );
 }
 
-//void ili9341_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * color_map)
-//{
-//	uint8_t data[4];
-//
-//	// Column addresses
-//	ili9341_send_cmd(0x2A);
-//	data[0] = (area->x1 >> 8) & 0xFF;
-//	data[1] = area->x1 & 0xFF;
-//	data[2] = (area->x2 >> 8) & 0xFF;
-//	data[3] = area->x2 & 0xFF;
-//	ili9341_send_data(data, 4);
-//
-//	// Page addresses
-//	ili9341_send_cmd(0x2B);
-//	data[0] = (area->y1 >> 8) & 0xFF;
-//	data[1] = area->y1 & 0xFF;
-//	data[2] = (area->y2 >> 8) & 0xFF;
-//	data[3] = area->y2 & 0xFF;
-//	ili9341_send_data(data, 4);
-//
-//	// Memory write
-//	ili9341_send_cmd(0x2C);
-//	uint32_t size = lv_area_get_width(area) * lv_area_get_height(area);
-//	ili9341_send_color((void*)color_map, size * 2);
-//}
+void ili9341_fill( uint16_t color )
+{
+  uint32_t total_pixel_counts = ILI9341_PIXEL_COUNT;
+  uint8_t data[2] = { (color >> 8u), (color & 0xFF) };
 
+  ili9341_set_window( 0u, 0u, (lcd_width-1u), (lcd_height-1u) );
+  ili9341_send_cmd(ILI9341_GRAM, 0u, 0u );
+  while( total_pixel_counts )
+  {
+    ili9341_send_data( data, 2u );
+    total_pixel_counts--;
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+  }
+}
 
 // Private Function Definitions
 static void ili9341_reset(void)
 {
   // ili9341 software reset command
-  ili9341_send_cmd(ILI9341_SWRESET);
+  ili9341_send_cmd(ILI9341_SWRESET, 0, 0);
 }
 
 static void ili9341_sleep_out(void)
 {
-  ili9341_send_cmd(ILI9341_SLEEP_OUT);
+  ili9341_send_cmd(ILI9341_SLEEP_OUT, 0, 0);
 }
 
-static void ili9341_send_cmd(uint8_t cmd)
+
+static void ili9341_send_cmd(uint8_t cmd, void * data, uint16_t length)
 {
-  display_send_cmd( cmd );
+  display_send_cmd(cmd, data, length);
 }
 
 static void ili9341_send_data(void * data, uint16_t length)
