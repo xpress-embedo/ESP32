@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include "ili9341.h"
+#include "xpt2046.h"
 
 // Defines
 // Display Resolution
@@ -31,10 +33,13 @@
 #define TOUCH_SPI_MOSI                (TFT_SPI_MOSI)
 #define TOUCH_SPI_MISO                (TFT_SPI_MISO)
 #define TOUCH_SPI_SCLK                (TFT_SPI_SCLK)
-#define TOUCH_SPI_CS                  (TFT_SPI_CS)
+#define TOUCH_SPI_CS                  (GPIO_NUM_2)
 
 #define TFT_CS_LOW()                 gpio_set_level(TFT_SPI_CS, 0)
 #define TFT_CS_HIGH()                gpio_set_level(TFT_SPI_CS, 1)
+#define TOUCH_CS_LOW()               gpio_set_level(TOUCH_SPI_CS, 0)
+#define TOUCH_CS_HIGH()              gpio_set_level(TOUCH_SPI_CS, 1)
+
 #define TFT_DC_LOW()                 gpio_set_level(TFT_PIN_DC, 0)
 #define TFT_DC_HIGH()                gpio_set_level(TFT_PIN_DC, 1)
 
@@ -43,5 +48,6 @@ void tft_init( void );
 void tft_delay_ms(uint32_t delay);
 void tft_send_cmd( uint8_t cmd, const uint8_t *data, int len );
 void tft_send_data( const uint8_t *data, int len );
+void touch_read_data( uint8_t cmd, uint8_t *data, int len );
 
 #endif /* MAIN_TFT_H_ */
