@@ -12,8 +12,8 @@
 
 #define CMD_X_READ                  0b10010000  // NOTE: XPT2046 data sheet says this is actually Y
 #define CMD_Y_READ                  0b11010000  // NOTE: XPT2046 data sheet says this is actually X
-#define CMD_Z1_READ                 0b10110000
-#define CMD_Z2_READ                 0b11000000
+#define CMD_Z1_READ                 0b10110000  // 0xB0
+#define CMD_Z2_READ                 0b11000000  // 0xC0
 #define XPT2046_TOUCH_THRESHOLD     400 // Threshold for touch detection
 
 typedef enum {
@@ -61,7 +61,6 @@ static int16_t xpt2046_cmd(uint8_t cmd)
   uint8_t data[2] = {0x00, 0x00};
   int16_t val = 0;
   touch_read_data( cmd, data, 2 );
-  printf("Data Read: %d and %d\n", data[0], data[1]);
   val = (data[0] << 8) | data[1];
   return val;
 }
@@ -69,20 +68,18 @@ static int16_t xpt2046_cmd(uint8_t cmd)
 static xpt2046_touch_detect_t xpt2048_is_touch_detected(void)
 {
   xpt2046_touch_detect_t touch_detect = TOUCH_NOT_DETECTED;
+
   int16_t z1 = xpt2046_cmd(CMD_Z1_READ) >> 3;
   int16_t z2 = xpt2046_cmd(CMD_Z2_READ) >> 3;
 
-  printf("Z1 = %d, Z2 = %d, ", z1, z2);
-  z1 = z1 >> 3;
-  z2 = z2 >> 3;
-
   int16_t z = z1 + 4096 - z2;
 
-  printf("Z = %d\n", z);
+  printf("Z1 = %d, Z2 = %d, Z = %d\n", z1, z2, z);
 
   if( z > XPT2046_TOUCH_THRESHOLD )
   {
     touch_detect = TOUCH_DETECTED;
+    printf("touch detected\n");
   }
   return touch_detect;
 }
