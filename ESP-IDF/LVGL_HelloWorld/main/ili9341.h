@@ -14,13 +14,12 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include <stdbool.h>
-#include <unistd.h>
+#include <stdint.h>
 
 // Defines
 // LCD Height and Width
-#define ILI9341_LCD_WIDTH             (DISP_HOR_RES_MAX)
-#define ILI9341_LCD_HEIGHT            (DISP_VER_RES_MAX)
+#define ILI9341_LCD_WIDTH             (TFT_HOR_RES_MAX)
+#define ILI9341_LCD_HEIGHT            (TFT_VER_RES_MAX)
 
 #define ILI9341_PIXEL_COUNT           (ILI9341_LCD_WIDTH*ILI9341_LCD_HEIGHT)
 

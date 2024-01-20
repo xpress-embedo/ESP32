@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "display_mng.h"
+
+#include "tft.h"
 // #include "lvgl.h"
 
 //static void Display_Vibgyor( void )
@@ -94,7 +95,7 @@
 
 void app_main(void)
 {
-  display_init();
+  tft_init();
   // Display_Vibgyor();
   while (true)
   {

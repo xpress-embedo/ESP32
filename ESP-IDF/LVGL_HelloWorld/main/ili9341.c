@@ -5,14 +5,10 @@
  *      Author: xpress_embedo
  */
 #include "ili9341.h"
-#include "display_mng.h"
-#include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+
+#include "tft.h"
 
 // Defines
-#define TAG "ILI9341"
-
 #define ILI9341_MADCTL_MY           (0x80u)   // Bottom to top
 #define ILI9341_MADCTL_MX           (0x40u)   // Right to left
 #define ILI9341_MADCTL_MV           (0x20u)   // Reverse Mode
@@ -104,13 +100,11 @@ void ili9341_init( void )
 
   ili9341_reset();
 
-  vTaskDelay(250 / portTICK_PERIOD_MS);
+  tft_delay_ms(250);
 
   ili9341_sleep_out();
 
-  vTaskDelay(250 / portTICK_PERIOD_MS);
-
-  ESP_LOGI(TAG, "LCD ILI9341 Initialization.");
+  tft_delay_ms(250);
 
   // Send all the commands
   uint16_t cmd = 0;
@@ -119,11 +113,11 @@ void ili9341_init( void )
     ili9341_send_cmd( ili_init_cmds[cmd].cmd, ili_init_cmds[cmd].data, (ili_init_cmds[cmd].databytes & 0x1F) );
     if (ili_init_cmds[cmd].databytes & 0x80)
     {
-      vTaskDelay(200 / portTICK_PERIOD_MS);
+      tft_delay_ms(250);
     }
     cmd++;
-    }
   }
+}
 
 void ili9341_set_orientation( ili9341_orientation_e orientation )
 {
@@ -461,12 +455,12 @@ static void ili9341_sleep_out(void)
 
 static void ili9341_send_cmd(uint8_t cmd, void * data, uint16_t length)
 {
-  display_send_cmd(cmd, data, length);
+  tft_send_cmd(cmd, data, length);
 }
 
 static void ili9341_send_data(void * data, uint16_t length)
 {
-  display_send_data(data, length);
+  tft_send_data(data, length);
 }
 
 

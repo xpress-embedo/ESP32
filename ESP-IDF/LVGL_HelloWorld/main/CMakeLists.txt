@@ -3,7 +3,7 @@
 
 idf_component_register(
     SRCS main.c         # list the source files of this component
-    display_mng.c
+    tft.c
     ili9341.c
     INCLUDE_DIRS        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
