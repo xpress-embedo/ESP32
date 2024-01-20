@@ -61,6 +61,7 @@ static int16_t xpt2046_cmd(uint8_t cmd)
   uint8_t data[2] = {0x00, 0x00};
   int16_t val = 0;
   touch_read_data( cmd, data, 2 );
+  printf("Data Read: %d and %d\n", data[0], data[1]);
   val = (data[0] << 8) | data[1];
   return val;
 }
