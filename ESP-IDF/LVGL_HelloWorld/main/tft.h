@@ -50,4 +50,7 @@ void tft_send_cmd( uint8_t cmd, const uint8_t *data, int len );
 void tft_send_data( const uint8_t *data, int len );
 void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len );
 
+uint16_t tft_get_width( void );
+uint16_t tft_get_height( void );
+
 #endif /* MAIN_TFT_H_ */

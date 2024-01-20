@@ -177,6 +177,16 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
   TOUCH_CS_HIGH();
 }
 
+uint16_t tft_get_width( void )
+{
+  return ili9341_get_width();
+}
+
+uint16_t tft_get_height( void )
+{
+  return ili9341_get_height();
+}
+
 // Private Function Definitions
 static void tft_driver_init( void )
 {
