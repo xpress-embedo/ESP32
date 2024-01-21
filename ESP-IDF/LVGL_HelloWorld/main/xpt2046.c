@@ -10,8 +10,8 @@
 
 // Defines
 
-#define CMD_X_READ                  0b10010000  // NOTE: XPT2046 data sheet says this is actually Y
-#define CMD_Y_READ                  0b11010000  // NOTE: XPT2046 data sheet says this is actually X
+#define CMD_X_READ                  0b10010000  // NOTE: XPT2046 data sheet says this is actually Y 0x90
+#define CMD_Y_READ                  0b11010000  // NOTE: XPT2046 data sheet says this is actually X 0xD0
 #define CMD_Z1_READ                 0b10110000  // 0xB0
 #define CMD_Z2_READ                 0b11000000  // 0xC0
 #define XPT2046_TOUCH_THRESHOLD     400 // Threshold for touch detection
@@ -20,9 +20,9 @@
 #define XPT2046_Y_MIN               200
 #define XPT2046_X_MAX               1800
 #define XPT2046_Y_MAX               1800
-#define XPT2046_X_INV               1
+#define XPT2046_X_INV               0
 #define XPT2046_Y_INV               0
-#define XPT2046_XY_SWAP             1
+#define XPT2046_XY_SWAP             0
 
 
 typedef enum {
@@ -56,24 +56,29 @@ void xpt2046_read(void)
   int16_t x = last_x;
   int16_t y = last_y;
 
-  if( xpt2048_is_touch_detected() == TOUCH_DETECTED )
+  // if( xpt2048_is_touch_detected() == TOUCH_DETECTED )
+  if( 1 )
   {
     valid = true;
+    xpt2046_cmd(CMD_X_READ);
+    xpt2046_cmd(CMD_X_READ);
+    xpt2046_cmd(CMD_X_READ);
     x = xpt2046_cmd(CMD_X_READ);
+    tft_delay_ms(100);
     y = xpt2046_cmd(CMD_Y_READ);
-    printf("\nX = %d, Y = %d\n", x, y);
+    // printf("\nX = %d, Y = %d\n", x, y);
 
     // Normalize Data back to 12-bits
     x = x >> 4;
     y = y >> 4;
-    printf("Normalize X = %d, Y = %d\n", x, y);
+    // printf("Normalize X = %d, Y = %d\n", x, y);
 
-    xpt2046_corr(&x, &y);
-    xpt2046_avg(&x, &y);
+    // xpt2046_corr(&x, &y);
+    // xpt2046_avg(&x, &y);
 
     last_x = x;
     last_y = y;
-    printf("Calculated X = %d, Y = %d\n\n", x, y);
+    // printf("Calculated X = %d, Y = %d\n\n", x, y);
   }
   else
   {
@@ -117,9 +122,13 @@ static void xpt2046_avg(int16_t * x, int16_t * y)
 static int16_t xpt2046_cmd(uint8_t cmd)
 {
   uint8_t data[2] = {0x00, 0x00};
+  // uint16_t temp = 0;
   int16_t val = 0;
   touch_read_data( cmd, data, 2 );
+  // temp = data[0] << 5;
+  // temp |= (data[1] >> 3);
   val = (data[0] << 8) | data[1];
+  printf("Raw Data: 0x%X, 0x%X\n", data[0], data[1]);
   return val;
 }
 
@@ -132,12 +141,12 @@ static xpt2046_touch_detect_t xpt2048_is_touch_detected(void)
 
   int16_t z = z1 + 4096 - z2;
 
-  printf("Z1 = %d, Z2 = %d, Z = %d\n", z1, z2, z);
+  // printf("Z1 = %d, Z2 = %d, Z = %d\n", z1, z2, z);
 
   if( z > XPT2046_TOUCH_THRESHOLD )
   {
     touch_detect = TOUCH_DETECTED;
-    printf("touch detected\n");
+    // printf("touch detected\n");
   }
   return touch_detect;
 }
@@ -151,6 +160,7 @@ static void xpt2046_corr(int16_t * x, int16_t * y)
   *y = swap_tmp;
 #endif
 
+  printf("Correlation Actual x = %d, y = %d\n", *x, *y);
   if( (*x) > XPT2046_X_MIN )
   {
     (*x) -= XPT2046_X_MIN;
@@ -168,10 +178,13 @@ static void xpt2046_corr(int16_t * x, int16_t * y)
   {
     (*y) = 0;
   }
+  printf("Correlation Modified x = %d, y = %d\n", *x, *y);
 
   (*x) = (uint32_t)( (uint32_t)(*x) * (uint32_t)tft_get_width()) / (XPT2046_X_MAX - XPT2046_X_MIN);
 
   (*y) = (uint32_t)( (uint32_t)(*y) * (uint32_t)tft_get_height()) / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+
+  printf("Correlation Translated x = %d, y = %d\n", *x, *y);
 
 #if XPT2046_X_INV != 0
   (*x) =  tft_get_width() - (*x);

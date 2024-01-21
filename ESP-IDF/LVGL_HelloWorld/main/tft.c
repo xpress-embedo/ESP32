@@ -12,8 +12,8 @@
 #include "tft.h"
 
 // Private Macros
-#define TFT_SPI_CLK_SPEED             (40*1000*1000)
-#define TOUCH_SPI_CLK_SPEED           (20*1000)
+#define TFT_SPI_CLK_SPEED             (40*1000*1000)      // 40MHz
+#define TOUCH_SPI_CLK_SPEED           (25*1000)       // 2.5MHz
 
 #define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 40)
 
@@ -143,13 +143,16 @@ void tft_send_data( const uint8_t *data, int len )
 //  esp_err_t ret;
 //  spi_transaction_t t;
 //
+//  TFT_CS_HIGH();
 //  TOUCH_CS_LOW();
 //  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-//  t.length = (len + sizeof(cmd)) * 8;
+//  t.length = (len + 1) * 8;
 //  t.rxlength = (len * 8);
 //  t.cmd = cmd;
 //  t.rx_buffer = data;
+//  t.flags = SPI_TRANS_USE_RXDATA;
 //  ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
+//  // ret = spi_device_transmit(spi_touch_handle, &t);  // transmit
 //  TOUCH_CS_HIGH();
 //  assert(ret == ESP_OK);
 //}
@@ -158,6 +161,7 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
 {
   esp_err_t ret;
   spi_transaction_t t;
+  TFT_CS_HIGH();
   TOUCH_CS_LOW();
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
   t.length = 8;                     // Commands are 8-bits
@@ -170,6 +174,7 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
     t.length = len*8;
     t.rxlength = (len * 8);
     t.rx_buffer = data;
+    t.flags = SPI_TRANS_USE_RXDATA;
     ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
     TOUCH_CS_HIGH();
     assert(ret == ESP_OK);
