@@ -138,48 +138,24 @@ void tft_send_data( const uint8_t *data, int len )
   assert(ret == ESP_OK);            // should have no issues
 }
 
-//void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
-//{
-//  esp_err_t ret;
-//  spi_transaction_t t;
-//
-//  TFT_CS_HIGH();
-//  TOUCH_CS_LOW();
-//  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-//  t.length = (len + 1) * 8;
-//  t.rxlength = (len * 8);
-//  t.cmd = cmd;
-//  t.rx_buffer = data;
-//  t.flags = SPI_TRANS_USE_RXDATA;
-//  ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
-//  // ret = spi_device_transmit(spi_touch_handle, &t);  // transmit
-//  TOUCH_CS_HIGH();
-//  assert(ret == ESP_OK);
-//}
-
 void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
 {
   esp_err_t ret;
   spi_transaction_t t;
+
   TFT_CS_HIGH();
   TOUCH_CS_LOW();
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-  t.length = 8;                     // Commands are 8-bits
-  t.tx_buffer = &cmd;               // The data is command itself
+  t.length = (len * 8);
+  t.rxlength = (len * 8);
+  t.cmd = cmd;
+  t.rx_buffer = data;
+  // t.flags = SPI_TRANS_USE_RXDATA;    // if used this the received data will be in rx_data
+  t.flags = 0;                          // recived data will be in rx_buffer and copied to *data buffer
   ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
-  assert(ret == ESP_OK);            // should have no issues
-  if( len )
-  {
-    memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-    t.length = len*8;
-    t.rxlength = (len * 8);
-    t.rx_buffer = data;
-    t.flags = SPI_TRANS_USE_RXDATA;
-    ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
-    TOUCH_CS_HIGH();
-    assert(ret == ESP_OK);
-  }
+  // ret = spi_device_transmit(spi_touch_handle, &t);  // transmit
   TOUCH_CS_HIGH();
+  assert(ret == ESP_OK);
 }
 
 uint16_t tft_get_width( void )
@@ -241,6 +217,7 @@ static void tft_driver_init( void )
     .pre_cb = NULL,                 // callback to be called before transmission is started
     .post_cb = NULL,                // callback to be called after transmission is completed
     .flags = SPI_DEVICE_NO_DUMMY,
+    .command_bits = 8,              // for touch spi, we need one 8-bit command
   };
 
   // initialize the SPI bus
