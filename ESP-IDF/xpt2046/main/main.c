@@ -64,6 +64,7 @@ void app_main(void)
     .queue_size = 50,
     .pre_cb = NULL,
     .post_cb = NULL,
+    .command_bits = 8,
     .flags = SPI_DEVICE_NO_DUMMY,
   };
 
@@ -90,12 +91,11 @@ void app_main(void)
     printf("X = 0x%x, 0x%X\n", data1[0], data1[1] );
 
     touch_read_data(0xD0, data2, 2);
-    printf("X = 0x%x, 0x%X\n\n", data2[0], data2[1] );
+    printf("Y = 0x%x, 0x%X\n\n", data2[0], data2[1] );
     sleep(2);
   }
 }
 
-#if 0
 void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
 {
   esp_err_t ret;
@@ -103,40 +103,17 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
 
   TOUCH_CS_LOW();
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-  t.length = (len + sizeof(cmd)) * 8;
+  t.length = (len) * 8;
   t.rxlength = (len * 8);
   t.cmd = cmd;
   t.rx_buffer = data;
-  t.flags = SPI_TRANS_USE_RXDATA;
+  // t.flags = SPI_TRANS_USE_RXDATA;   // when SPI_TRANS_USE_RXDATA, data is present in rx_data buffer otherwise rx_buffer
+  t.flags = 0;                          // data will be recived in rx_buffer
   ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
   // ret = spi_device_transmit(spi_touch_handle, &t);  // transmit
-  printf("Function Data = 0x%x, 0x%X\n\n", t.rx_data[0], t.rx_data[1]);
+  // rx_data will contain data only when t.flags = SPI_TRANS_USE_RXDATA
+  // printf("rx_data = 0x%x, 0x%X\n", t.rx_data[0], t.rx_data[1]);
+  data = t.rx_data;
   TOUCH_CS_HIGH();
   assert(ret == ESP_OK);
 }
-#else
-void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
-{
-  esp_err_t ret;
-  spi_transaction_t t;
-  TOUCH_CS_LOW();
-  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-  t.length = 8;                     // Commands are 8-bits
-  t.tx_buffer = &cmd;               // The data is command itself
-  ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
-  assert(ret == ESP_OK);            // should have no issues
-  if( len )
-  {
-    memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-    t.length = len*8;
-    t.rxlength = (len * 8);
-    t.rx_buffer = data;
-    t.flags = SPI_TRANS_USE_RXDATA;
-    ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
-    printf("Function Data = 0x%x, 0x%X\n\n", t.rx_data[0], t.rx_data[1]);
-    TOUCH_CS_HIGH();
-    assert(ret == ESP_OK);
-  }
-  TOUCH_CS_HIGH();
-}
-#endif
