@@ -13,7 +13,7 @@
 
 // Private Macros
 #define TFT_SPI_CLK_SPEED             (40*1000*1000)      // 40MHz
-#define TOUCH_SPI_CLK_SPEED           (25*1000)       // 2.5MHz
+#define TOUCH_SPI_CLK_SPEED           (25*1000*100)       // 2.5MHz
 
 #define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 40)
 

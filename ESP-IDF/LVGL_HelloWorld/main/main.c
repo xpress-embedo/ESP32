@@ -4,19 +4,20 @@
 
 #include "tft.h"
 
+int16_t x = 0;
+int16_t y = 0;
+
 void app_main(void)
 {
   tft_init();
 
   while (true)
   {
-    xpt2046_read();
-    // printf("\n");
-    // ili9341_fill( ILI9341_DARKGREEN );
-    // tft_delay_ms(500);
-    // ili9341_fill( ILI9341_DARKCYAN );
-    tft_delay_ms(100);
-    // sleep();
+    if( xpt2046_read(&x, &y) )
+    {
+      printf("X = %d, Y = %d\n\n", x, y);
+    }
+    tft_delay_ms(10);
     // printf("Hello from app_main!\n");
     // lv_timer_handler();
   }

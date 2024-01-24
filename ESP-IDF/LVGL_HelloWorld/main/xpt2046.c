@@ -47,11 +47,11 @@ void xpt2046_init(void)
 
 }
 
-void xpt2046_read(void)
+uint8_t xpt2046_read(int16_t *det_x, int16_t *det_y)
 {
   static int16_t last_x = 0;
   static int16_t last_y = 0;
-  bool valid = false;
+  uint8_t valid = false;
 
   int16_t x = last_x;
   int16_t y = last_y;
@@ -61,26 +61,28 @@ void xpt2046_read(void)
     valid = true;
     xpt2046_cmd(CMD_X_READ);
     x = xpt2046_cmd(CMD_X_READ);
-    tft_delay_ms(100);
     y = xpt2046_cmd(CMD_Y_READ);
     // printf("\nX = %d, Y = %d\n", x, y);
 
     // Normalize Data back to 12-bits
     x = x >> 4;
     y = y >> 4;
-    printf("Normalize X = %d, Y = %d\n", x, y);
+    // printf("Normalize X = %d, Y = %d\n", x, y);
 
     xpt2046_corr(&x, &y);
     xpt2046_avg(&x, &y);
 
     last_x = x;
     last_y = y;
-    // printf("Calculated X = %d, Y = %d\n\n", x, y);
+    *det_x = x;
+    *det_y = y;
+    // printf("Mapped X = %d, Y = %d\n\n", x, y);
   }
   else
   {
     avg_last = 0;
   }
+  return valid;
 }
 
 // Private Function Definitions
@@ -145,6 +147,36 @@ static xpt2046_touch_detect_t xpt2048_is_touch_detected(void)
   return touch_detect;
 }
 
+/*
+ * Explanation about this function
+ * This function uses simple linear equation formula to calculated the mapped value.
+ * We checked manually by pressing at (0,0) of the touch screen, and let's say
+ * we get the value (XPT2046_X_MIN, XPT2046_Y_MIN) and then we touched at the
+ * point (max, max) which in our case is (320, 240) but could be different also
+ * and then we recorded the points (XPT2046_X_MAX, XPT2046_Y_MAX).
+ * What we want when we receive XPT2046_X_MIN we should map it to 0 i.e. minimum
+ * & when we received XPT2046_X_MAX we should map it to 320 i.e, maximum or tft width
+ * Here we will use the simple Liner Equation formula y = m*x + c
+ * where y is the output value for a given x (not to be confused with the x, y coordinates)
+ * m = (y2-y1)/(x2-x1)
+ * so our m = (tft_width - 0)/(x_max - x_min)
+ * Now we have the value of slope, we can use the formula to the find the y intercept i.e. c
+ * y1 = m*x1 + c
+ * using y1 = 0 which is the value when x1 = x_min
+ * 0 = ((tft_width - 0)/(x_max-x_min))*x_min + c
+ * c = 0 - ((tft_width - 0)/(x_max-x_min))*x_min
+ * c = ((tft_width)/(x_max-x_min))*x_min
+ * So now complete formula is to calculate the mapped value when a x is received is:
+ * y = m*x + c
+ * y = (tft_width)*x/(x_max - x_min) - ((tft_width)/(x_max-x_min))*x_min
+ * y = (tft_width/(x_max - x_min) (x - x_x_min)
+ * And if you see below, we are using the same formula, only thing is divided it
+ * into two steps x = x - x_min is first step and (tft_width/(x_max - x_min) is
+ * second step.
+ * Same thing is done for calculating the mapped y-coordinates
+ * NOTE: I am again writing here, don't get confused with x and y with x and y
+ * coordinates. In the above formula y means mapped value for input x.
+ */
 static void xpt2046_corr(int16_t * x, int16_t * y)
 {
 #if XPT2046_XY_SWAP != 0
@@ -172,17 +204,16 @@ static void xpt2046_corr(int16_t * x, int16_t * y)
   {
     (*y) = 0;
   }
-  printf("Correlation Modified x = %d, y = %d\n", *x, *y);
+  // printf("Correlation Modified x = %d, y = %d\n", *x, *y);
 
+
+  // Map X-Position to screen width
   (*x) = (uint32_t)( (uint32_t)(*x) * (uint32_t)tft_get_width()) / (XPT2046_X_MAX - XPT2046_X_MIN);
-  // (*x) = (uint32_t)( (uint32_t)(*x) * (uint32_t)tft_get_width());
-  // *(x) = (uint32_t)( (uint32_t)(*x) / (XPT2046_X_MAX - XPT2046_X_MIN));
 
+  // Map Y-Position to screen height
   (*y) = (uint32_t)( (uint32_t)(*y) * (uint32_t)tft_get_height()) / (XPT2046_Y_MAX - XPT2046_Y_MIN);
-  // (*y) = (uint32_t)( (uint32_t)(*y) * (uint32_t)tft_get_height());
-  // (*y) = (uint32_t)( (uint32_t)(*y) / (XPT2046_Y_MAX - XPT2046_Y_MIN));
 
-  printf("Correlation Translated x = %d, y = %d\n", *x, *y);
+  // printf("Correlation Translated x = %d, y = %d\n", *x, *y);
 
 #if XPT2046_X_INV != 0
   (*x) =  tft_get_width() - (*x);

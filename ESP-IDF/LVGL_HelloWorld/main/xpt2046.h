@@ -19,7 +19,7 @@ extern "C" {
 
 // Public Properties
 void xpt2046_init(void);
-void xpt2046_read(void);
+uint8_t xpt2046_read(int16_t *det_x, int16_t *det_y);
 
 
 #ifdef __cplusplus
