@@ -9,17 +9,22 @@
 #include "xpt2046.h"
 
 // Defines
-
 #define CMD_X_READ                  0b10010000  // NOTE: XPT2046 data sheet says this is actually Y 0x90
 #define CMD_Y_READ                  0b11010000  // NOTE: XPT2046 data sheet says this is actually X 0xD0
 #define CMD_Z1_READ                 0b10110000  // 0xB0
 #define CMD_Z2_READ                 0b11000000  // 0xC0
 #define XPT2046_TOUCH_THRESHOLD     400 // Threshold for touch detection
 #define XPT2046_AVG                 4
+
+// These are the values at lowest coordinates and maximum coordinates
+// These values are used to map the touch screen over display
+// These values can also be considered as calibration, a run-time calibration
+// is more meaningful but as of now it is hard-coded
 #define XPT2046_X_MIN               200
 #define XPT2046_Y_MIN               200
 #define XPT2046_X_MAX               1950
 #define XPT2046_Y_MAX               1860
+
 #define XPT2046_X_INV               0
 #define XPT2046_Y_INV               0
 #define XPT2046_XY_SWAP             0
@@ -42,11 +47,25 @@ int16_t avg_buf_y[XPT2046_AVG];
 uint8_t avg_last;
 
 // Public Function Definition
+
+/**
+ * @brief Initialize the Touch Screen drivers and other related stuff
+ *        Right now it is not used as drivers initialization will be done together
+ *        with the display initialization, in future here we can configure the
+ *        touch detection interrupt.
+ */
 void xpt2046_init(void)
 {
 
 }
 
+/**
+ * @brief This funcion returns the detected touch events and returns the values 
+ *        of x and y coordinates after mapping and averaging.
+ * @param det_x pointer to x coordinate
+ * @param det_y pointer to y coordinate
+ * @return true when touch is detected else false
+ */
 uint8_t xpt2046_read(int16_t *det_x, int16_t *det_y)
 {
   static int16_t last_x = 0;
@@ -86,6 +105,14 @@ uint8_t xpt2046_read(int16_t *det_x, int16_t *det_y)
 }
 
 // Private Function Definitions
+
+/**
+ * @brief This function performs the averaging on the samples.
+ *        Latest entry is inserted at the first index while previous entries are
+ *        shifted, this helps to reduce the noise and unintentional touches
+ * @param x pointer to data containing x coordinates
+ * @param y pointer to data containing y coordinates
+ */
 static void xpt2046_avg(int16_t * x, int16_t * y)
 {
   // Shift out the oldest data
@@ -119,6 +146,16 @@ static void xpt2046_avg(int16_t * x, int16_t * y)
   (*y) = (int32_t)y_sum / avg_last;
 }
 
+/**
+ * @brief The function is used to send command to the touch controller.
+ *        The function "touch_read_data" is implemented in other module to keep
+ *        this file generic.
+ * @param cmd Command to be transmitted to XPT2046
+ * @return the values read from the touch controller
+ * @note   The data is 16-bit while SPI returns the 8-bit data two times, hence
+ *         we shift the data[0] by 8 times and then or it with data[1] to make
+ *         2 8-bits data back into 16-bit data.
+ */
 static int16_t xpt2046_cmd(uint8_t cmd)
 {
   uint8_t data[2] = {0x00, 0x00};
@@ -128,6 +165,14 @@ static int16_t xpt2046_cmd(uint8_t cmd)
   return val;
 }
 
+/**
+ * @brief The function detects if touch is pressed somewhere or not.
+ *        This function works by reading the Z parameters which is also known as
+ *        pressure parameter, when pressure is greater than XPT2046_TOUCH_THRESHOLD
+ *        touch is detected.
+ * @param  none
+ * @return TOUCH_DETECTED if touch is detected else TOUCH_NOT_DETECTED
+ */
 static xpt2046_touch_detect_t xpt2048_is_touch_detected(void)
 {
   xpt2046_touch_detect_t touch_detect = TOUCH_NOT_DETECTED;
@@ -176,6 +221,13 @@ static xpt2046_touch_detect_t xpt2048_is_touch_detected(void)
  * Same thing is done for calculating the mapped y-coordinates
  * NOTE: I am again writing here, don't get confused with x and y with x and y
  * coordinates. In the above formula y means mapped value for input x.
+ */
+
+/**
+ * @brief This function is to map the received coordinates as per display size.
+ *        A detailed explainaton how this is done is explained above in comments.
+ * @param x pointer to x data
+ * @param y pointer to y data
  */
 static void xpt2046_corr(int16_t * x, int16_t * y)
 {
