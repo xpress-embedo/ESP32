@@ -9,16 +9,17 @@
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "ili9341.h"
 #include "tft.h"
 
 // Private Macros
-#define TFT_SPI_CLK_SPEED             (40*1000*1000)
+#define TFT_SPI_CLK_SPEED             (40*1000*1000)      // 40MHz
+#define TOUCH_SPI_CLK_SPEED           (25*1000*100)       // 2.5MHz
 
 #define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 40)
 
 // Private Variables
 spi_device_handle_t spi_tft_handle;
+spi_device_handle_t spi_touch_handle;
 // ---------------------------LVGL Related Stuff-------------------------------
 
 // Private Function Prototypes
@@ -34,40 +35,41 @@ void tft_init( void )
 {
   tft_driver_init();
   ili9341_init();
-  ili9341_set_orientation(LCD_LANDSCAPE);
-  ili9341_set_orientation(LCD_ORIENTATION_180);
-  ili9341_set_orientation(LCD_PORTRAIT);
-  // Some Test Code Starts
-  ili9341_draw_pixel( 0u, 0u, ILI9341_RED );
-  tft_delay_ms(500);
-  ili9341_set_orientation( LCD_ORIENTATION_0 );
-  ili9341_fill( ILI9341_RED );
-  tft_delay_ms(500);
-  ili9341_set_orientation( LCD_ORIENTATION_90 );
-  ili9341_fill( ILI9341_ORANGE );
-  tft_delay_ms(500);
-  ili9341_set_orientation( LCD_ORIENTATION_180 );
-  ili9341_fill( ILI9341_PINK );
-  tft_delay_ms(500);
-  ili9341_set_orientation( LCD_ORIENTATION_270 );
-  ili9341_fill( ILI9341_DARKGREEN );
-  tft_delay_ms(500);
-  ili9341_fill( ILI9341_DARKCYAN );
-  tft_delay_ms(500);
-  ili9341_fill_rectangle( 0u, 0u, 50u, 50u, ILI9341_WHITE );
-  tft_delay_ms(500);
-  ili9341_fill_rectangle( 50u, 50u, 100u, 100u, ILI9341_ORANGE );
-  tft_delay_ms(500);
-  ili9341_fill_rectangle( 100u, 100u, 150u, 150u, ILI9341_DARKGREEN );
-  tft_delay_ms(500);
-  ili9341_draw_circle( 20, 20, 20, ILI9341_PINK);
-  tft_delay_ms(500);
-  ili9341_draw_line( 0u, 0u, ili9341_get_width(), ili9341_get_height(), ILI9341_DARKGREEN);
-  tft_delay_ms(500);
-  ili9341_draw_h_line( 10u, 10u, 50u, ILI9341_ORANGE );
-  tft_delay_ms(500);
-  ili9341_draw_v_line( 10u, 10u, 50u, ILI9341_ORANGE );
-  tft_delay_ms(500);
+  ili9341_set_orientation(LCD_ORIENTATION_270);
+//  ili9341_set_orientation(LCD_LANDSCAPE);
+//  ili9341_set_orientation(LCD_ORIENTATION_180);
+//  ili9341_set_orientation(LCD_PORTRAIT);
+//  // Some Test Code Starts
+//  ili9341_draw_pixel( 0u, 0u, ILI9341_RED );
+//  tft_delay_ms(500);
+//  ili9341_set_orientation( LCD_ORIENTATION_0 );
+//  ili9341_fill( ILI9341_RED );
+//  tft_delay_ms(500);
+//  ili9341_set_orientation( LCD_ORIENTATION_90 );
+//  ili9341_fill( ILI9341_ORANGE );
+//  tft_delay_ms(500);
+//  ili9341_set_orientation( LCD_ORIENTATION_180 );
+//  ili9341_fill( ILI9341_PINK );
+//  tft_delay_ms(500);
+//  ili9341_set_orientation( LCD_ORIENTATION_270 );
+//  ili9341_fill( ILI9341_DARKGREEN );
+//  tft_delay_ms(500);
+//  ili9341_fill( ILI9341_DARKCYAN );
+//  tft_delay_ms(500);
+//  ili9341_fill_rectangle( 0u, 0u, 50u, 50u, ILI9341_WHITE );
+//  tft_delay_ms(500);
+//  ili9341_fill_rectangle( 50u, 50u, 100u, 100u, ILI9341_ORANGE );
+//  tft_delay_ms(500);
+//  ili9341_fill_rectangle( 100u, 100u, 150u, 150u, ILI9341_DARKGREEN );
+//  tft_delay_ms(500);
+//  ili9341_draw_circle( 20, 20, 20, ILI9341_PINK);
+//  tft_delay_ms(500);
+//  ili9341_draw_line( 0u, 0u, ili9341_get_width(), ili9341_get_height(), ILI9341_DARKGREEN);
+//  tft_delay_ms(500);
+//  ili9341_draw_h_line( 10u, 10u, 50u, ILI9341_ORANGE );
+//  tft_delay_ms(500);
+//  ili9341_draw_v_line( 10u, 10u, 50u, ILI9341_ORANGE );
+//  tft_delay_ms(500);
   // Some Test Code Ends
 }
 
@@ -136,14 +138,45 @@ void tft_send_data( const uint8_t *data, int len )
   assert(ret == ESP_OK);            // should have no issues
 }
 
+void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
+{
+  esp_err_t ret;
+  spi_transaction_t t;
+
+  TFT_CS_HIGH();
+  TOUCH_CS_LOW();
+  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
+  t.length = (len * 8);
+  t.rxlength = (len * 8);
+  t.cmd = cmd;
+  t.rx_buffer = data;
+  // t.flags = SPI_TRANS_USE_RXDATA;    // if used this the received data will be in rx_data
+  t.flags = 0;                          // recived data will be in rx_buffer and copied to *data buffer
+  ret = spi_device_polling_transmit(spi_touch_handle, &t);  // transmit
+  // ret = spi_device_transmit(spi_touch_handle, &t);  // transmit
+  TOUCH_CS_HIGH();
+  assert(ret == ESP_OK);
+}
+
+uint16_t tft_get_width( void )
+{
+  return ili9341_get_width();
+}
+
+uint16_t tft_get_height( void )
+{
+  return ili9341_get_height();
+}
+
 // Private Function Definitions
 static void tft_driver_init( void )
 {
   esp_err_t ret;
   spi_dma_chan_t dma_channel = SPI_DMA_CH1;   // don't enable DMA on Channel-0
 
-  // SPI bus configuration
-  spi_bus_config_t bus_cfg =
+  // SPI bus configuration for display
+  // NOTE: the same bus configuration is used for touch also todo: check later
+  spi_bus_config_t tft_bus_cfg =
   {
     .mosi_io_num = TFT_SPI_MOSI,
     .miso_io_num = TFT_SPI_MISO,
@@ -154,7 +187,7 @@ static void tft_driver_init( void )
   };
 
   // LCD Device configuration
-  spi_device_interface_config_t dev_config =
+  spi_device_interface_config_t tft_dev_config =
   {
     .clock_speed_hz = TFT_SPI_CLK_SPEED,
     .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
@@ -172,23 +205,44 @@ static void tft_driver_init( void )
     .flags = SPI_DEVICE_NO_DUMMY,
   };
 
+  // touch device config
+  spi_device_interface_config_t touch_dev_config =
+  {
+    .clock_speed_hz = TOUCH_SPI_CLK_SPEED,
+    .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
+    // .spics_io_num = TFT_SPI_CS,  // chip select for this device (manual control now)
+    .spics_io_num = -1,             // chip select for this device (manual control)
+    .input_delay_ns = 0,            // todo
+    .queue_size = 50,
+    .pre_cb = NULL,                 // callback to be called before transmission is started
+    .post_cb = NULL,                // callback to be called after transmission is completed
+    .flags = SPI_DEVICE_NO_DUMMY,
+    .command_bits = 8,              // for touch spi, we need one 8-bit command
+  };
+
   // initialize the SPI bus
-  ret = spi_bus_initialize(TFT_SPI_HOST, &bus_cfg, dma_channel);
+  ret = spi_bus_initialize(TFT_SPI_HOST, &tft_bus_cfg, dma_channel);
   assert(ret == ESP_OK);
 
   // attach the LCD to the SPI bus
-  ret = spi_bus_add_device(TFT_SPI_HOST, &dev_config, &spi_tft_handle);
+  ret = spi_bus_add_device(TFT_SPI_HOST, &tft_dev_config, &spi_tft_handle);
+  assert(ret == ESP_OK);
+
+  // attach the touch to the SPI bus
+  ret = spi_bus_add_device(TFT_SPI_HOST, &touch_dev_config, &spi_touch_handle);
   assert(ret == ESP_OK);
 
   //Initialize non-SPI GPIOs
   gpio_config_t io_conf = {};
-  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS);
+  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS) | (1u<<TOUCH_SPI_CS);
   io_conf.mode = GPIO_MODE_OUTPUT;
   io_conf.pull_up_en = true;
   gpio_config(&io_conf);
 
   TFT_CS_LOW();
   TFT_CS_HIGH();
+  TOUCH_CS_LOW();
+  TOUCH_CS_HIGH();
 }
 
 /*
