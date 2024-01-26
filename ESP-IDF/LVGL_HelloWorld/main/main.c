@@ -1,24 +1,22 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-#include "tft.h"
+#include "display_mng.h"
 
 int16_t x = 0;
 int16_t y = 0;
 
 void app_main(void)
 {
-  tft_init();
+  display_init();
 
   while (true)
   {
-    if( xpt2046_read(&x, &y) )
-    {
-      printf("X = %d, Y = %d\n\n", x, y);
-    }
-    tft_delay_ms(10);
-    // printf("Hello from app_main!\n");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    printf("Hello from app_main!\n");
     // lv_timer_handler();
   }
 }

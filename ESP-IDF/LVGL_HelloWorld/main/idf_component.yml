@@ -1,5 +1,6 @@
 ## IDF Component Manager Manifest File
 dependencies:
+  lvgl/lvgl: "^9.0.0"
   ## lvgl/lvgl: "==8.3.11"
   ## Required IDF version
   idf:

@@ -6,6 +6,7 @@ idf_component_register(
     tft.c
     ili9341.c
     xpt2046.c
+    display_mng.c
     INCLUDE_DIRS        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)
