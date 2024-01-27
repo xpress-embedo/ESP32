@@ -67,9 +67,9 @@ void display_init( void )
   lv_disp_drv_init(&disp_drv);
   disp_drv.hor_res = tft_get_width();
   disp_drv.ver_res = tft_get_height();
-  // disp_drv.flush_cb = display_flush_cb;
   // disp_drv.flush_cb = display_flush_slow_cb;
-  disp_drv.flush_cb = display_flush_swap_cb;
+  disp_drv.flush_cb = display_flush_cb;
+  // disp_drv.flush_cb = display_flush_swap_cb;
   disp_drv.drv_update_cb = NULL;        // todo
   disp_drv.draw_buf = &draw_buf;
   // user data todo
@@ -112,24 +112,14 @@ static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
 
 static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
-  size_t idx = 0;
-  ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
-  // transfer frame buffer
-  // size_t len = ((area->x2+1 - area->x1) * (area->y2+1 - area->y1) * 2);
-  // tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
+  size_t width = (area->x2 - area->x1 + 1);
+  size_t height = (area->y2 - area->y1 + 1);
+  size_t len = width * height * 2;
 
-  uint8_t data[2];
-  uint16_t temp;
-  size_t len = ((area->x2+1 - area->x1) * (area->y2+1 - area->y1));
-  tft_send_cmd(ILI9341_GRAM, 0, 0);
-  for( idx = 0; idx < len; idx++ )
-  {
-    temp = color_map->full;
-    data[0] = (temp)>>8;
-    data[1] = (temp) & 0xFF;
-    tft_send_data(data, 2);
-    color_map++;
-  }
+  ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
+
+  // transfer frame buffer
+  tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
 
   lv_disp_flush_ready(drv);
 }
@@ -145,6 +135,7 @@ static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   uint16_t temp;
 
   ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
+
   // transfer frame buffer
   // size_t len = ((area->x2+1 - area->x1) * (area->y2+1 - area->y1) * 2);
   // tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
