@@ -170,7 +170,7 @@ uint16_t tft_get_height( void )
 static void tft_driver_init( void )
 {
   esp_err_t ret;
-  spi_dma_chan_t dma_channel = SPI_DMA_DISABLED;   // don't enable DMA on Channel-0
+  spi_dma_chan_t dma_channel = SPI_DMA_CH1;   // don't enable DMA on Channel-0
 
   // SPI bus configuration for display
   // NOTE: the same bus configuration is used for touch also todo: check later
