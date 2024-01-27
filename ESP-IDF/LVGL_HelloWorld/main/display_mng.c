@@ -19,6 +19,7 @@
 static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
+static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data);
 static void lvgl_tick(void *arg);
 
 // Public Function Definitions
@@ -88,7 +89,13 @@ void display_init( void )
   ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, LV_TICK_PERIOD_MS * 1000));  // here time is in micro seconds
 
   // configuring input devices
-  // todo
+  static lv_indev_drv_t indev_drv;
+  lv_indev_drv_init(&indev_drv);            // Basic initialization
+  indev_drv.type = LV_INDEV_TYPE_POINTER;   // touchpad and mouse
+  indev_drv.read_cb = display_input_read;   // register callback
+  // Register the driver in LVGL and save the created input device object
+  // lv_indev_t * my_indev = lv_indev_drv_register(&indev_drv);
+  lv_indev_drv_register(&indev_drv);
 }
 
 
@@ -137,9 +144,6 @@ static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
 
   // transfer frame buffer
-  // size_t len = ((area->x2+1 - area->x1) * (area->y2+1 - area->y1) * 2);
-  // tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
-
   tft_send_cmd(ILI9341_GRAM, 0, 0);
   for( idx = 0; idx < len; idx++ )
   {
@@ -151,6 +155,24 @@ static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   }
 
   lv_disp_flush_ready(drv);
+}
+
+static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
+{
+  static int16_t x = 0;
+  static int16_t y = 0;
+  // check if we have a touch detected or not
+  if( xpt2046_read(&x, &y) )
+  {
+    // we are here means touch is detected
+    data->point.x = x;
+    data->point.y = y;
+    data->state = LV_INDEV_STATE_PRESSED;
+  }
+  else
+  {
+    data->state = LV_INDEV_STATE_RELEASED;
+  }
 }
 
 static void lvgl_tick(void *arg)
