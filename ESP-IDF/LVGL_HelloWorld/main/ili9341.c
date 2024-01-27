@@ -38,6 +38,11 @@ static uint16_t lcd_width = ILI9341_LCD_WIDTH;
 static uint16_t lcd_height = ILI9341_LCD_HEIGHT;
 
 // Public Function Definition
+
+/**
+ * @brief Initialize the ILI9341 Display Controller
+ * @param  None
+ */
 void ili9341_init( void )
 {
   lcd_init_cmd_t ili_init_cmds[]=
@@ -56,45 +61,44 @@ void ili9341_init( void )
      * vcl = 0, ddvdh=3, vgh=1, vgl=2
      * DDVDH_ENH=1
      */
-    {0xED, {0x67, 0x03, 0X12, 0X81}, 4},
+    {ILI9341_POWER_SEQ, {0x67, 0x03, 0X12, 0X81}, 4},
     /* Driver timing control A,
      * non-overlap=default +1
      * EQ=default - 1, CR=default
      * pre-charge=default - 1
      */
-    {0xE8, {0x8A, 0x01, 0x78}, 3},
+    {ILI9341_DTCA, {0x8A, 0x01, 0x78}, 3},
     /* Power control A, Vcore=1.6V, DDVDH=5.6V */
-    {0xCB, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5},
+    {ILI9341_POWERA, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5},
     /* Pump ratio control, DDVDH=2xVCl */
-    {0xF7, {0x20}, 1},
-
-    {0xF7, {0x20}, 1},
+    {ILI9341_PRC, {0x20}, 1},
+    {ILI9341_PRC, {0x20}, 1},
     /* Driver timing control, all=0 unit */
-    {0xEA, {0x00, 0x00}, 2},
+    {ILI9341_DTCB, {0x00, 0x00}, 2},
     /* Power control 1, GVDD=4.75V */
-    {0xC0, {0x23}, 1},
+    {ILI9341_POWER1, {0x23}, 1},
     /* Power control 2, DDVDH=VCl*2, VGH=VCl*7, VGL=-VCl*3 */
-    {0xC1, {0x11}, 1},
+    {ILI9341_POWER2, {0x11}, 1},
     /* VCOM control 1, VCOMH=4.025V, VCOML=-0.950V */
-    {0xC5, {0x43, 0x4C}, 2},
+    {ILI9341_VCOM1, {0x43, 0x4C}, 2},
     /* VCOM control 2, VCOMH=VMH-2, VCOML=VML-2 */
-    {0xC7, {0xA0}, 1},
+    {ILI9341_VCOM2, {0xA0}, 1},
     /* Frame rate control, f=fosc, 70Hz fps */
-    {0xB1, {0x00, 0x1B}, 2},
+    {ILI9341_FRMCTR1, {0x00, 0x1B}, 2},
     /* Enable 3G, disabled */
-    {0xF2, {0x00}, 1},
+    {ILI9341_3GAMMA_EN, {0x00}, 1},
     /* Gamma set, curve 1 */
-    {0x26, {0x01}, 1},
+    {ILI9341_GAMMA, {0x01}, 1},
     /* Positive gamma correction */
-    {0xE0, {0x1F, 0x36, 0x36, 0x3A, 0x0C, 0x05, 0x4F, 0X87, 0x3C, 0x08, 0x11, 0x35, 0x19, 0x13, 0x00}, 15},
+    {ILI9341_PGAMMA, {0x1F, 0x36, 0x36, 0x3A, 0x0C, 0x05, 0x4F, 0X87, 0x3C, 0x08, 0x11, 0x35, 0x19, 0x13, 0x00}, 15},
     /* Negative gamma correction */
-    {0xE1, {0x00, 0x09, 0x09, 0x05, 0x13, 0x0A, 0x30, 0x78, 0x43, 0x07, 0x0E, 0x0A, 0x26, 0x2C, 0x1F}, 15},
+    {ILI9341_NGAMMA, {0x00, 0x09, 0x09, 0x05, 0x13, 0x0A, 0x30, 0x78, 0x43, 0x07, 0x0E, 0x0A, 0x26, 0x2C, 0x1F}, 15},
     /* Entry mode set, Low vol detect disabled, normal display */
-    {0xB7, {0x07}, 1},
+    {ILI9341_ETMOD, {0x07}, 1},
     /* Display function control */
-    {0xB6, {0x08, 0x82, 0x27}, 3},    /* Display on */
+    {ILI9341_DFC, {0x08, 0x82, 0x27}, 3},    /* Display on */
     {ILI9341_MAC, {0x48}, 1},
-    {0x29, {0}, 0x80},
+    {ILI9341_DISPLAY_ON, {0}, 0x80},
     {0x00, {0}, 0xff},
   };
 
@@ -119,6 +123,10 @@ void ili9341_init( void )
   }
 }
 
+/**
+ * @brief Set Display Orientation
+ * @param orientation 
+ */
 void ili9341_set_orientation( ili9341_orientation_e orientation )
 {
   uint8_t data = 0x00;
@@ -154,22 +162,43 @@ void ili9341_set_orientation( ili9341_orientation_e orientation )
   ili9341_send_cmd(ILI9341_MAC, &data, 1);
 }
 
+/**
+ * @brief Get Display Controller Set Orientation
+ * @param  None
+ * @return lcd orientation
+ */
 ili9341_orientation_e ili9341_get_orientation( void )
 {
   return lcd_orientation;
 }
 
+/**
+ * @brief Get display width
+ * @param  none
+ * @return display width
+ */
 uint16_t ili9341_get_width( void )
 {
   return lcd_width;
 }
 
+/**
+ * @brief Get display height
+ * @param  none
+ * @return display height
+ */
 uint16_t ili9341_get_height( void )
 {
   return lcd_height;
 }
 
-// Set the display area
+/**
+ * @brief Set the Display Area
+ * @param x_start x start position
+ * @param y_start y start position
+ * @param x_end   x end position
+ * @param y_end   y end position
+ */
 void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end )
 {
   uint8_t params[4] = { 0 };
@@ -188,6 +217,12 @@ void ili9341_set_window( uint16_t x_start, uint16_t y_start, uint16_t x_end, uin
   ili9341_send_cmd( ILI9341_RASET, params, 4u );
 }
 
+/**
+ * @brief Function to draw a pixel
+ * @param x   x-position to draw
+ * @param y   y-position to draw
+ * @param color color of the pixel
+ */
 void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color )
 {
   uint8_t data[2] = { (color>>8u), (color & 0xFF) };
@@ -195,6 +230,10 @@ void ili9341_draw_pixel( uint16_t x, uint16_t y, uint16_t color )
   ili9341_send_cmd(ILI9341_GRAM, data, 2u );
 }
 
+/**
+ * @brief Fill the display fully with the specified color
+ * @param color 
+ */
 void ili9341_fill( uint16_t color )
 {
   uint32_t total_pixel_counts = ILI9341_PIXEL_COUNT;
@@ -230,6 +269,17 @@ void ili9341_rectangle( int16_t x_upper_left, int16_t y_upper_left, int16_t x_bo
   ili9341_draw_h_line( x_upper_left, x_bottom_right, y_upper_left, color);
 }
 
+/**
+ * @brief Draws a filled rectangle on lcd.
+ * 
+ * Draws a rectangle on lcd by using the specified parameters.
+ * 
+ * @param x_start: x coordinate of the upper left rectangle corner. 
+ * @param y_start: y coordinate of the upper left rectangle corner. 
+ * @param x_end: x coordinate of the lower right rectangle corner. 
+ * @param y_end: y coordinate of the lower right rectangle corner. 
+ * @param color: color parameter
+ */
 void ili9341_fill_rectangle( int16_t x_start, int16_t y_start, int16_t x_end, int16_t y_end, uint16_t color )
 {
   uint32_t total_pixels_to_write = 0u;
@@ -422,16 +472,40 @@ void ili9341_draw_line( int16_t x_start, int16_t y_start, int16_t x_end, int16_t
   }
 }
 
+/**
+ * @brief Draw a horizontal line
+ * @param x_start x-position
+ * @param y_start y-position
+ * @param width width of the line
+ * @param color color of the line
+ */
 void ili9341_draw_h_line( int16_t x_start, int16_t y_start, int16_t width, uint16_t color )
 {
   ili9341_draw_line( x_start, y_start, (x_start+width-1u), y_start, color);
 }
 
+/**
+ * @brief Draw a vertical line
+ * @param x_start x-position
+ * @param y_start y-position
+ * @param width height of the line
+ * @param color color of the line
+ */
 void ili9341_draw_v_line( int16_t x_start, int16_t y_start, int16_t height, uint16_t color )
 {
   ili9341_draw_line( x_start, y_start, x_start, (y_start+height-1u), color);
 }
 
+/**
+ * @brief Draw a triangle
+ * @param x0 
+ * @param y0 
+ * @param x1 
+ * @param y1 
+ * @param x2 
+ * @param y2 
+ * @param color 
+ */
 void ili9341_draw_triangle( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
 {
   ili9341_draw_line(x0, y0, x1, y1, color);
@@ -441,23 +515,45 @@ void ili9341_draw_triangle( int16_t x0, int16_t y0, int16_t x1, int16_t y1, int1
 
 
 // Private Function Definitions
+
+/**
+ * @brief Send the Software Reset Command to the Display Controller
+ * @param  None
+ */
 static void ili9341_reset(void)
 {
   // ili9341 software reset command
   ili9341_send_cmd(ILI9341_SWRESET, 0, 0);
 }
 
+/**
+ * @brief Send the command to display controller to move out of the sleep mode
+ * @param  None
+ */
 static void ili9341_sleep_out(void)
 {
   ili9341_send_cmd(ILI9341_SLEEP_OUT, 0, 0);
 }
 
 
+/**
+ * @brief Send Command/Data to the TFT Controller
+ * 
+ * @param cmd   command value
+ * @param data  data buffer pointer
+ * @param len   length of the data
+ */
 static void ili9341_send_cmd(uint8_t cmd, void * data, size_t length)
 {
   tft_send_cmd(cmd, data, length);
 }
 
+/**
+ * @brief Send Data to the TFT Controller
+ * 
+ * @param data  data buffer pointer
+ * @param len   length of the data
+ */
 static void ili9341_send_data(void * data, size_t length)
 {
   tft_send_data(data, length);
