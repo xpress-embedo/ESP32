@@ -6,26 +6,32 @@
 #include "lvgl.h"
 #include "display_mng.h"
 
+// Private Variables
 static uint8_t button_counter = 0;
-lv_obj_t * count_label;
+static lv_obj_t * count_label;
 
-static void event_handler(lv_event_t * e)
+// Private Function Declarations
+void lv_button_demo(void);
+static void event_handler(lv_event_t * e);
+
+
+void app_main(void)
 {
-  lv_event_code_t code = lv_event_get_code(e);
+  display_init();
 
-  if(code == LV_EVENT_CLICKED)
+  lv_button_demo();
+
+  while (true)
   {
-    LV_LOG_USER("Clicked");
-    button_counter++;
-    lv_label_set_text_fmt(count_label, "Count: %d", button_counter);
-  }
-  else if(code == LV_EVENT_VALUE_CHANGED)
-  {
-    LV_LOG_USER("Toggled");
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    // printf("Hello from app_main!\n");
+    lv_timer_handler();
   }
 }
 
-void lv_example_btn_1(void)
+
+// Private Function Definitions
+void lv_button_demo(void)
 {
   lv_obj_t * label;
 
@@ -52,16 +58,18 @@ void lv_example_btn_1(void)
   lv_obj_center(label);
 }
 
-void app_main(void)
+static void event_handler(lv_event_t * e)
 {
-  display_init();
+  lv_event_code_t code = lv_event_get_code(e);
 
-  lv_example_btn_1();
-
-  while (true)
+  if( (code == LV_EVENT_CLICKED) || (code ==  LV_EVENT_LONG_PRESSED_REPEAT) )
   {
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-    // printf("Hello from app_main!\n");
-    lv_timer_handler();
+    LV_LOG_USER("Clicked");
+    button_counter++;
+    lv_label_set_text_fmt(count_label, "Count: %d", button_counter);
+  }
+  else if(code == LV_EVENT_VALUE_CHANGED)
+  {
+    LV_LOG_USER("Toggled");
   }
 }
