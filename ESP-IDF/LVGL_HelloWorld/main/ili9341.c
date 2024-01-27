@@ -29,8 +29,8 @@ typedef struct
 // Private Function Prototypes
 static void ili9341_reset(void);
 static void ili9341_sleep_out(void);
-static void ili9341_send_cmd(uint8_t cmd, void * data, uint16_t length);
-static void ili9341_send_data(void * data, uint16_t length);
+static void ili9341_send_cmd(uint8_t cmd, void * data, size_t length);
+static void ili9341_send_data(void * data, size_t length);
 
 // Private Variables
 static ili9341_orientation_e lcd_orientation = LCD_PORTRAIT;
@@ -453,12 +453,12 @@ static void ili9341_sleep_out(void)
 }
 
 
-static void ili9341_send_cmd(uint8_t cmd, void * data, uint16_t length)
+static void ili9341_send_cmd(uint8_t cmd, void * data, size_t length)
 {
   tft_send_cmd(cmd, data, length);
 }
 
-static void ili9341_send_data(void * data, uint16_t length)
+static void ili9341_send_data(void * data, size_t length)
 {
   tft_send_data(data, length);
 }

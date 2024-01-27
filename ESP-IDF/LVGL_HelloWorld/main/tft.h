@@ -47,8 +47,8 @@
 // Public Functions
 void tft_init( void );
 void tft_delay_ms(uint32_t delay);
-void tft_send_cmd( uint8_t cmd, const uint8_t *data, int len );
-void tft_send_data( const uint8_t *data, int len );
+void tft_send_cmd( uint8_t cmd, const uint8_t *data, size_t len );
+void tft_send_data( const uint8_t *data, size_t len );
 void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len );
 
 uint16_t tft_get_width( void );

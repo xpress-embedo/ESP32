@@ -83,7 +83,7 @@ void tft_delay_ms(uint32_t delay)
  * mode for higher speed. The overhead of interrupt transaction is more than
  * just waiting for the transaction to complete.
  */
-void tft_send_cmd( uint8_t cmd, const uint8_t *data, int len )
+void tft_send_cmd( uint8_t cmd, const uint8_t *data, size_t len )
 {
   esp_err_t ret;
   spi_transaction_t t;
@@ -117,7 +117,7 @@ void tft_send_cmd( uint8_t cmd, const uint8_t *data, int len )
  * mode for higher speed. The overhead of interrupt transaction is more than
  * just waiting for the transaction to complete.
  */
-void tft_send_data( const uint8_t *data, int len )
+void tft_send_data( const uint8_t *data, size_t len )
 {
   esp_err_t ret;
   spi_transaction_t t;
@@ -170,7 +170,7 @@ uint16_t tft_get_height( void )
 static void tft_driver_init( void )
 {
   esp_err_t ret;
-  spi_dma_chan_t dma_channel = SPI_DMA_CH1;   // don't enable DMA on Channel-0
+  spi_dma_chan_t dma_channel = SPI_DMA_DISABLED;   // don't enable DMA on Channel-0
 
   // SPI bus configuration for display
   // NOTE: the same bus configuration is used for touch also todo: check later
