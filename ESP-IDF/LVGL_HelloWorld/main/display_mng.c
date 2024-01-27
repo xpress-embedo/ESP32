@@ -16,10 +16,8 @@
 #define DISP_BUFFER_SIZE            (TFT_BUFFER_SIZE)
 
 // Private Function Declarations
-#if 1
 static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
-#endif
-static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
+static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void lvgl_tick(void *arg);
 
 // Public Function Definitions
@@ -68,8 +66,9 @@ void display_init( void )
   lv_disp_drv_init(&disp_drv);
   disp_drv.hor_res = tft_get_width();
   disp_drv.ver_res = tft_get_height();
-  disp_drv.flush_cb = display_flush_cb;
+  // disp_drv.flush_cb = display_flush_cb;
   // disp_drv.flush_cb = display_flush_slow_cb;
+  disp_drv.flush_cb = display_flush_swap_cb;
   disp_drv.drv_update_cb = NULL;        // todo
   disp_drv.draw_buf = &draw_buf;
   // user data todo
@@ -93,7 +92,6 @@ void display_init( void )
 
 
 // Private Function Definitions
-#if 1
 // This function is so slow that it will create a watchdog reset
 static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
@@ -110,9 +108,8 @@ static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   }
   lv_disp_flush_ready(drv);
 }
-#endif
 
-static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
   size_t idx = 0;
   ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
