@@ -23,6 +23,13 @@ static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data);
 static void lvgl_tick(void *arg);
 
 // Public Function Definitions
+
+/**
+ * @brief Display Initialize
+ *        Initialize the Display Controller, Touch, and Initialize LVGL Library
+ *        Also link draw buffer.
+ * @param  None
+ */
 void display_init( void )
 {
   // initialize the lvgl library
@@ -32,20 +39,6 @@ void display_init( void )
   tft_init();
   xpt2046_init();
 
-#if 0
-  // LVGL version 9
-  uint16_t* buf1 = heap_caps_malloc(DISP_BUFFER_SIZE * sizeof(uint16_t) , MALLOC_CAP_DMA);
-  assert(buf1 != NULL);
-
-  static lv_color_t* buf2 = NULL;
-
-  lv_display_t * display = lv_display_create( tft_get_width(), tft_get_height() );
-  tft_delay_ms(10);
-  lv_display_set_buffers(display, buf1, buf2, sizeof(buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
-  lv_display_set_flush_cb(display, display_flush_cb);
-#endif
-
-#if 1
   // for LVGL 8.3.11
   static lv_disp_draw_buf_t draw_buf; // contains internal graphics buffer called draw buffer
   static lv_disp_drv_t disp_drv;      // contains callback functions
@@ -76,7 +69,6 @@ void display_init( void )
   // user data todo
   // lv_disp_t *disp = lv_disp_drv_register(&disp_drv);
   lv_disp_drv_register(&disp_drv);
-#endif
 
   // Tick Interface for LVGL using esp_timer to generate 2ms periodic event
   const esp_timer_create_args_t lvgl_tick_timer_args =
@@ -100,7 +92,14 @@ void display_init( void )
 
 
 // Private Function Definitions
-// This function is so slow that it will create a watchdog reset
+/**
+ * @brief Flush the data to the display controller
+ *        This function is so slow that it will create a watchdog reset.
+ *        This function is just written to test some stuff
+ * @param drv         lvgl display drivers
+ * @param area        lvgl area to be updated
+ * @param color_map   pixel information
+ */
 static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
   uint16_t x, y;
@@ -117,6 +116,18 @@ static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   lv_disp_flush_ready(drv);
 }
 
+/**
+ * @brief Flush the data to the display controller
+ *        This function is a fast function, further improvements can be done in
+ *        the SPI driver layer.
+ * @note  The ILI9341 is working in 8-bit SPI mode, and hence in LVGL configuration
+ *        Data SWAP must be enabled, else this function will not display data
+ *        properly, and if u want that use the flush_swap function, but for sure
+ *        the flush_swap function is a slow function.
+ * @param drv         lvgl display drivers
+ * @param area        lvgl area to be updated
+ * @param color_map   pixel information
+ */
 static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
   size_t width = (area->x2 - area->x1 + 1);
@@ -131,7 +142,15 @@ static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color
   lv_disp_flush_ready(drv);
 }
 
-
+/**
+ * @brief Flush the data to the display controller
+ *        This function is swaps the data before transmitting unlike the above 
+ *        flush function, hence it is slow, it is recommended to use the above
+ *        function and not this one.
+ * @param drv         lvgl display drivers
+ * @param area        lvgl area to be updated
+ * @param color_map   pixel information
+ */
 static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
   size_t idx = 0;
@@ -157,6 +176,11 @@ static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_
   lv_disp_flush_ready(drv);
 }
 
+/**
+ * @brief Read the touch coordinates from the touch controller
+ * @param drv   pointer to input device driver structure
+ * @param data  pointer to data
+ */
 static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
 {
   static int16_t x = 0;
@@ -175,6 +199,12 @@ static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
   }
 }
 
+/**
+ * @brief LVGL Tick Funtion Hook
+ *        LVGL need to call funcion lv_tick_inc periodically @ LV_TICK_PERIOD_MS
+ *        to keep timing information.
+ * @param arg 
+ */
 static void lvgl_tick(void *arg)
 {
   (void) arg;

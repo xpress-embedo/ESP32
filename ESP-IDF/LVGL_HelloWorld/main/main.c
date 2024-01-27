@@ -51,7 +51,7 @@ void app_main(void)
 
   while (true)
   {
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
     // printf("Hello from app_main!\n");
     lv_timer_handler();
   }
