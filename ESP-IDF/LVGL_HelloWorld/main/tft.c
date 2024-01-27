@@ -15,8 +15,6 @@
 #define TFT_SPI_CLK_SPEED             (40*1000*1000)      // 40MHz
 #define TOUCH_SPI_CLK_SPEED           (25*1000*100)       // 2.5MHz
 
-#define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 40)
-
 // Private Variables
 spi_device_handle_t spi_tft_handle;
 spi_device_handle_t spi_touch_handle;
@@ -181,7 +179,7 @@ static void tft_driver_init( void )
     .mosi_io_num = TFT_SPI_MOSI,
     .miso_io_num = TFT_SPI_MISO,
     .sclk_io_num = TFT_SPI_SCLK,
-    .max_transfer_sz = TFT_BUFFER_SIZE,  // maximum transfer size in bytes
+    .max_transfer_sz = TFT_BUFFER_SIZE*2,  // maximum transfer size in bytes
     .quadhd_io_num = -1,
     .quadwp_io_num = -1,
   };

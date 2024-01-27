@@ -19,6 +19,7 @@
 // Display Resolution
 #define TFT_HOR_RES_MAX               (240)
 #define TFT_VER_RES_MAX               (320)
+#define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 20)
 
 #define TFT_SPI_HOST                  (SPI3_HOST)
 // Display Related Pins
