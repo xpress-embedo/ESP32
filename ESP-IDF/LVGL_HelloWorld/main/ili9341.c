@@ -50,7 +50,7 @@ void ili9341_init( void )
     {ILI9341_MAC, {0x08}, 1},
     {ILI9341_PIXEL_FORMAT, {0x55}, 1},
     /* Power contorl B, power control = 0, DC_ENA = 1 */
-    {0xCF, {0x00, 0xAA, 0XE0}, 3},
+    {ILI9341_POWERB, {0x00, 0xAA, 0XE0}, 3},
     /* Power on sequence control,
      * cp1 keeps 1 frame, 1st frame enable
      * vcl = 0, ddvdh=3, vgh=1, vgl=2

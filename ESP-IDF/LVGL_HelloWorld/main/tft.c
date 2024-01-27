@@ -29,6 +29,11 @@ static void tft_pre_tx_cb( spi_transaction_t *t );
 #endif
 
 // Public Function Definitions
+
+/**
+ * @brief Initialize the TFT
+ * @param  
+ */
 void tft_init( void )
 {
   tft_driver_init();
@@ -71,17 +76,26 @@ void tft_init( void )
   // Some Test Code Ends
 }
 
+/**
+ * @brief Delay in milliseconds
+ *        This function uses FreeRTOS task delay API's
+ * @param delay value in milliseconds
+ */
 void tft_delay_ms(uint32_t delay)
 {
   vTaskDelay(delay / portTICK_PERIOD_MS);
 }
 
-/*
- * Send Command to the LCD. Uses the "spi_device_polling_transmit", which waits
- * unit the transfer is complete.
- * Since command transactions are usually small, they are handled in polling
- * mode for higher speed. The overhead of interrupt transaction is more than
- * just waiting for the transaction to complete.
+/**
+ * @brief Send Command/Data to the TFT Controller
+ *        Send Command to the LCD. Uses the "spi_device_polling_transmit", which
+ *        waits until the transfer is complete.
+ *        Since command transactions are usually small, they are handled in 
+ *        polling mode for higher speed. The overhead of interrupt transaction 
+ *        is more than just waiting for the transaction to complete.
+ * @param cmd   command value
+ * @param data  data buffer pointer
+ * @param len   length of the data
  */
 void tft_send_cmd( uint8_t cmd, const uint8_t *data, size_t len )
 {
@@ -110,12 +124,15 @@ void tft_send_cmd( uint8_t cmd, const uint8_t *data, size_t len )
   TFT_CS_HIGH();
 }
 
-/*
- * Send Data to the LCD. Uses the "spi_device_polling_transmit", which waits
- * unit the transfer is complete.
- * Since data transactions are usually small, they are handled in polling
- * mode for higher speed. The overhead of interrupt transaction is more than
- * just waiting for the transaction to complete.
+/**
+ * @brief Send Data to the TFT Controller
+ *        Send Command to the LCD. Uses the "spi_device_polling_transmit", which
+ *        waits until the transfer is complete.
+ *        Since command transactions are usually small, they are handled in 
+ *        polling mode for higher speed. The overhead of interrupt transaction 
+ *        is more than just waiting for the transaction to complete.
+ * @param data  data buffer pointer
+ * @param len   length of the data
  */
 void tft_send_data( const uint8_t *data, size_t len )
 {
@@ -136,6 +153,12 @@ void tft_send_data( const uint8_t *data, size_t len )
   assert(ret == ESP_OK);            // should have no issues
 }
 
+/**
+ * @brief Read the data from the touch controller XPT2046
+ * @param cmd   Command Value
+ * @param data  Pointer to data
+ * @param len   Length of the data which will be received
+ */
 void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
 {
   esp_err_t ret;
@@ -156,20 +179,36 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
   assert(ret == ESP_OK);
 }
 
+/**
+ * @brief Return the TFT Width, considering the rotation factor
+ * @param  None
+ * @return Width
+ */
 uint16_t tft_get_width( void )
 {
   return ili9341_get_width();
 }
 
+/**
+ * @brief Return the TFT Height, considering the rotation factor
+ * @param  None
+ * @return Height
+ */
 uint16_t tft_get_height( void )
 {
   return ili9341_get_height();
 }
 
 // Private Function Definitions
+
+/**
+ * @brief Initialize the TFT Drivere i.e. for ILI9341 and XPT2046 Controller
+ * @param  None
+ */
 static void tft_driver_init( void )
 {
   esp_err_t ret;
+  // TODO: this needs to be evaluated that why it is not working when DMA is disabled
   spi_dma_chan_t dma_channel = SPI_DMA_CH1;   // don't enable DMA on Channel-0
 
   // SPI bus configuration for display
@@ -179,7 +218,9 @@ static void tft_driver_init( void )
     .mosi_io_num = TFT_SPI_MOSI,
     .miso_io_num = TFT_SPI_MISO,
     .sclk_io_num = TFT_SPI_SCLK,
-    .max_transfer_sz = TFT_BUFFER_SIZE*2,  // maximum transfer size in bytes
+    // maximum transfer size in bytes, it is multiplied by 2 because we are using
+    // RGB565 format which means two byte for single pixel and hence this is needed
+    .max_transfer_sz = TFT_BUFFER_SIZE * 2,
     .quadhd_io_num = -1,
     .quadwp_io_num = -1,
   };
@@ -243,12 +284,14 @@ static void tft_driver_init( void )
   TOUCH_CS_HIGH();
 }
 
-/*
- * This function is called (in IRQ context) just before a transmission starts.
- * It will set the D/C line to the value indicated in the user field.
- * NOTE: not used any more, now I am controlling pins manually
- */
 #if 0
+/**
+ * @brief   Pre Transmission Callback
+ *          This function is called (IRQ context) just before a transmission starts.
+ *          It will set the D/C line to the value indicated in the user field.
+ * @param t Transaction Handle
+ * @note    not used any more, now I am controlling pins manually
+ */
 static void tft_pre_tx_cb( spi_transaction_t *t )
 {
   int dc = (int)t->user;
