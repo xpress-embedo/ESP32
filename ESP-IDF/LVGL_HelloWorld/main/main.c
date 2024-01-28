@@ -23,14 +23,17 @@ void app_main(void)
 
   while (true)
   {
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-    // printf("Hello from app_main!\n");
-    lv_timer_handler();
+    sleep(3);
+    printf("LVGL Demo Running\n");
   }
 }
 
 
 // Private Function Definitions
+/**
+ * @brief Simple Button Screen containing two labels and two buttons
+ * @param  None
+ */
 void lv_button_demo(void)
 {
   lv_obj_t * label;
@@ -58,18 +61,25 @@ void lv_button_demo(void)
   lv_obj_center(label);
 }
 
+/**
+ * @brief Event Handler Function for Button Clicked Events
+ * @param e lvgl event
+ */
 static void event_handler(lv_event_t * e)
 {
   lv_event_code_t code = lv_event_get_code(e);
 
   if( (code == LV_EVENT_CLICKED) || (code ==  LV_EVENT_LONG_PRESSED_REPEAT) )
   {
-    LV_LOG_USER("Clicked");
+    if ( code == LV_EVENT_CLICKED)
+      LV_LOG_USER("Click Event");
+    else if( code == LV_EVENT_LONG_PRESSED_REPEAT )
+      LV_LOG_USER("Press and Hold Event");
     button_counter++;
     lv_label_set_text_fmt(count_label, "Count: %d", button_counter);
   }
   else if(code == LV_EVENT_VALUE_CHANGED)
   {
-    LV_LOG_USER("Toggled");
+    LV_LOG_USER("Toggle Event");
   }
 }

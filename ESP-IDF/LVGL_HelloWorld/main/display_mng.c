@@ -7,6 +7,8 @@
 
 #include "esp_heap_caps.h"
 #include "esp_timer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "lvgl.h"
 #include "display_mng.h"
@@ -16,6 +18,7 @@
 #define DISP_BUFFER_SIZE            (TFT_BUFFER_SIZE)
 
 // Private Function Declarations
+static void display_mng(void *pvParameter);
 static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
@@ -32,17 +35,17 @@ static void lvgl_tick(void *arg);
  */
 void display_init( void )
 {
+  // for LVGL 8.3.11
+  static lv_disp_draw_buf_t draw_buf; // contains internal graphics buffer called draw buffer
+  static lv_disp_drv_t disp_drv;      // contains callback functions
+  static lv_indev_drv_t indev_drv;    // input device drivers
+
   // initialize the lvgl library
   lv_init();
 
   // initialize the tft and touch library
   tft_init();
   xpt2046_init();
-
-  // for LVGL 8.3.11
-  static lv_disp_draw_buf_t draw_buf; // contains internal graphics buffer called draw buffer
-  static lv_disp_drv_t disp_drv;      // contains callback functions
-
 
   // Buffer for 1/10 of the screen, we can increase the size of the buffer also
   // static lv_color_t buf1[DISP_HOR_RES_MAX * 10];
@@ -81,17 +84,35 @@ void display_init( void )
   ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, LV_TICK_PERIOD_MS * 1000));  // here time is in micro seconds
 
   // configuring input devices
-  static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);            // Basic initialization
   indev_drv.type = LV_INDEV_TYPE_POINTER;   // touchpad and mouse
   indev_drv.read_cb = display_input_read;   // register callback
   // Register the driver in LVGL and save the created input device object
   // lv_indev_t * my_indev = lv_indev_drv_register(&indev_drv);
   lv_indev_drv_register(&indev_drv);
+
+  // callback function, task name, stack size, parameters, priority, task handle
+  xTaskCreate(&display_mng, "display mng", 4096, NULL, 5, NULL);
 }
 
 
 // Private Function Definitions
+/**
+ * @brief Display Manager Function which calls the lvgl timer handler function
+ * @param *pvParameter  task parameter
+ */
+static void display_mng(void *pvParameter)
+{
+
+  while(1)
+  {
+    // TODO: analyze later, I want to keep this 5, but if set 5 watchdog reset
+    // is happening, will investigate later
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    lv_timer_handler();
+  }
+}
+
 /**
  * @brief Flush the data to the display controller
  *        This function is so slow that it will create a watchdog reset.
