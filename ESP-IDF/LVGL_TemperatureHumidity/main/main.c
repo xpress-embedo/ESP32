@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "lvgl.h"
 #include "display_mng.h"
-#include "dht11.h"
-
-// Defines
-#define DHT11_GPIO_NUM                  (GPIO_NUM_12)
-#define MAIN_APP_TASK_PERIOD            (4000)        // 4sec
 
 // Private Variables
-static const char *TAG = "APP";
 static uint8_t button_counter = 0;
 static lv_obj_t * count_label;
 
@@ -25,16 +18,13 @@ static void event_handler(lv_event_t * e);
 void app_main(void)
 {
   display_init();
+
   lv_button_demo();
-  dht11_init(DHT11_GPIO_NUM);
 
   while (true)
   {
-    vTaskDelay(MAIN_APP_TASK_PERIOD / portTICK_PERIOD_MS);
-    /* Get DHT11 Temperature and Humidity Values */
-    ESP_LOGI(TAG, "Temperature: %d", dht11_read().temperature);
-    ESP_LOGI(TAG, "Humidity: %d", dht11_read().humidity);
-    ESP_LOGI(TAG, "Status: %d", dht11_read().status);
+    sleep(3);
+    printf("LVGL Demo Running\n");
   }
 }
 

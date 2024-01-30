@@ -106,8 +106,7 @@ static void display_mng(void *pvParameter)
 
   while(1)
   {
-    // TODO: analyze later, I want to keep this 5, but if set 5 watchdog reset
-    // is happening, will investigate later
+
     lv_timer_handler();
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }

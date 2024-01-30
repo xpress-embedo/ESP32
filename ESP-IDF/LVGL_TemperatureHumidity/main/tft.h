@@ -19,7 +19,7 @@
 // Display Resolution
 #define TFT_HOR_RES_MAX               (240)
 #define TFT_VER_RES_MAX               (320)
-#define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 20)
+#define TFT_BUFFER_SIZE               (TFT_HOR_RES_MAX * 10)
 
 #define TFT_SPI_HOST                  (SPI3_HOST)
 // Display Related Pins
@@ -38,8 +38,8 @@
 
 #define TFT_CS_LOW()                 gpio_set_level(TFT_SPI_CS, 0)
 #define TFT_CS_HIGH()                gpio_set_level(TFT_SPI_CS, 1)
-#define TOUCH_CS_LOW()               gpio_set_level(TOUCH_SPI_CS, 0)
-#define TOUCH_CS_HIGH()              gpio_set_level(TOUCH_SPI_CS, 1)
+#define TOUCH_CS_LOW()               // gpio_set_level(TOUCH_SPI_CS, 0)   // now this is handled in SPI device driver
+#define TOUCH_CS_HIGH()              // gpio_set_level(TOUCH_SPI_CS, 1)   // now this is handled in SPI device driver
 
 #define TFT_DC_LOW()                 gpio_set_level(TFT_PIN_DC, 0)
 #define TFT_DC_HIGH()                gpio_set_level(TFT_PIN_DC, 1)

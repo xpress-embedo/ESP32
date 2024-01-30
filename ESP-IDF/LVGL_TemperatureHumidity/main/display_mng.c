@@ -106,10 +106,9 @@ static void display_mng(void *pvParameter)
 
   while(1)
   {
-    // TODO: analyze later, I want to keep this 5, but if set 5 watchdog reset
-    // is happening, will investigate later
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+
     lv_timer_handler();
+    vTaskDelay(5 / portTICK_PERIOD_MS);
   }
 }
 
@@ -158,7 +157,13 @@ static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color
   ili9341_set_window(area->x1, area->y1, area->x2, area->y2);
 
   // transfer frame buffer
-  tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
+  // the problem with this command is that it uses the polling method
+  // tft_send_cmd(ILI9341_GRAM, (uint8_t*)color_map, len);
+
+  // while here the first command i.e. ILI9341_GRAM using polling method
+  // while the send data method using spi_device_transmit function
+  tft_send_cmd(ILI9341_GRAM, 0, 0);
+  tft_send_data((uint8_t*)color_map, len);
 
   lv_disp_flush_ready(drv);
 }

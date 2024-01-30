@@ -148,7 +148,8 @@ void tft_send_data( const uint8_t *data, size_t len )
   t.tx_buffer = data;               // Data
   // Not used any more
   // t.user = (void*)1;                // transaction id, keep it 1 for data mode
-  ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
+  // ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
+  ret = spi_device_transmit(spi_tft_handle, &t);  // transmit
   TFT_CS_HIGH();
   assert(ret == ESP_OK);            // should have no issues
 }
@@ -164,7 +165,6 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len )
   esp_err_t ret;
   spi_transaction_t t;
 
-  TFT_CS_HIGH();
   TOUCH_CS_LOW();
   memset( &t, 0x00, sizeof(t) );    // zero out the transaction
   t.length = (len * 8);
@@ -249,10 +249,10 @@ static void tft_driver_init( void )
   {
     .clock_speed_hz = TOUCH_SPI_CLK_SPEED,
     .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
-    // .spics_io_num = TFT_SPI_CS,  // chip select for this device (manual control now)
-    .spics_io_num = -1,             // chip select for this device (manual control)
+    .spics_io_num = TOUCH_SPI_CS,   // chip select for this device
+    // .spics_io_num = -1,             // chip select for this device (manual control)
     .input_delay_ns = 0,            // todo
-    .queue_size = 50,
+    .queue_size = 6,
     .pre_cb = NULL,                 // callback to be called before transmission is started
     .post_cb = NULL,                // callback to be called after transmission is completed
     .flags = SPI_DEVICE_NO_DUMMY,
@@ -273,7 +273,7 @@ static void tft_driver_init( void )
 
   //Initialize non-SPI GPIOs
   gpio_config_t io_conf = {};
-  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS) | (1u<<TOUCH_SPI_CS);
+  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS);
   io_conf.mode = GPIO_MODE_OUTPUT;
   io_conf.pull_up_en = true;
   gpio_config(&io_conf);
