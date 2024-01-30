@@ -36,13 +36,14 @@
 #define TOUCH_SPI_SCLK                (TFT_SPI_SCLK)
 #define TOUCH_SPI_CS                  (GPIO_NUM_2)
 
-#define TFT_CS_LOW()                 gpio_set_level(TFT_SPI_CS, 0)
-#define TFT_CS_HIGH()                gpio_set_level(TFT_SPI_CS, 1)
-#define TOUCH_CS_LOW()               // gpio_set_level(TOUCH_SPI_CS, 0)   // now this is handled in SPI device driver
-#define TOUCH_CS_HIGH()              // gpio_set_level(TOUCH_SPI_CS, 1)   // now this is handled in SPI device driver
+#define TFT_CS_LOW()                 // gpio_set_level(TFT_SPI_CS, 0)     // now this is handled in the SPI device configuration
+#define TFT_CS_HIGH()                // gpio_set_level(TFT_SPI_CS, 1)     // now this is handled in the SPI device configuration
+#define TOUCH_CS_LOW()               // gpio_set_level(TOUCH_SPI_CS, 0)   // now this is handled in the SPI device configuration
+#define TOUCH_CS_HIGH()              // gpio_set_level(TOUCH_SPI_CS, 1)   // now this is handled in the SPI device configuration
 
-#define TFT_DC_LOW()                 gpio_set_level(TFT_PIN_DC, 0)
-#define TFT_DC_HIGH()                gpio_set_level(TFT_PIN_DC, 1)
+// NOTE: the initialization is not handled by the SPI drivers, this is controlled using pre-callback
+#define TFT_DC_LOW()                 // gpio_set_level(TFT_PIN_DC, 0)     // now this is handled in the transmission pre callback function using user parameter
+#define TFT_DC_HIGH()                // gpio_set_level(TFT_PIN_DC, 1)     // now this is handled in the transmission pre callback function using user parameter
 
 // Public Functions
 void tft_init( void );
