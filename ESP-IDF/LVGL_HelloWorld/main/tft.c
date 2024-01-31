@@ -21,8 +21,9 @@
 #define SPI_USER_FLAG_FLUSH_READY     (0x03)              // lvgl flush ready
 
 // Private Variables
-spi_device_handle_t spi_tft_handle;
-spi_device_handle_t spi_touch_handle;
+static spi_device_handle_t spi_tft_handle;
+static spi_device_handle_t spi_touch_handle;
+static uint8_t tft_flush_complete = false;
 // ---------------------------LVGL Related Stuff-------------------------------
 
 // Private Function Prototypes
@@ -146,6 +147,8 @@ void tft_send_data( const uint8_t *data, size_t len )
   if( len == 0 )
     return;                                     // no need to send anything
 
+  tft_flush_complete = false;                   // variable to track tft flushing status
+                                                // next time flushing will not start until this is true
   TFT_CS_LOW();
   TFT_DC_HIGH();
   memset( &t, 0x00, sizeof(t) );                // zero out the transaction
@@ -153,7 +156,7 @@ void tft_send_data( const uint8_t *data, size_t len )
   t.tx_buffer = data;                           // Data
   t.user = (void*)SPI_USER_FLAG_FLUSH_READY;    // transaction id, keep it 1 for data mode
   // ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
-  ret = spi_device_transmit(spi_tft_handle, &t);// transmit
+  ret = spi_device_transmit(spi_tft_handle, &t);          // transmit
   TFT_CS_HIGH();
   assert(ret == ESP_OK);                        // should have no issues
 }
@@ -201,6 +204,17 @@ uint16_t tft_get_width( void )
 uint16_t tft_get_height( void )
 {
   return ili9341_get_height();
+}
+
+/**
+ * @brief Return the the flushing status whether completed or not
+ * @param  None
+ * @return flushing status
+ * @warn properly we need atomic code here
+ */
+uint8_t tft_flush_status( void )
+{
+  return tft_flush_complete;
 }
 
 // Private Function Definitions
@@ -329,7 +343,7 @@ static void tft_post_tx_cb(spi_transaction_t *t )
   switch(flags)
   {
     case SPI_USER_FLAG_FLUSH_READY:
-      // todo:
+      tft_flush_complete = true;
       break;
     case SPI_USER_FLAG_DC_LOW:
     case SPI_USER_FLAG_DC_HIGH:

@@ -55,4 +55,6 @@ void touch_read_data( uint8_t cmd, uint8_t *data, uint8_t len );
 uint16_t tft_get_width( void );
 uint16_t tft_get_height( void );
 
+uint8_t tft_flush_status( void );
+
 #endif /* MAIN_TFT_H_ */
