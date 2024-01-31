@@ -24,7 +24,7 @@ void app_main(void)
   while (true)
   {
     sleep(3);
-    printf("LVGL Demo Running\n");
+    // printf("LVGL Demo Running\n");
   }
 }
 

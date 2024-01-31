@@ -103,10 +103,8 @@ void display_init( void )
  */
 static void display_mng(void *pvParameter)
 {
-
   while(1)
   {
-
     lv_timer_handler();
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
