@@ -137,7 +137,14 @@ static void dht11_send_start_signal( void )
    * The Request is to pull down the bus for more than 18ms, in order to give
    * DHT11 time to understand it and then pull it up for 40 micro-seconds
    */
-  gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
+  gpio_config_t io_conf = {};
+  io_conf.pin_bit_mask = (1u<<dht_gpio);
+  io_conf.mode = GPIO_MODE_OUTPUT;
+  io_conf.pull_up_en = true;
+  gpio_config(&io_conf);
+  // NOTE: I have to add the above code, without this GPIO is not working
+  // so I added above configuration code and commented the below one
+  // gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
   gpio_set_level(dht_gpio, 0);
   ets_delay_us(DHT11_START_SIGNAL_PULL_DOWN_DELAY);   // 20ms delay
   gpio_set_level(dht_gpio, 1);

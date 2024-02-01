@@ -15,18 +15,22 @@
 #define TFT_SPI_CLK_SPEED             (40*1000*1000)      // 40MHz
 #define TOUCH_SPI_CLK_SPEED           (25*1000*100)       // 2.5MHz
 
+// User Macros
+#define SPI_USER_FLAG_DC_LOW          (0x01)              // for command
+#define SPI_USER_FLAG_DC_HIGH         (0x02)              // for data
+#define SPI_USER_FLAG_FLUSH_READY     (0x03)              // lvgl flush ready
+
 // Private Variables
-spi_device_handle_t spi_tft_handle;
-spi_device_handle_t spi_touch_handle;
+static spi_device_handle_t spi_tft_handle;
+static spi_device_handle_t spi_touch_handle;
+static uint8_t tft_flush_complete = false;
 // ---------------------------LVGL Related Stuff-------------------------------
 
 // Private Function Prototypes
 static void tft_driver_init( void );
-#if 0
-// NOTE: this function was used to control D/C line using auto callback, but now
-// is not used, and the control is manual.
+// NOTE: this function was used to control D/C line using auto callback
 static void tft_pre_tx_cb( spi_transaction_t *t );
-#endif
+static void tft_post_tx_cb( spi_transaction_t *t );
 
 // Public Function Definitions
 
@@ -105,21 +109,23 @@ void tft_send_cmd( uint8_t cmd, const uint8_t *data, size_t len )
   TFT_CS_LOW();
   TFT_DC_LOW();
   // Send Command
-  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-  t.length = 8;                     // Commands are 8-bits
-  t.tx_buffer = &cmd;               // The data is command itself
+  memset( &t, 0x00, sizeof(t) );          // zero out the transaction
+  t.length = 8;                           // Commands are 8-bits
+  t.tx_buffer = &cmd;                     // The data is command itself
+  t.user = (void*)SPI_USER_FLAG_DC_LOW;   // transaction id, keep it 0 for command mode
   ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
-  assert(ret == ESP_OK);            // should have no issues
+  assert(ret == ESP_OK);                  // should have no issues
   TFT_DC_HIGH();
   // if there is some data with command
   if( len )
   {
-    memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-    t.length = len*8;                 // length is in bytes while transaction length is in bits
-    t.tx_buffer = data;               // The data is command itself
+    memset( &t, 0x00, sizeof(t) );        // zero out the transaction
+    t.length = len*8;                     // length is in bytes while transaction length is in bits
+    t.tx_buffer = data;                   // The data is command itself
+    t.user = (void*)SPI_USER_FLAG_DC_HIGH;// transaction id, keep it 1 for data mode
     ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
     TFT_CS_HIGH();
-    assert(ret == ESP_OK);            // should have no issues
+    assert(ret == ESP_OK);                // should have no issues
   }
   TFT_CS_HIGH();
 }
@@ -139,19 +145,20 @@ void tft_send_data( const uint8_t *data, size_t len )
   esp_err_t ret;
   spi_transaction_t t;
   if( len == 0 )
-    return;                         // no need to send anything
+    return;                                     // no need to send anything
 
+  tft_flush_complete = false;                   // variable to track tft flushing status
+                                                // next time flushing will not start until this is true
   TFT_CS_LOW();
   TFT_DC_HIGH();
-  memset( &t, 0x00, sizeof(t) );    // zero out the transaction
-  t.length = len*8;                 // length is in bytes while transaction length is in bits
-  t.tx_buffer = data;               // Data
-  // Not used any more
-  // t.user = (void*)1;                // transaction id, keep it 1 for data mode
+  memset( &t, 0x00, sizeof(t) );                // zero out the transaction
+  t.length = len*8;                             // length is in bytes while transaction length is in bits
+  t.tx_buffer = data;                           // Data
+  t.user = (void*)SPI_USER_FLAG_FLUSH_READY;    // transaction id, keep it 1 for data mode
   // ret = spi_device_polling_transmit(spi_tft_handle, &t);  // transmit
-  ret = spi_device_transmit(spi_tft_handle, &t);  // transmit
+  ret = spi_device_transmit(spi_tft_handle, &t);          // transmit
   TFT_CS_HIGH();
-  assert(ret == ESP_OK);            // should have no issues
+  assert(ret == ESP_OK);                        // should have no issues
 }
 
 /**
@@ -199,6 +206,17 @@ uint16_t tft_get_height( void )
   return ili9341_get_height();
 }
 
+/**
+ * @brief Return the the flushing status whether completed or not
+ * @param  None
+ * @return flushing status
+ * @warn properly we need atomic code here
+ */
+uint8_t tft_flush_status( void )
+{
+  return tft_flush_complete;
+}
+
 // Private Function Definitions
 
 /**
@@ -230,17 +248,18 @@ static void tft_driver_init( void )
   {
     .clock_speed_hz = TFT_SPI_CLK_SPEED,
     .mode = 0,                      // SPI mode, representing pair of CPOL, CPHA
-    // .spics_io_num = TFT_SPI_CS,  // chip select for this device (manual control now)
-    .spics_io_num = -1,             // chip select for this device (manual control)
+    .spics_io_num = TFT_SPI_CS,     // chip select for this device
+    // .spics_io_num = -1,          // chip select for this device (for manual control)
     .input_delay_ns = 0,            // todo
     .queue_size = 50,               // Transaction queue size. This sets how
                                     // many transactions can be 'in the air'
                                     // (queued using spi_device_queue_trans
                                     // but not yet finished using
                                     // spi_device_get_trans_result) at the same time
-    // .pre_cb = display_pre_tx_cb,    // callback to be called before transmission is started
-    .pre_cb = NULL,                 // callback to be called before transmission is started
-    .post_cb = NULL,                // callback to be called after transmission is completed
+    .pre_cb = tft_pre_tx_cb,        // callback to be called before transmission is started
+    // .pre_cb = NULL,              // callback to be called before transmission is started
+    .post_cb = tft_post_tx_cb,
+    // .post_cb = NULL,                // callback to be called after transmission is completed
     .flags = SPI_DEVICE_NO_DUMMY,
   };
 
@@ -273,7 +292,11 @@ static void tft_driver_init( void )
 
   //Initialize non-SPI GPIOs
   gpio_config_t io_conf = {};
-  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS);
+  // Touch Chip Select and TFT Chip Select are now handled by SPI device configuration
+  // Also the DC is not manually controlled, in-fact it is also handled in the
+  // pre-transmission callback function
+  // io_conf.pin_bit_mask = (1u<<TFT_PIN_DC) | (1u<<TFT_SPI_CS) | (1u<<TOUCH_SPI_CS);
+  io_conf.pin_bit_mask = (1u<<TFT_PIN_DC);
   io_conf.mode = GPIO_MODE_OUTPUT;
   io_conf.pull_up_en = true;
   gpio_config(&io_conf);
@@ -284,17 +307,48 @@ static void tft_driver_init( void )
   TOUCH_CS_HIGH();
 }
 
-#if 0
 /**
  * @brief   Pre Transmission Callback
  *          This function is called (IRQ context) just before a transmission starts.
  *          It will set the D/C line to the value indicated in the user field.
  * @param t Transaction Handle
- * @note    not used any more, now I am controlling pins manually
  */
 static void tft_pre_tx_cb( spi_transaction_t *t )
 {
-  int dc = (int)t->user;
-  gpio_set_level(TFT_PIN_DC, dc);
+  int flags = (int)t->user;
+  switch(flags)
+  {
+    case SPI_USER_FLAG_DC_LOW:
+      gpio_set_level(TFT_PIN_DC, 0);
+      break;
+    case SPI_USER_FLAG_DC_HIGH:
+    case SPI_USER_FLAG_FLUSH_READY:
+      gpio_set_level(TFT_PIN_DC, 1);
+      break;
+    default:
+      break;
+  };
 }
-#endif
+
+/**
+ * @brief   Post Transmission Callback
+ *          This function is called (IRQ context) just after the transmission
+ *          is completed.
+ *          It will set call the flush ready function of the lvgl library
+ * @param t Transaction Handle
+ */
+static void tft_post_tx_cb(spi_transaction_t *t )
+{
+  int flags = (int)t->user;
+  switch(flags)
+  {
+    case SPI_USER_FLAG_FLUSH_READY:
+      tft_flush_complete = true;
+      break;
+    case SPI_USER_FLAG_DC_LOW:
+    case SPI_USER_FLAG_DC_HIGH:
+    default:
+      break;
+  };
+}
+

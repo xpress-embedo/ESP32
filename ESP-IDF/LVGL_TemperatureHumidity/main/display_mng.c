@@ -9,6 +9,7 @@
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 
 #include "lvgl.h"
 #include "display_mng.h"
@@ -19,14 +20,20 @@
 
 // Private Function Declarations
 static void display_mng(void *pvParameter);
-static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
+static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_flush_swap_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map);
 static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data);
 static void lvgl_tick(void *arg);
 
-// Public Function Definitions
+// Private Variables
+// Creates a semaphore to handle concurrent call to lvgl stuff, If we wish to
+// call *any* lvgl function from other threads/tasks we should lock on the very
+// same semaphore!
+SemaphoreHandle_t lvgl_semaphore;
 
+
+// Public Function Definitions
 /**
  * @brief Display Initialize
  *        Initialize the Display Controller, Touch, and Initialize LVGL Library
@@ -39,6 +46,8 @@ void display_init( void )
   static lv_disp_draw_buf_t draw_buf; // contains internal graphics buffer called draw buffer
   static lv_disp_drv_t disp_drv;      // contains callback functions
   static lv_indev_drv_t indev_drv;    // input device drivers
+
+  lvgl_semaphore = xSemaphoreCreateMutex();
 
   // initialize the lvgl library
   lv_init();
@@ -92,46 +101,45 @@ void display_init( void )
   lv_indev_drv_register(&indev_drv);
 
   // callback function, task name, stack size, parameters, priority, task handle
-  xTaskCreate(&display_mng, "display mng", 4096, NULL, 5, NULL);
+  // xTaskCreate(&display_mng, "display mng", 4096*4, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(&display_mng, "display mng", 4096*4, NULL, 5, NULL, 0);
+  // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
-
 
 // Private Function Definitions
 /**
  * @brief Display Manager Function which calls the lvgl timer handler function
  * @param *pvParameter  task parameter
  */
+static int max_flushing_time = 0;
 static void display_mng(void *pvParameter)
 {
+  int64_t start_time = 0;
   while(1)
   {
-    lv_timer_handler();
-    vTaskDelay(5 / portTICK_PERIOD_MS);
-  }
-}
-
-/**
- * @brief Flush the data to the display controller
- *        This function is so slow that it will create a watchdog reset.
- *        This function is just written to test some stuff
- * @param drv         lvgl display drivers
- * @param area        lvgl area to be updated
- * @param color_map   pixel information
- */
-static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
-{
-  uint16_t x, y;
-  lv_color_t temp;
-  for(y = area->y1; y <= area->y2; y++)
-  {
-    for(x = area->x1; x <= area->x2; x++)
+    vTaskDelay(pdMS_TO_TICKS(20));
+    if( pdTRUE == xSemaphoreTake(lvgl_semaphore, portMAX_DELAY) )
     {
-      temp = *color_map;
-      ili9341_draw_pixel(x, y, temp.full);
-      color_map++;
+      start_time = esp_timer_get_time();
+      lv_timer_handler();
+      // Semaphore is released when flushing is completed, this is checked using
+      // tft_flush_status function, and then we release the semaphore
+      // xSemaphoreGive(lvgl_semaphore);
+    }
+
+    // check flushing status
+    if( tft_flush_status() == true )
+    {
+      // printf("Flushing Time: %d" PRId64 ", %" PRId64 "\n", esp_timer_get_time(), start_time);
+      int time_taken = (int32_t)((esp_timer_get_time() - start_time)/1000);
+      if( time_taken > max_flushing_time )
+      {
+        max_flushing_time = time_taken;
+        printf("Flushing Time: %d ms\n", max_flushing_time );
+      }
+      xSemaphoreGive(lvgl_semaphore);
     }
   }
-  lv_disp_flush_ready(drv);
 }
 
 /**
@@ -163,6 +171,31 @@ static void display_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color
   tft_send_cmd(ILI9341_GRAM, 0, 0);
   tft_send_data((uint8_t*)color_map, len);
 
+  lv_disp_flush_ready(drv);
+}
+
+
+/**
+ * @brief Flush the data to the display controller
+ *        This function is so slow that it will create a watchdog reset.
+ *        This function is just written to test some stuff
+ * @param drv         lvgl display drivers
+ * @param area        lvgl area to be updated
+ * @param color_map   pixel information
+ */
+static void display_flush_slow_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+{
+  uint16_t x, y;
+  lv_color_t temp;
+  for(y = area->y1; y <= area->y2; y++)
+  {
+    for(x = area->x1; x <= area->x2; x++)
+    {
+      temp = *color_map;
+      ili9341_draw_pixel(x, y, temp.full);
+      color_map++;
+    }
+  }
   lv_disp_flush_ready(drv);
 }
 
@@ -224,8 +257,8 @@ static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
 }
 
 /**
- * @brief LVGL Tick Funtion Hook
- *        LVGL need to call funcion lv_tick_inc periodically @ LV_TICK_PERIOD_MS
+ * @brief LVGL Tick Function Hook
+ *        LVGL need to call function lv_tick_inc periodically @ LV_TICK_PERIOD_MS
  *        to keep timing information.
  * @param arg 
  */
