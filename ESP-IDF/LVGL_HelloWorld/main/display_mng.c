@@ -101,7 +101,9 @@ void display_init( void )
   lv_indev_drv_register(&indev_drv);
 
   // callback function, task name, stack size, parameters, priority, task handle
-  xTaskCreate(&display_mng, "display mng", 4096*4, NULL, 5, NULL);
+  // xTaskCreate(&display_mng, "display mng", 4096*4, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(&display_mng, "display mng", 4096*4, NULL, 5, NULL, 0);
+  // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
 
 // Private Function Definitions
@@ -109,12 +111,13 @@ void display_init( void )
  * @brief Display Manager Function which calls the lvgl timer handler function
  * @param *pvParameter  task parameter
  */
+static int max_flushing_time = 0;
 static void display_mng(void *pvParameter)
 {
   int64_t start_time = 0;
   while(1)
   {
-    vTaskDelay(pdMS_TO_TICKS(50));
+    vTaskDelay(pdMS_TO_TICKS(20));
     if( pdTRUE == xSemaphoreTake(lvgl_semaphore, portMAX_DELAY) )
     {
       start_time = esp_timer_get_time();
@@ -129,7 +132,11 @@ static void display_mng(void *pvParameter)
     {
       // printf("Flushing Time: %d" PRId64 ", %" PRId64 "\n", esp_timer_get_time(), start_time);
       int time_taken = (int32_t)((esp_timer_get_time() - start_time)/1000);
-      printf("Flushing Time: %d ms\n", time_taken );
+      if( time_taken > max_flushing_time )
+      {
+        max_flushing_time = time_taken;
+        printf("Flushing Time: %d ms\n", max_flushing_time );
+      }
       xSemaphoreGive(lvgl_semaphore);
     }
   }
