@@ -11,7 +11,7 @@
 
 // macros
 #define DHT11_PIN                     (GPIO_NUM_12)
-#define MAIN_TASK_PERIOD              (4000)
+#define MAIN_TASK_PERIOD              (5000)
 
 // Private Variables
 static uint8_t button_counter = 0;

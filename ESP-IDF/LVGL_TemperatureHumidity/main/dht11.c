@@ -24,6 +24,8 @@
 static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
 static dht11_reading_t last_read;
+// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_idf.html#critical-sections
+static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 /* Private Function Prototypes */
 static int dht11_wait_or_timeout(uint16_t useconds, int level);
@@ -38,7 +40,7 @@ static dht11_reading_t dht11_crc_error( void );
 void dht11_init(gpio_num_t gpio_num)
 {
   /* Wait for some seconds to make the device pass its initial unstable status */
-  vTaskDelay(DHT11_INITIAL_WAKEUP_DELAY / portTICK_PERIOD_MS);
+  vTaskDelay( pdMS_TO_TICKS(DHT11_INITIAL_WAKEUP_DELAY) );
   dht_gpio = gpio_num;
 }
 
@@ -59,6 +61,9 @@ dht11_reading_t dht11_read( void )
   /* trigger the start signal */
   dht11_send_start_signal();
 
+  // critical section starts (this will block other tasks, but is much needed here)
+  portENTER_CRITICAL(&mux);
+
   /* Check for DHT11 Host Signal, here DHT11 should pull the line low for 80us
    * and then pull the line high for 80 us
    */
@@ -77,6 +82,8 @@ dht11_reading_t dht11_read( void )
     timeout error. */
     if(dht11_wait_or_timeout(50, 0) == DHT11_TIMEOUT_ERROR)
     {
+      // exit the critical section, other tasks based on the priority can also run
+      portEXIT_CRITICAL(&mux);
       return last_read = dht11_timeout_error();
     }
 
@@ -89,6 +96,8 @@ dht11_reading_t dht11_read( void )
       data[i/8] |= (1 << (7-(i%8)));
     }
   }
+  // exit the critical section, other tasks based on the priority can also run
+  portEXIT_CRITICAL(&mux);
 
   /* last step is to validate the received data by checking the checksum */
   if(dht11_check_checksum(data) != DHT11_CHECKSUM_ERROR)
@@ -147,6 +156,7 @@ static void dht11_send_start_signal( void )
   // gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
   gpio_set_level(dht_gpio, 0);
   ets_delay_us(DHT11_START_SIGNAL_PULL_DOWN_DELAY);   // 20ms delay
+  // vTaskDelay( pdMS_TO_TICKS(DHT11_START_SIGNAL_PULL_DOWN_DELAY) );
   gpio_set_level(dht_gpio, 1);
   ets_delay_us(DHT11_START_SIGNAL_PULL_UP_DELAY);     // 40us delay
   gpio_set_direction(dht_gpio, GPIO_MODE_INPUT);
