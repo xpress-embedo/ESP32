@@ -10,6 +10,13 @@
 #include "dht11.h"
 #include "ui.h"
 
+typedef enum {
+  LANGUAGE_ENGLISH = 0,
+  LANGUAGE_GERMAN,
+  LANGUAGE_HINDI,
+  LANGUAGE_MAX
+} language_t;
+
 // macros
 #define DHT11_PIN                     (GPIO_NUM_12)
 #define MAIN_TASK_PERIOD              (5000)
@@ -18,17 +25,47 @@
 static const char *TAG = "APP";
 static uint8_t temperature = 0;
 static uint8_t humidity = 0;
+static language_t current_language = LANGUAGE_ENGLISH;
+const static char * welcome_label[LANGUAGE_MAX] =
+{
+  "Welcome to the Embedded Laboratory",
+  "Willkommen im Embedded Laboratory",
+  "एंबेडेड प्रयोगशाला में आपका स्वागत है",
+};
+
+const static char * temperature_label[LANGUAGE_MAX] =
+{
+  "Temperature",
+  "Temperatur",
+  "तापमान",
+};
+
+const static char * humidity_label[LANGUAGE_MAX] =
+{
+  "Humidity",
+  "Feuchtigkeit",
+  "नमी",
+};
 
 // Private Function Declarations
 static void update_temperature_humidity( void );
+static void update_labels( language_t language );
 
 void app_main(void)
 {
+  // Disable default gpio logging messages
+  esp_log_level_set("gpio", ESP_LOG_NONE);
+
+  // initialize dht sensor library
   dht11_init(DHT11_PIN);
+
+  // initialize display related stuff, also lvgl
   display_init();
   
   // main user interface
   ui_init();
+  current_language = LANGUAGE_ENGLISH;
+  update_labels(current_language);
 
   while (true)
   {
@@ -49,6 +86,22 @@ void app_main(void)
   }
 }
 
+void update_language(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t * obj = lv_event_get_target(e);
+  uint16_t selected_idx = 0;
+  if( LV_EVENT_VALUE_CHANGED == code )
+  {
+    selected_idx = lv_dropdown_get_selected(obj);
+    if( selected_idx < LANGUAGE_MAX )
+    {
+      ESP_LOGI(TAG, "Value Change Event, %d", selected_idx);
+      current_language = (language_t)(selected_idx);
+      update_labels(current_language);
+    }
+  }
+}
 
 // Private Function Definitions
 /*
@@ -56,6 +109,24 @@ void app_main(void)
  */
 static void update_temperature_humidity( void )
 {
-  lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", temperature);
-  lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", humidity);
+  char buffer[10] = { 0 };
+  snprintf(buffer, 10, "%u °C", temperature);
+  lv_label_set_text(ui_lblTemperatureValue, buffer);
+  snprintf(buffer, 10, "%u °C", humidity);
+  lv_label_set_text(ui_lblHumidityValue, buffer);
+
+  // lv_label_set_text_fmt(ui_lblTemperatureValue, "%u °C", temperature);
+  // lv_label_set_text_fmt(ui_lblHumidityValue, "%u %%", humidity);
+  ESP_LOGI(TAG, "Temperature = %u and Humidity = %u Updated on Display", temperature, humidity);
 }
+
+static void update_labels( language_t language )
+{
+  if( language < LANGUAGE_MAX )
+  {
+    lv_label_set_text_static(ui_lblTemperature, temperature_label[language]);
+    lv_label_set_text_static(ui_lblHumidity, humidity_label[language]);
+    lv_label_set_text_static(ui_lblHeadLine, welcome_label[language]);
+  }
+}
+

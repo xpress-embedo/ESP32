@@ -1471,6 +1471,7 @@
               },
               {
                 "nid": -2006796104,
+                "flags": 1048576,
                 "strtype": "OBJECT/Layout",
                 "InheritedType": 1
               },
@@ -1779,6 +1780,71 @@
                 "strtype": "DROPDOWN/Style_list_selected",
                 "strval": "{\"python\":\"{0}.get_list()\",\"c\":\"lv_dropdown_get_list({0})\"} lv.PART.SELECTED, Text, Rectangle",
                 "InheritedType": 11
+              },
+              {
+                "disabled": false,
+                "nid": 1121937241,
+                "strtype": "DROPDOWN/EventHandler",
+                "strval": "VALUE_CHANGED",
+                "childs": [
+                  {
+                    "nid": -669239261,
+                    "strtype": "_custom/name",
+                    "strval": "LANGUAGE",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1199538412,
+                    "strtype": "_custom/condition_C",
+                    "strval": "",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1364556622,
+                    "strtype": "_custom/condition_P",
+                    "strval": "",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -881366419,
+                    "strtype": "_custom/action",
+                    "strval": "CALL FUNCTION",
+                    "childs": [
+                      {
+                        "nid": -1383863324,
+                        "strtype": "CALL FUNCTION/Name",
+                        "strval": "CALL FUNCTION",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1334964329,
+                        "strtype": "CALL FUNCTION/Call",
+                        "strval": "<{Function_name}>( event_struct )",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": -1848334114,
+                        "strtype": "CALL FUNCTION/CallC",
+                        "strval": "<{Function_name}>( e );",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": -1561343736,
+                        "strtype": "CALL FUNCTION/Function_name",
+                        "strval": "update_language",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": -1670070463,
+                        "strtype": "CALL FUNCTION/Dont_export_function",
+                        "strval": "True",
+                        "InheritedType": 2
+                      }
+                    ],
+                    "InheritedType": 10
+                  }
+                ],
+                "InheritedType": 4
               }
             ],
             "saved_objtypeKey": "DROPDOWN"
@@ -2033,7 +2099,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
     "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
-    "backup_cnt": 20,
+    "backup_cnt": 24,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

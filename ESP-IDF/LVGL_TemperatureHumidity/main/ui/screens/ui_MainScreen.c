@@ -62,4 +62,6 @@ void ui_MainScreen_screen_init(void)
 
 
 
+    lv_obj_add_event_cb(ui_cbLanguageSelection, ui_event_cbLanguageSelection, LV_EVENT_ALL, NULL);
+
 }

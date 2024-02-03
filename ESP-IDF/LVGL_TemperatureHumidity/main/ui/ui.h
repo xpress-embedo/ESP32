@@ -22,6 +22,7 @@ extern lv_obj_t * ui_lblTemperature;
 extern lv_obj_t * ui_lblHumidity;
 extern lv_obj_t * ui_lblTemperatureValue;
 extern lv_obj_t * ui_lblHumidityValue;
+void ui_event_cbLanguageSelection(lv_event_t * e);
 extern lv_obj_t * ui_cbLanguageSelection;
 extern lv_obj_t * ui____initial_actions0;
 

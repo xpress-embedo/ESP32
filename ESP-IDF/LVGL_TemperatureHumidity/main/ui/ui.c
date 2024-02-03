@@ -17,6 +17,7 @@ lv_obj_t * ui_lblTemperature;
 lv_obj_t * ui_lblHumidity;
 lv_obj_t * ui_lblTemperatureValue;
 lv_obj_t * ui_lblHumidityValue;
+void ui_event_cbLanguageSelection(lv_event_t * e);
 lv_obj_t * ui_cbLanguageSelection;
 lv_obj_t * ui____initial_actions0;
 
@@ -31,6 +32,14 @@ lv_obj_t * ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
+void ui_event_cbLanguageSelection(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        update_language(e);
+    }
+}
 
 ///////////////////// SCREENS ////////////////////
 
