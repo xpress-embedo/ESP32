@@ -16,8 +16,10 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_lblHeadLine, lv_pct(0));
     lv_obj_set_y(ui_lblHeadLine, lv_pct(-30));
     lv_obj_set_align(ui_lblHeadLine, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblHeadLine, "Welcome to Embedded Laboratory");
+    lv_label_set_long_mode(ui_lblHeadLine, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_label_set_text(ui_lblHeadLine, "Welcome to the Embedded Laboratory.");
     lv_obj_set_style_text_align(ui_lblHeadLine, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblHeadLine, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblTemperature = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblTemperature, lv_pct(30));
@@ -41,7 +43,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_lblTemperatureValue, lv_pct(5));
     lv_obj_set_y(ui_lblTemperatureValue, lv_pct(0));
     lv_obj_set_align(ui_lblTemperatureValue, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblTemperatureValue, "0 C");
+    lv_label_set_text(ui_lblTemperatureValue, "0 °C");
 
     ui_lblHumidityValue = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblHumidityValue, lv_pct(30));

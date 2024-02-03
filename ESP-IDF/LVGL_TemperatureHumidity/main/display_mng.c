@@ -105,9 +105,6 @@ void display_init( void )
   // xTaskCreate(&display_mng, "display mng", 4096*4, NULL, 5, NULL);
   xTaskCreatePinnedToCore(&display_mng, "display mng", 4096*4, NULL, 5, NULL, 0);
   // NOTE: I checked the flush timing with pinning and without pinning to core is same
-
-  // main user interface
-  ui_init();
 }
 
 // Private Function Definitions

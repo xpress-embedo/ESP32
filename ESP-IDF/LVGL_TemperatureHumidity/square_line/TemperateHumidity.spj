@@ -38,6 +38,7 @@
               },
               {
                 "nid": -1897321763,
+                "flags": 1048576,
                 "strtype": "OBJECT/Transform",
                 "InheritedType": 1
               },
@@ -69,6 +70,7 @@
               },
               {
                 "nid": 917442838,
+                "flags": 1048576,
                 "strtype": "OBJECT/Flags",
                 "InheritedType": 1
               },
@@ -206,7 +208,6 @@
               },
               {
                 "nid": -846081771,
-                "flags": 1048576,
                 "strtype": "OBJECT/States",
                 "InheritedType": 1
               },
@@ -266,13 +267,13 @@
               {
                 "nid": -914965695,
                 "strtype": "LABEL/Long_mode",
-                "strval": "WRAP",
+                "strval": "SCROLL_CIRCULAR",
                 "InheritedType": 3
               },
               {
                 "nid": -1005914863,
                 "strtype": "LABEL/Text",
-                "strval": "Welcome to Embedded Laboratory",
+                "strval": "Welcome to the Embedded Laboratory.",
                 "InheritedType": 10
               },
               {
@@ -287,6 +288,12 @@
                         "nid": 992100001,
                         "strtype": "_style/Text_Align",
                         "strval": "CENTER",
+                        "InheritedType": 3
+                      },
+                      {
+                        "nid": -456778777,
+                        "strtype": "_style/Text_Font",
+                        "strval": "montserrat_20",
                         "InheritedType": 3
                       }
                     ],
@@ -1145,7 +1152,7 @@
               {
                 "nid": -156531136,
                 "strtype": "LABEL/Text",
-                "strval": "0 C",
+                "strval": "0 °C",
                 "InheritedType": 10
               },
               {
@@ -1705,6 +1712,7 @@
               },
               {
                 "nid": -1953270389,
+                "flags": 1048576,
                 "strtype": "DROPDOWN/Label",
                 "InheritedType": 1
               },
@@ -2010,7 +2018,7 @@
     "offset_x": 0,
     "offset_y": 0,
     "shape": "RECTANGLE",
-    "multilang": "ENABLE",
+    "multilang": "DISABLE",
     "description": "",
     "board": "ESP32-S2-Kaluga Kit",
     "board_version": "1.0.0",
@@ -2023,13 +2031,13 @@
     "theme_dark": false,
     "theme_color1": 5,
     "theme_color2": 0,
-    "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\Design",
-    "projectExportFolderPath": "",
-    "backup_cnt": 9,
+    "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
+    "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
+    "backup_cnt": 20,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
-    "callfuncsexport": null,
-    "lvgl_include_path": null,
+    "callfuncsexport": "C_FILE",
+    "lvgl_include_path": "",
     "BitDepth": 16,
     "Name": "TemperateHumidity"
   }
