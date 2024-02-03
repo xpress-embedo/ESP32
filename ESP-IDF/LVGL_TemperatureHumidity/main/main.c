@@ -26,6 +26,7 @@ static const char *TAG = "APP";
 static uint8_t temperature = 0;
 static uint8_t humidity = 0;
 static language_t current_language = LANGUAGE_ENGLISH;
+
 const static char * welcome_label[LANGUAGE_MAX] =
 {
   "Welcome to the Embedded Laboratory",
@@ -124,9 +125,23 @@ static void update_labels( language_t language )
 {
   if( language < LANGUAGE_MAX )
   {
+    switch (language)
+    {
+      case LANGUAGE_ENGLISH:
+      case LANGUAGE_GERMAN:
+        lv_obj_set_style_text_font(ui_lblTemperature, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(ui_lblHumidity, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+        break;
+      case LANGUAGE_HINDI:
+        lv_obj_set_style_text_font(ui_lblTemperature, &ui_font_mangal, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(ui_lblHumidity, &ui_font_mangal, LV_PART_MAIN | LV_STATE_DEFAULT);
+        break;
+      default:
+        break;
+    }
     lv_label_set_text_static(ui_lblTemperature, temperature_label[language]);
     lv_label_set_text_static(ui_lblHumidity, humidity_label[language]);
-    lv_label_set_text_static(ui_lblHeadLine, welcome_label[language]);
+    // lv_label_set_text_static(ui_lblHeadLine, welcome_label[language]);
   }
 }
 

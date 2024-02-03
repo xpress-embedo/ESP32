@@ -1784,7 +1784,7 @@
               {
                 "disabled": false,
                 "nid": 1121937241,
-                "strtype": "DROPDOWN/EventHandler",
+                "strtype": "_event/EventHandler",
                 "strval": "VALUE_CHANGED",
                 "childs": [
                   {
@@ -1807,7 +1807,7 @@
                   },
                   {
                     "nid": -881366419,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -2099,7 +2099,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
     "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
-    "backup_cnt": 24,
+    "backup_cnt": 35,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",
