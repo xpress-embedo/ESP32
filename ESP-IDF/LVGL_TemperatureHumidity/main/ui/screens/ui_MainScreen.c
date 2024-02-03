@@ -38,11 +38,12 @@ void ui_MainScreen_screen_init(void)
     lv_label_set_text(ui_lblHumidity, "Humidity");
 
     ui_lblTemperatureValue = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblTemperatureValue, 30);
+    lv_obj_set_width(ui_lblTemperatureValue, 40);
     lv_obj_set_height(ui_lblTemperatureValue, 20);
     lv_obj_set_x(ui_lblTemperatureValue, -30);
     lv_obj_set_y(ui_lblTemperatureValue, -20);
     lv_obj_set_align(ui_lblTemperatureValue, LV_ALIGN_CENTER);
+    lv_label_set_long_mode(ui_lblTemperatureValue, LV_LABEL_LONG_SCROLL);
     lv_label_set_text(ui_lblTemperatureValue, "0 °C");
 
     ui_cbLanguageSelection = lv_dropdown_create(ui_MainScreen);
@@ -57,11 +58,12 @@ void ui_MainScreen_screen_init(void)
 
 
     ui_lblHumidityValue = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblHumidityValue, 30);
+    lv_obj_set_width(ui_lblHumidityValue, 40);
     lv_obj_set_height(ui_lblHumidityValue, 20);
     lv_obj_set_x(ui_lblHumidityValue, -30);
     lv_obj_set_y(ui_lblHumidityValue, 10);
     lv_obj_set_align(ui_lblHumidityValue, LV_ALIGN_CENTER);
+    lv_label_set_long_mode(ui_lblHumidityValue, LV_LABEL_LONG_SCROLL);
     lv_label_set_text(ui_lblHumidityValue, "0 %");
 
     lv_obj_add_event_cb(ui_cbLanguageSelection, ui_event_cbLanguageSelection, LV_EVENT_ALL, NULL);

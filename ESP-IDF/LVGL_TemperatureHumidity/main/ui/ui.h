@@ -28,8 +28,8 @@ extern lv_obj_t * ui____initial_actions0;
 
 
 
-LV_FONT_DECLARE(ui_font_mangal24);
 LV_FONT_DECLARE(ui_font_mangal18);
+LV_FONT_DECLARE(ui_font_mangal24);
 
 void ui_init(void);
 

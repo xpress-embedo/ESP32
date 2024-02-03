@@ -935,7 +935,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  30,
+                  40,
                   20
                 ],
                 "InheritedType": 7
@@ -1140,14 +1140,13 @@
               },
               {
                 "nid": -25924451,
-                "flags": 1048576,
                 "strtype": "LABEL/Label",
                 "InheritedType": 1
               },
               {
                 "nid": 992940296,
                 "strtype": "LABEL/Long_mode",
-                "strval": "WRAP",
+                "strval": "SCROLL",
                 "InheritedType": 3
               },
               {
@@ -1613,7 +1612,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  30,
+                  40,
                   20
                 ],
                 "InheritedType": 7
@@ -1818,14 +1817,13 @@
               },
               {
                 "nid": 671982533,
-                "flags": 1048576,
                 "strtype": "LABEL/Label",
                 "InheritedType": 1
               },
               {
                 "nid": 1689670636,
                 "strtype": "LABEL/Long_mode",
-                "strval": "WRAP",
+                "strval": "SCROLL",
                 "InheritedType": 3
               },
               {
@@ -2102,7 +2100,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
     "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
-    "backup_cnt": 46,
+    "backup_cnt": 47,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

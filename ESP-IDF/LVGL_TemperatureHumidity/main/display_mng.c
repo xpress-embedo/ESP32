@@ -31,7 +31,7 @@ static void lvgl_tick(void *arg);
 // Creates a semaphore to handle concurrent call to lvgl stuff, If we wish to
 // call *any* lvgl function from other threads/tasks we should lock on the very
 // same semaphore!
-SemaphoreHandle_t lvgl_semaphore;
+static SemaphoreHandle_t lvgl_semaphore;
 
 
 // Public Function Definitions
@@ -107,6 +107,32 @@ void display_init( void )
   // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
 
+/**
+ * @brief Lock the displaty update with a semaphore
+ *        Creates a semaphore to handle concurrent call to lvgl stuff
+ * @param   none
+ * @return  if locking is successful else false
+ * @note    Check this link https://docs.lvgl.io/8.3/porting/os.html#
+ */
+uint8_t display_update_lock( void )
+{
+  uint8_t status = false;
+  if( pdTRUE == xSemaphoreTake(lvgl_semaphore, portMAX_DELAY) )
+  {
+    status = true;
+  }
+  return status;
+}
+
+/**
+ * @brief Unlock the display update from a semaphore
+ * @param  none
+ */
+void display_update_unlock( void )
+{
+  xSemaphoreGive(lvgl_semaphore);
+}
+
 // Private Function Definitions
 /**
  * @brief Display Manager Function which calls the lvgl timer handler function
@@ -119,13 +145,13 @@ static void display_mng(void *pvParameter)
   while(1)
   {
     vTaskDelay(pdMS_TO_TICKS(20));
-    if( pdTRUE == xSemaphoreTake(lvgl_semaphore, portMAX_DELAY) )
+    if( true == display_update_lock() )
     {
       start_time = esp_timer_get_time();
       lv_timer_handler();
       // Semaphore is released when flushing is completed, this is checked using
       // tft_flush_status function, and then we release the semaphore
-      // xSemaphoreGive(lvgl_semaphore);
+      // display_update_unlock();
     }
 
     // check flushing status
@@ -138,7 +164,7 @@ static void display_mng(void *pvParameter)
         max_flushing_time = time_taken;
         printf("Flushing Time: %d ms\n", max_flushing_time );
       }
-      xSemaphoreGive(lvgl_semaphore);
+      display_update_unlock();
     }
   }
 }
