@@ -12,7 +12,7 @@ void ui_MainScreen_screen_init(void)
 
     ui_lblHeadLine = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblHeadLine, lv_pct(100));
-    lv_obj_set_height(ui_lblHeadLine, lv_pct(10));
+    lv_obj_set_height(ui_lblHeadLine, LV_SIZE_CONTENT);    /// 10
     lv_obj_set_x(ui_lblHeadLine, lv_pct(0));
     lv_obj_set_y(ui_lblHeadLine, lv_pct(-30));
     lv_obj_set_align(ui_lblHeadLine, LV_ALIGN_CENTER);
@@ -22,45 +22,47 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblHeadLine, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblTemperature = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblTemperature, lv_pct(30));
-    lv_obj_set_height(ui_lblTemperature, lv_pct(10));
-    lv_obj_set_x(ui_lblTemperature, lv_pct(-30));
-    lv_obj_set_y(ui_lblTemperature, lv_pct(0));
+    lv_obj_set_width(ui_lblTemperature, 100);
+    lv_obj_set_height(ui_lblTemperature, 20);
+    lv_obj_set_x(ui_lblTemperature, -100);
+    lv_obj_set_y(ui_lblTemperature, -20);
     lv_obj_set_align(ui_lblTemperature, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblTemperature, "Temperature");
 
     ui_lblHumidity = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblHumidity, lv_pct(30));
-    lv_obj_set_height(ui_lblHumidity, lv_pct(10));
-    lv_obj_set_x(ui_lblHumidity, lv_pct(-30));
-    lv_obj_set_y(ui_lblHumidity, lv_pct(8));
+    lv_obj_set_width(ui_lblHumidity, 100);
+    lv_obj_set_height(ui_lblHumidity, 20);
+    lv_obj_set_x(ui_lblHumidity, -100);
+    lv_obj_set_y(ui_lblHumidity, 10);
     lv_obj_set_align(ui_lblHumidity, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblHumidity, "Humidity");
 
     ui_lblTemperatureValue = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblTemperatureValue, lv_pct(30));
-    lv_obj_set_height(ui_lblTemperatureValue, lv_pct(10));
-    lv_obj_set_x(ui_lblTemperatureValue, lv_pct(5));
-    lv_obj_set_y(ui_lblTemperatureValue, lv_pct(0));
+    lv_obj_set_width(ui_lblTemperatureValue, 30);
+    lv_obj_set_height(ui_lblTemperatureValue, 20);
+    lv_obj_set_x(ui_lblTemperatureValue, -30);
+    lv_obj_set_y(ui_lblTemperatureValue, -20);
     lv_obj_set_align(ui_lblTemperatureValue, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblTemperatureValue, "0 °C");
 
-    ui_lblHumidityValue = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblHumidityValue, lv_pct(30));
-    lv_obj_set_height(ui_lblHumidityValue, lv_pct(10));
-    lv_obj_set_x(ui_lblHumidityValue, lv_pct(5));
-    lv_obj_set_y(ui_lblHumidityValue, lv_pct(8));
-    lv_obj_set_align(ui_lblHumidityValue, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblHumidityValue, "0 %");
-
     ui_cbLanguageSelection = lv_dropdown_create(ui_MainScreen);
     lv_dropdown_set_options(ui_cbLanguageSelection, "English\nGerman\nHindi");
-    lv_obj_set_x(ui_cbLanguageSelection, lv_pct(25));
-    lv_obj_set_y(ui_cbLanguageSelection, lv_pct(0));
+    lv_obj_set_width(ui_cbLanguageSelection, 100);
+    lv_obj_set_height(ui_cbLanguageSelection, 30);
+    lv_obj_set_x(ui_cbLanguageSelection, 100);
+    lv_obj_set_y(ui_cbLanguageSelection, -30);
     lv_obj_set_align(ui_cbLanguageSelection, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_cbLanguageSelection, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
 
 
+
+    ui_lblHumidityValue = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_lblHumidityValue, 30);
+    lv_obj_set_height(ui_lblHumidityValue, 20);
+    lv_obj_set_x(ui_lblHumidityValue, -30);
+    lv_obj_set_y(ui_lblHumidityValue, 10);
+    lv_obj_set_align(ui_lblHumidityValue, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblHumidityValue, "0 %");
 
     lv_obj_add_event_cb(ui_cbLanguageSelection, ui_event_cbLanguageSelection, LV_EVENT_ALL, NULL);
 

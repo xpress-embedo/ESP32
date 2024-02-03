@@ -5,7 +5,7 @@
   "c_path": "\\assets\\ui_font_mangal18.c",
   "cfg_path": "\\assets\\ui_font_mangal18.fcfg",
   "size": 18,
-  "bpp": 4,
+  "bpp": 8,
   "letters": 0,
   "ranges": [
     "0x0900-0x097f"

@@ -31,7 +31,7 @@ const static char * welcome_label[LANGUAGE_MAX] =
 {
   "Welcome to the Embedded Laboratory",
   "Willkommen im Embedded Laboratory",
-  "एंबेडेड प्रयोगशाला में आपका स्वागत है",
+  "एम्बेडेड प्रयोगशाला में आपका स्वागत है",
 };
 
 const static char * temperature_label[LANGUAGE_MAX] =

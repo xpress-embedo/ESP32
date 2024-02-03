@@ -16,9 +16,9 @@ lv_obj_t * ui_lblHeadLine;
 lv_obj_t * ui_lblTemperature;
 lv_obj_t * ui_lblHumidity;
 lv_obj_t * ui_lblTemperatureValue;
-lv_obj_t * ui_lblHumidityValue;
 void ui_event_cbLanguageSelection(lv_event_t * e);
 lv_obj_t * ui_cbLanguageSelection;
+lv_obj_t * ui_lblHumidityValue;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
