@@ -12,7 +12,8 @@ idf_component_register(
     ui/ui_helpers.c
     ui/screens/ui_MainScreen.c
     ui/components/ui_comp_hook.c
-    ui/fonts/ui_font_mangal.c
+    ui/fonts/ui_font_mangal18.c
+    ui/fonts/ui_font_mangal24.c
     INCLUDE_DIRS "." "ui"       # optional, add here public include directories
     PRIV_INCLUDE_DIRS   		# optional, add here private include directories
     REQUIRES            		# optional, list the public requirements (component names)
