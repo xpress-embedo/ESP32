@@ -8,8 +8,12 @@ idf_component_register(
     tft.c
     xpt2046.c
     dht11.c
-    INCLUDE_DIRS        # optional, add here public include directories
-    PRIV_INCLUDE_DIRS   # optional, add here private include directories
-    REQUIRES            # optional, list the public requirements (component names)
-    PRIV_REQUIRES       # optional, list the private requirements
+    ui/ui.c
+    ui/ui_helpers.c
+    ui/screens/ui_MainScreen.c
+    ui/components/ui_comp_hook.c
+    INCLUDE_DIRS "." "ui"       # optional, add here public include directories
+    PRIV_INCLUDE_DIRS   		# optional, add here private include directories
+    REQUIRES            		# optional, list the public requirements (component names)
+    PRIV_REQUIRES               # optional, list the private requirements
 )
