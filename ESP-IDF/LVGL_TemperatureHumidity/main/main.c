@@ -5,17 +5,8 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "lvgl.h"
-#include "display_mng.h"
 #include "dht11.h"
-#include "ui.h"
-
-typedef enum {
-  LANGUAGE_ENGLISH = 0,
-  LANGUAGE_GERMAN,
-  LANGUAGE_HINDI,
-  LANGUAGE_MAX
-} language_t;
+#include "gui_mng.h"
 
 // macros
 #define DHT11_PIN                     (GPIO_NUM_12)
@@ -23,11 +14,11 @@ typedef enum {
 
 // Private Variables
 static const char *TAG = "APP";
-static int temperature = 0;
-static int humidity = 0;
+static uint8_t temperature = 0;
+static uint8_t humidity = 0;
 
 // Private Function Declarations
-static void update_temperature_humidity( void );
+// todo
 
 void app_main(void)
 {
@@ -37,11 +28,8 @@ void app_main(void)
   // initialize dht sensor library
   dht11_init(DHT11_PIN);
 
-  // initialize display related stuff, also lvgl
-  display_init();
-
-  // main user interface
-  ui_init();
+  // start the gui task, this handles all the display related stuff
+  gui_start();
 
   while (true)
   {
@@ -49,11 +37,21 @@ void app_main(void)
     // Get DHT11 Temperature and Humidity Values
     if( dht11_read().status == DHT11_OK )
     {
-      temperature = (uint8_t)dht11_read().temperature;
-      humidity = (uint8_t)dht11_read().humidity;
-      ESP_LOGI(TAG, "Temperature: %d", temperature);
-      ESP_LOGI(TAG, "Humidity: %d", humidity);
-      update_temperature_humidity();
+      uint8_t temp = (uint8_t)dht11_read().humidity;
+      if( temp < 100 )
+      {
+        // humidity can't be greater than 100%, that means invalid data
+        humidity = temp;
+        temperature = (uint8_t)dht11_read().temperature;
+        ESP_LOGI(TAG, "Temperature: %d", temperature);
+        ESP_LOGI(TAG, "Humidity: %d", humidity);
+        // trigger event to display temperature and humidity
+        gui_set_event(GUI_MNG_EV_TEMP_HUMID);
+      }
+      else
+      {
+        ESP_LOGI(TAG, "In-correct data received from DHT11");
+      }
     }
     else
     {
@@ -63,19 +61,15 @@ void app_main(void)
 }
 
 // Private Function Definitions
-/*
- * @brief Update the temperature and humidity values of the display
- */
-static void update_temperature_humidity( void )
+
+uint8_t get_temerature( void )
 {
-  if( true == display_update_lock() )
-  {
-    lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", temperature);
-    lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", humidity);
-    // ESP_LOGI(TAG, "Variable Temperature = %d, Humidity = %d Updated on Display", temperature, humidity);
-    // ESP_LOGI(TAG, "Label => Temperature = %s, Humidity = %s", lv_label_get_text(ui_lblTemperatureValue), lv_label_get_text(ui_lblHumidityValue));
-    display_update_unlock();
-  }
+  return temperature;
+}
+
+uint8_t get_humidity( void )
+{
+  return humidity;
 }
 
 
