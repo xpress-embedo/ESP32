@@ -19,7 +19,7 @@ typedef enum {
 
 typedef struct _gui_q_msg_t {
   gui_mng_event_t   event_id;
-  // uint8_t           *data;
+  uint8_t           *data;
 } gui_q_msg_t;
 
 // Public Function Prototypes

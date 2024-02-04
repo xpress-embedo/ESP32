@@ -20,7 +20,7 @@
 // Macros
 #define GUI_LOCK()                        gui_update_lock()
 #define GUI_UNLOCK()                      gui_update_unlock()
-#define GUI_EVENT_QUEUE_LEN               (5)
+#define GUI_EVENT_QUEUE_LEN               (1)
 
 // Private Variables
 static const char *TAG = "GUI";
@@ -28,7 +28,7 @@ static const char *TAG = "GUI";
 // call *any* lvgl function from other threads/tasks we should lock on the very
 // same semaphore!
 static SemaphoreHandle_t  gui_semaphore;
-static QueueHandle_t      gui_event;
+static QueueHandle_t      gui_event = NULL;
 static lv_chart_series_t * temp_series;
 static lv_chart_series_t * humid_series;
 
@@ -50,7 +50,7 @@ void gui_start( void )
 
   // callback function, task name, stack size, parameters, priority, task handle
   // xTaskCreate(&gui_task, "gui task", 4096*4, NULL, 5, NULL);
-  xTaskCreatePinnedToCore(&gui_task, "gui task", 4096*4, NULL, 5, NULL, 0);
+  xTaskCreatePinnedToCore(&gui_task, "gui task", 4096*2, NULL, 5, NULL, 0);
   // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
 
@@ -62,7 +62,7 @@ BaseType_t gui_send_event( gui_mng_event_t event, uint8_t *pData )
   if( event < GUI_MNG_EV_MAX )
   {
     msg.event_id  = event;
-    // msg.data      = pData;
+    msg.data      = pData;
     status = xQueueSend( gui_event, &msg, portMAX_DELAY );
   }
   return status;
@@ -153,9 +153,13 @@ static void gui_task(void *pvParameter)
 
   // create message queue with the length GUI_EVENT_QUEUE_LEN
   gui_event = xQueueCreate( GUI_EVENT_QUEUE_LEN, sizeof(gui_q_msg_t) );
-  if( gui_event )
+  if( gui_event == NULL )
   {
     ESP_LOGE(TAG, "Unable to Create Queue");
+  }
+  else
+  {
+    ESP_LOGI(TAG, "Queue Created");
   }
 
   while(1)
@@ -175,10 +179,8 @@ static void gui_task(void *pvParameter)
         {
           case GUI_MNG_EV_TEMP_HUMID:
             gui_update_temp_humid();
-            gui_event = GUI_MNG_EV_NONE;
             break;
           default:
-            gui_event = GUI_MNG_EV_NONE;
             break;
         } // switch case end
       }   // if event received in limit end
