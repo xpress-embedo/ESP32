@@ -11,61 +11,67 @@ void ui_MainScreen_screen_init(void)
     lv_obj_clear_flag(ui_MainScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_lblHeadLine = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblHeadLine, lv_pct(100));
-    lv_obj_set_height(ui_lblHeadLine, LV_SIZE_CONTENT);    /// 10
-    lv_obj_set_x(ui_lblHeadLine, lv_pct(0));
-    lv_obj_set_y(ui_lblHeadLine, lv_pct(-30));
+    lv_obj_set_width(ui_lblHeadLine, 320);
+    lv_obj_set_height(ui_lblHeadLine, 20);
+    lv_obj_set_x(ui_lblHeadLine, 0);
+    lv_obj_set_y(ui_lblHeadLine, -100);
     lv_obj_set_align(ui_lblHeadLine, LV_ALIGN_CENTER);
     lv_label_set_long_mode(ui_lblHeadLine, LV_LABEL_LONG_SCROLL_CIRCULAR);
-    lv_label_set_text(ui_lblHeadLine, "Welcome to the Embedded Laboratory.");
+    lv_label_set_text(ui_lblHeadLine, "Temperature and Humidity Graph.");
+    lv_obj_set_style_text_color(ui_lblHeadLine, lv_color_hex(0x9B19B3), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblHeadLine, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_lblHeadLine, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblHeadLine, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_lblTemperature = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblTemperature, 100);
-    lv_obj_set_height(ui_lblTemperature, 20);
-    lv_obj_set_x(ui_lblTemperature, -100);
-    lv_obj_set_y(ui_lblTemperature, -20);
-    lv_obj_set_align(ui_lblTemperature, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblTemperature, "Temperature");
 
     ui_lblHumidity = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblHumidity, 100);
     lv_obj_set_height(ui_lblHumidity, 20);
-    lv_obj_set_x(ui_lblHumidity, -100);
-    lv_obj_set_y(ui_lblHumidity, 10);
+    lv_obj_set_x(ui_lblHumidity, 50);
+    lv_obj_set_y(ui_lblHumidity, -50);
     lv_obj_set_align(ui_lblHumidity, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblHumidity, "Humidity");
 
     ui_lblTemperatureValue = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblTemperatureValue, 40);
     lv_obj_set_height(ui_lblTemperatureValue, 20);
-    lv_obj_set_x(ui_lblTemperatureValue, -30);
-    lv_obj_set_y(ui_lblTemperatureValue, -20);
+    lv_obj_set_x(ui_lblTemperatureValue, 120);
+    lv_obj_set_y(ui_lblTemperatureValue, -70);
     lv_obj_set_align(ui_lblTemperatureValue, LV_ALIGN_CENTER);
     lv_label_set_long_mode(ui_lblTemperatureValue, LV_LABEL_LONG_SCROLL);
     lv_label_set_text(ui_lblTemperatureValue, "0 °C");
 
-    ui_cbLanguageSelection = lv_dropdown_create(ui_MainScreen);
-    lv_dropdown_set_options(ui_cbLanguageSelection, "English\nGerman\nHindi");
-    lv_obj_set_width(ui_cbLanguageSelection, 100);
-    lv_obj_set_height(ui_cbLanguageSelection, 30);
-    lv_obj_set_x(ui_cbLanguageSelection, 100);
-    lv_obj_set_y(ui_cbLanguageSelection, -30);
-    lv_obj_set_align(ui_cbLanguageSelection, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_cbLanguageSelection, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-
-
+    ui_lblTemperature = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_lblTemperature, 100);
+    lv_obj_set_height(ui_lblTemperature, 20);
+    lv_obj_set_x(ui_lblTemperature, 50);
+    lv_obj_set_y(ui_lblTemperature, -70);
+    lv_obj_set_align(ui_lblTemperature, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblTemperature, "Temperature");
 
     ui_lblHumidityValue = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblHumidityValue, 40);
     lv_obj_set_height(ui_lblHumidityValue, 20);
-    lv_obj_set_x(ui_lblHumidityValue, -30);
-    lv_obj_set_y(ui_lblHumidityValue, 10);
+    lv_obj_set_x(ui_lblHumidityValue, 120);
+    lv_obj_set_y(ui_lblHumidityValue, -50);
     lv_obj_set_align(ui_lblHumidityValue, LV_ALIGN_CENTER);
     lv_label_set_long_mode(ui_lblHumidityValue, LV_LABEL_LONG_SCROLL);
     lv_label_set_text(ui_lblHumidityValue, "0 %");
 
-    lv_obj_add_event_cb(ui_cbLanguageSelection, ui_event_cbLanguageSelection, LV_EVENT_ALL, NULL);
+    ui_chartData = lv_chart_create(ui_MainScreen);
+    lv_obj_set_width(ui_chartData, 240);
+    lv_obj_set_height(ui_chartData, 120);
+    lv_obj_set_x(ui_chartData, 0);
+    lv_obj_set_y(ui_chartData, 30);
+    lv_obj_set_align(ui_chartData, LV_ALIGN_CENTER);
+    lv_chart_set_type(ui_chartData, LV_CHART_TYPE_LINE);
+    lv_chart_set_point_count(ui_chartData, 100);
+    lv_chart_set_range(ui_chartData, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
+    lv_chart_set_range(ui_chartData, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
+    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, false, 50);
+    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, true, 25);
+
+
+
 
 }

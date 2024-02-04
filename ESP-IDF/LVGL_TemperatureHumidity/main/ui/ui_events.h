@@ -10,8 +10,6 @@
 extern "C" {
 #endif
 
-void update_language(lv_event_t * e);
-
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

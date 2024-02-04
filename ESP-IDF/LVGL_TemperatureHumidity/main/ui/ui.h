@@ -18,18 +18,15 @@ extern "C" {
 void ui_MainScreen_screen_init(void);
 extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_lblHeadLine;
-extern lv_obj_t * ui_lblTemperature;
 extern lv_obj_t * ui_lblHumidity;
 extern lv_obj_t * ui_lblTemperatureValue;
-void ui_event_cbLanguageSelection(lv_event_t * e);
-extern lv_obj_t * ui_cbLanguageSelection;
+extern lv_obj_t * ui_lblTemperature;
 extern lv_obj_t * ui_lblHumidityValue;
+extern lv_obj_t * ui_chartData;
 extern lv_obj_t * ui____initial_actions0;
 
 
 
-LV_FONT_DECLARE(ui_font_mangal18);
-LV_FONT_DECLARE(ui_font_mangal24);
 
 void ui_init(void);
 
