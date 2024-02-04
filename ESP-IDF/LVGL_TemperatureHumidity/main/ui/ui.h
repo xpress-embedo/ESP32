@@ -22,7 +22,7 @@ extern lv_obj_t * ui_lblHumidity;
 extern lv_obj_t * ui_lblTemperatureValue;
 extern lv_obj_t * ui_lblTemperature;
 extern lv_obj_t * ui_lblHumidityValue;
-extern lv_obj_t * ui_chartData;
+extern lv_obj_t * ui_chart;
 extern lv_obj_t * ui____initial_actions0;
 
 

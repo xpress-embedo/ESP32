@@ -17,7 +17,7 @@ lv_obj_t * ui_lblHumidity;
 lv_obj_t * ui_lblTemperatureValue;
 lv_obj_t * ui_lblTemperature;
 lv_obj_t * ui_lblHumidityValue;
-lv_obj_t * ui_chartData;
+lv_obj_t * ui_chart;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////

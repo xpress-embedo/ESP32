@@ -1886,7 +1886,6 @@
               },
               {
                 "nid": -1260388952,
-                "flags": 1048576,
                 "strtype": "CHART/Chart_data",
                 "InheritedType": 1
               },
@@ -2190,7 +2189,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
     "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
-    "backup_cnt": 59,
+    "backup_cnt": 73,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

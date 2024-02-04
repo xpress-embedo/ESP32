@@ -26,6 +26,8 @@
 // same semaphore!
 static SemaphoreHandle_t gui_semaphore;
 static gui_mng_event_t gui_event = GUI_MNG_EV_NONE;
+static lv_chart_series_t * temp_series;
+static lv_chart_series_t * humid_series;
 
 // Private Function Declaration
 static void gui_init( void );
@@ -99,6 +101,35 @@ static void gui_init( void )
 
   // main user interface
   ui_init();
+
+  // Below are some updates for chart related handling
+  sensor_data_t *sensor_data = get_temperature_humidity();
+  uint8_t *temp_data = sensor_data->temperature;
+  uint8_t *humid_data = sensor_data->humidity;
+
+  // this should match with the temperature & humidity buffer length
+  // NOTE: this is also configured in Square Line Studio as 100, so must match
+  uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
+  // By default the number of points are 10, update it to chart width
+  // this is already updated in Square Line Studio as 100
+  lv_chart_set_point_count( ui_chart, chart_hor_res );
+
+  // Do not display points on the data
+  lv_obj_set_style_size( ui_chart, 0, LV_PART_INDICATOR);
+
+  // Update mode shift or circular, here shift is selected
+  lv_chart_set_update_mode( ui_chart, LV_CHART_UPDATE_MODE_SHIFT );
+
+  // Add data series for temperature on primary y-axis
+  temp_series = lv_chart_add_series(ui_chart, lv_palette_main(LV_PALETTE_BLUE), LV_CHART_AXIS_PRIMARY_Y);
+  // Add data series for humidity on secondary y-axis
+  humid_series = lv_chart_add_series(ui_chart, lv_palette_main(LV_PALETTE_GREEN), LV_CHART_AXIS_SECONDARY_Y);
+
+  for( size_t idx=0; idx<chart_hor_res; idx++ )
+  {
+    temp_series->y_points[idx] = (lv_coord_t)*(temp_data+idx);
+    humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
+  }
 }
 
 /**
@@ -184,6 +215,19 @@ static void gui_update_temp_humid( void )
       lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", sensor_data->temperature[idx] );
       lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", sensor_data->humidity[idx] );
     }
+
+    // update chart
+    uint8_t *temperature_data = sensor_data->temperature;
+    uint8_t *humidity_data    = sensor_data->humidity;
+    // this should match the temperature buffer length
+    uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
+
+    for( idx=0; idx<chart_hor_res; idx++ )
+    {
+      temp_series->y_points[idx] = (lv_coord_t)*(temperature_data+idx);
+      humid_series->y_points[idx] = (lv_coord_t)*(humidity_data+idx);
+    }
+    lv_chart_refresh(ui_chart);
     // GUI_UNLOCK();
   }
 }

@@ -70,7 +70,7 @@ void app_main(void)
   }
 }
 
-// Private Function Definitions
+// Public Function Definitions
 
 /**
  * @brief Get the Pointer to the Sensor Data Structure to get the temperature 
@@ -82,6 +82,8 @@ sensor_data_t * get_temperature_humidity( void )
 {
   return &sensor_data;
 }
+
+// Private Function Definitions
 
 
 

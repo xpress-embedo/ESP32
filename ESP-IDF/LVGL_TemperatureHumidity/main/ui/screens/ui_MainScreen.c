@@ -57,19 +57,19 @@ void ui_MainScreen_screen_init(void)
     lv_label_set_long_mode(ui_lblHumidityValue, LV_LABEL_LONG_SCROLL);
     lv_label_set_text(ui_lblHumidityValue, "0 %");
 
-    ui_chartData = lv_chart_create(ui_MainScreen);
-    lv_obj_set_width(ui_chartData, 240);
-    lv_obj_set_height(ui_chartData, 120);
-    lv_obj_set_x(ui_chartData, 0);
-    lv_obj_set_y(ui_chartData, 30);
-    lv_obj_set_align(ui_chartData, LV_ALIGN_CENTER);
-    lv_chart_set_type(ui_chartData, LV_CHART_TYPE_LINE);
-    lv_chart_set_point_count(ui_chartData, 100);
-    lv_chart_set_range(ui_chartData, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
-    lv_chart_set_range(ui_chartData, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
-    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, false, 50);
-    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
-    lv_chart_set_axis_tick(ui_chartData, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, true, 25);
+    ui_chart = lv_chart_create(ui_MainScreen);
+    lv_obj_set_width(ui_chart, 240);
+    lv_obj_set_height(ui_chart, 120);
+    lv_obj_set_x(ui_chart, 0);
+    lv_obj_set_y(ui_chart, 30);
+    lv_obj_set_align(ui_chart, LV_ALIGN_CENTER);
+    lv_chart_set_type(ui_chart, LV_CHART_TYPE_LINE);
+    lv_chart_set_point_count(ui_chart, 100);
+    lv_chart_set_range(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
+    lv_chart_set_range(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
+    lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, false, 50);
+    lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+    lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, true, 25);
 
 
 
