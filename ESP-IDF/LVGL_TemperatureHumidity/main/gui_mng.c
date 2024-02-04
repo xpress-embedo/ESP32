@@ -174,10 +174,16 @@ static void gui_update_temp_humid( void )
    */
   // if( GUI_LOCK() )
   {
-    lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", get_temerature());
-    lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", get_humidity());
-    // ESP_LOGI(TAG, "Variable Temperature = %d, Humidity = %d Updated on Display", temperature, humidity);
-    // ESP_LOGI(TAG, "Label => Temperature = %s, Humidity = %s", lv_label_get_text(ui_lblTemperatureValue), lv_label_get_text(ui_lblHumidityValue));
+    sensor_data_t *sensor_data = get_temperature_humidity();
+    size_t idx = sensor_data->sensor_idx;
+    if( (idx > 0) && (idx < SENSOR_BUFF_SIZE) )
+    {
+      // before posting the event we have incremented the index and hence to get
+      // the last sensor data we have to use - 1
+      idx = (idx - 1);
+      lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", sensor_data->temperature[idx] );
+      lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", sensor_data->humidity[idx] );
+    }
     // GUI_UNLOCK();
   }
 }
