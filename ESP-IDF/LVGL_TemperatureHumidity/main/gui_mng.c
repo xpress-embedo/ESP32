@@ -5,6 +5,7 @@
  *      Author: xpress_embedo
  */
 #include "esp_timer.h"
+#include "esp_log.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -19,13 +20,15 @@
 // Macros
 #define GUI_LOCK()                        gui_update_lock()
 #define GUI_UNLOCK()                      gui_update_unlock()
+#define GUI_EVENT_QUEUE_LEN               (5)
 
 // Private Variables
+static const char *TAG = "GUI";
 // Creates a semaphore to handle concurrent call to lvgl stuff, If we wish to
 // call *any* lvgl function from other threads/tasks we should lock on the very
 // same semaphore!
-static SemaphoreHandle_t gui_semaphore;
-static gui_mng_event_t gui_event = GUI_MNG_EV_NONE;
+static SemaphoreHandle_t  gui_semaphore;
+static QueueHandle_t      gui_event;
 static lv_chart_series_t * temp_series;
 static lv_chart_series_t * humid_series;
 
@@ -51,12 +54,18 @@ void gui_start( void )
   // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
 
-void gui_set_event( gui_mng_event_t event )
+BaseType_t gui_send_event( gui_mng_event_t event, uint8_t *pData )
 {
+  BaseType_t status = pdFALSE;
+  gui_q_msg_t msg;
+
   if( event < GUI_MNG_EV_MAX )
   {
-    gui_event = event;
+    msg.event_id  = event;
+    // msg.data      = pData;
+    status = xQueueSend( gui_event, &msg, portMAX_DELAY );
   }
+  return status;
 }
 
 /**
@@ -139,26 +148,41 @@ static void gui_init( void )
  */
 static void gui_task(void *pvParameter)
 {
+  gui_q_msg_t msg;
+  msg.event_id = GUI_MNG_EV_NONE;
+
+  // create message queue with the length GUI_EVENT_QUEUE_LEN
+  gui_event = xQueueCreate( GUI_EVENT_QUEUE_LEN, sizeof(gui_q_msg_t) );
+  if( gui_event )
+  {
+    ESP_LOGE(TAG, "Unable to Create Queue");
+  }
+
   while(1)
   {
     vTaskDelay(pdMS_TO_TICKS(20));
 
+    // refresh the display
     gui_refresh();
 
-    // the below is the code to handle the state machine
-    if( GUI_MNG_EV_NONE != gui_event )
+    // wait only 5 ms and then proceed
+    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(5)) )
     {
-      switch( gui_event )
+      // the below is the code to handle the state machine
+      if( GUI_MNG_EV_NONE != msg.event_id )
       {
-        case GUI_MNG_EV_TEMP_HUMID:
-          gui_update_temp_humid();
-          gui_event = GUI_MNG_EV_NONE;
-          break;
-        default:
-          gui_event = GUI_MNG_EV_NONE;
-          break;
-      }
-    }
+        switch( msg.event_id )
+        {
+          case GUI_MNG_EV_TEMP_HUMID:
+            gui_update_temp_humid();
+            gui_event = GUI_MNG_EV_NONE;
+            break;
+          default:
+            gui_event = GUI_MNG_EV_NONE;
+            break;
+        } // switch case end
+      }   // if event received in limit end
+    }     // xQueueReceive end
   }
 }
 

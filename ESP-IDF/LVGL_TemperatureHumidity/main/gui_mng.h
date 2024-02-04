@@ -17,9 +17,14 @@ typedef enum {
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
+typedef struct _gui_q_msg_t {
+  gui_mng_event_t   event_id;
+  // uint8_t           *data;
+} gui_q_msg_t;
+
 // Public Function Prototypes
 void gui_start( void );
-void gui_set_event( gui_mng_event_t event );
+BaseType_t gui_send_event( gui_mng_event_t event, uint8_t *pData );
 uint8_t gui_update_lock( void );
 void gui_update_unlock( void );
 

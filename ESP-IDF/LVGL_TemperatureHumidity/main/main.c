@@ -35,21 +35,24 @@ void app_main(void)
   {
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
     // Get DHT11 Temperature and Humidity Values
-    if( dht11_read().status == DHT11_OK )
+    // if( dht11_read().status == DHT11_OK )
+    if( 1 )
     {
-      uint8_t temp = (uint8_t)dht11_read().humidity;
+      // uint8_t temp = (uint8_t)dht11_read().humidity;
+      uint8_t temp = 90;
       // humidity can't be greater than 100%, that means invalid data
       if( temp < 100 )
       {
         if( sensor_data.sensor_idx < SENSOR_BUFF_SIZE )
         {
           sensor_data.humidity[sensor_data.sensor_idx] = temp;
-          temp = (uint8_t)dht11_read().temperature;
+          // temp = (uint8_t)dht11_read().temperature;
+          temp = 25;
           sensor_data.temperature[sensor_data.sensor_idx] = temp;
           ESP_LOGI(TAG, "Temperature: %d", sensor_data.temperature[sensor_data.sensor_idx]);
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity[sensor_data.sensor_idx]);
           // trigger event to display temperature and humidity
-          gui_set_event(GUI_MNG_EV_TEMP_HUMID);
+          gui_send_event(GUI_MNG_EV_TEMP_HUMID, NULL );
           sensor_data.sensor_idx++;
           // reset the index
           if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )
@@ -60,12 +63,12 @@ void app_main(void)
       }
       else
       {
-        ESP_LOGI(TAG, "In-correct data received from DHT11");
+        // ESP_LOGI(TAG, "In-correct data received from DHT11");
       }
     }
     else
     {
-      ESP_LOGI(TAG, "Unable to Read DHT11 Status");
+      // ESP_LOGI(TAG, "Unable to Read DHT11 Status");
     }
   }
 }
