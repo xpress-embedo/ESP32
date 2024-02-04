@@ -18,7 +18,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_lblHeadLine, LV_ALIGN_CENTER);
     lv_label_set_long_mode(ui_lblHeadLine, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_text(ui_lblHeadLine, "Temperature and Humidity Graph.");
-    lv_obj_set_style_text_color(ui_lblHeadLine, lv_color_hex(0x9B19B3), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_lblHeadLine, lv_color_hex(0x084146), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblHeadLine, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_lblHeadLine, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblHeadLine, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -67,9 +67,11 @@ void ui_MainScreen_screen_init(void)
     lv_chart_set_point_count(ui_chart, 100);
     lv_chart_set_range(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
     lv_chart_set_range(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
-    lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 2, false, 50);
+    lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 0, 2, false, 50);
     lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
     lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, true, 25);
+    lv_obj_set_style_bg_color(ui_chart, lv_color_hex(0xF0F0F0), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_chart, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 
 

@@ -261,6 +261,7 @@
               },
               {
                 "nid": -194965837,
+                "flags": 1048576,
                 "strtype": "LABEL/Label",
                 "InheritedType": 1
               },
@@ -288,9 +289,9 @@
                         "nid": -1306702055,
                         "strtype": "_style/Text_Color",
                         "intarray": [
-                          155,
-                          25,
-                          179,
+                          8,
+                          65,
+                          70,
                           255
                         ],
                         "InheritedType": 7
@@ -1478,7 +1479,7 @@
               {
                 "nid": -1280985514,
                 "strtype": "OBJECT/Name",
-                "strval": "chartData",
+                "strval": "chart",
                 "InheritedType": 10
               },
               {
@@ -1760,7 +1761,6 @@
               },
               {
                 "nid": -1493316071,
-                "flags": 1048576,
                 "strtype": "CHART/X_Axis",
                 "InheritedType": 1
               },
@@ -1769,7 +1769,7 @@
                 "strtype": "CHART/XMajor",
                 "intarray": [
                   10,
-                  5
+                  0
                 ],
                 "InheritedType": 7
               },
@@ -1897,7 +1897,27 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 230778445,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 2115744370,
+                        "strtype": "_style/Bg_Color",
+                        "intarray": [
+                          240,
+                          240,
+                          240,
+                          255
+                        ],
+                        "InheritedType": 7
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": -410064276,
                 "strtype": "CHART/Style_bg",
                 "strval": "lv.PART.MAIN, Rectangle, Line, Pad",
@@ -2189,7 +2209,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
     "projectExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\LVGL_TemperatureHumidity\\main\\ui",
-    "backup_cnt": 73,
+    "backup_cnt": 82,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

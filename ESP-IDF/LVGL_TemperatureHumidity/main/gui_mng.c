@@ -20,7 +20,7 @@
 // Macros
 #define GUI_LOCK()                        gui_update_lock()
 #define GUI_UNLOCK()                      gui_update_unlock()
-#define GUI_EVENT_QUEUE_LEN               (1)
+#define GUI_EVENT_QUEUE_LEN               (5)
 
 // Private Variables
 static const char *TAG = "GUI";
@@ -54,6 +54,12 @@ void gui_start( void )
   // NOTE: I checked the flush timing with pinning and without pinning to core is same
 }
 
+/**
+ * @brief Send GUI Event
+ * @param event Event Code
+ * @param pData Pointer to Data if Any
+ * @return BaseType_t pdTRUE if successfull else pdFALSE
+ */
 BaseType_t gui_send_event( gui_mng_event_t event, uint8_t *pData )
 {
   BaseType_t status = pdFALSE;
@@ -105,13 +111,20 @@ static void gui_init( void )
 {
   gui_semaphore = xSemaphoreCreateMutex();
 
+  // create message queue with the length GUI_EVENT_QUEUE_LEN
+  gui_event = xQueueCreate( GUI_EVENT_QUEUE_LEN, sizeof(gui_q_msg_t) );
+  if( gui_event == NULL )
+  {
+    ESP_LOGE(TAG, "Unable to Create Queue");
+  }
+
   // initialize display related stuff, also lvgl
   display_init();
 
   // main user interface
   ui_init();
 
-  // Below are some updates for chart related handling
+  // Chart Related Code Starts
   sensor_data_t *sensor_data = get_temperature_humidity();
   uint8_t *temp_data = sensor_data->temperature;
   uint8_t *humid_data = sensor_data->humidity;
@@ -139,6 +152,39 @@ static void gui_init( void )
     temp_series->y_points[idx] = (lv_coord_t)*(temp_data+idx);
     humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
   }
+  // Chart Related Code Ends
+
+  // Legend Related Code Starts
+  // Showing Legends Code Starts from Here: this is temporary stuff, not the
+  // proper way of doing things, & library also doesn't support showing legends
+  // Create an array of Points for Lines
+  static lv_point_t temp_points[] = { {0,0}, {30,0} };
+  // Create Style for temperature and humidity legends
+  static lv_style_t style_line_temp;
+  lv_style_init(&style_line_temp);
+  lv_style_set_line_width(&style_line_temp, 4);
+  lv_style_set_line_color(&style_line_temp, lv_palette_main(LV_PALETTE_BLUE));
+
+  static lv_style_t style_line_humid;
+  lv_style_init(&style_line_humid);
+  lv_style_set_line_width(&style_line_humid, 4);
+  lv_style_set_line_color(&style_line_humid, lv_palette_main(LV_PALETTE_GREEN));
+
+  // Create a line and apply the style
+  lv_obj_t * temp_line;
+  lv_obj_t * humid_line;
+  temp_line = lv_line_create( lv_scr_act() );
+  humid_line = lv_line_create( lv_scr_act() );
+  // set the points for temperature legend
+  lv_line_set_points(temp_line, temp_points, 2);
+  lv_obj_add_style(temp_line, &style_line_temp, 0);
+  lv_obj_align_to(temp_line, ui_lblTemperature, LV_ALIGN_TOP_LEFT, -40, 8);
+  // set the points for humidity legend
+  lv_line_set_points(humid_line, temp_points, 2); // Using the same temp points
+  lv_obj_add_style(humid_line, &style_line_humid, 0);
+  lv_obj_align_to(humid_line, temp_line, LV_ALIGN_BOTTOM_MID, 0, 20);
+
+  // Legend Related Code Ends
 }
 
 /**
@@ -151,17 +197,6 @@ static void gui_task(void *pvParameter)
   gui_q_msg_t msg;
   msg.event_id = GUI_MNG_EV_NONE;
 
-  // create message queue with the length GUI_EVENT_QUEUE_LEN
-  gui_event = xQueueCreate( GUI_EVENT_QUEUE_LEN, sizeof(gui_q_msg_t) );
-  if( gui_event == NULL )
-  {
-    ESP_LOGE(TAG, "Unable to Create Queue");
-  }
-  else
-  {
-    ESP_LOGI(TAG, "Queue Created");
-  }
-
   while(1)
   {
     vTaskDelay(pdMS_TO_TICKS(20));
@@ -170,7 +205,7 @@ static void gui_task(void *pvParameter)
     gui_refresh();
 
     // wait only 5 ms and then proceed
-    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(5)) )
+    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(10)) )
     {
       // the below is the code to handle the state machine
       if( GUI_MNG_EV_NONE != msg.event_id )
