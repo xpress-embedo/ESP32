@@ -8,6 +8,7 @@
 #include "main.h"
 #include "dht11.h"
 #include "gui_mng.h"
+#include "thingspeak.h"
 
 // macros
 #define DHT11_PIN                     (GPIO_NUM_12)
@@ -24,6 +25,8 @@ void app_main(void)
 {
   // Disable default gpio logging messages
   esp_log_level_set("gpio", ESP_LOG_NONE);
+
+  thingspeak_start();
 
   // initialize dht sensor library
   dht11_init(DHT11_PIN);
