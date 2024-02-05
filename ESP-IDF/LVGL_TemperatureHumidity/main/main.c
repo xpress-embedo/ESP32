@@ -53,6 +53,7 @@ void app_main(void)
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity[sensor_data.sensor_idx]);
           // trigger event to display temperature and humidity
           gui_send_event(GUI_MNG_EV_TEMP_HUMID, NULL );
+          thingspeak_send_event(THING_SPEAK_EV_TEMP_HUMID, NULL);
           sensor_data.sensor_idx++;
           // reset the index
           if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )

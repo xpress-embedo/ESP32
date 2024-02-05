@@ -17,12 +17,14 @@
 #include "esp_wifi.h"
 #include "esp_http_client.h"
 
+#include "main.h"
 #include "thingspeak.h"
 
 // Private Macros
-//#define WIFI_SSID
-//#define WIFI_PASSWORD
-#define WIFI_MAX_RETRY                      (5u)
+#define WIFI_SSID
+#define WIFI_PASSWORD
+#define WIFI_MAX_RETRY                      (5)
+#define THINGSPEAK_EVENT_QUEUE_LEN          (5)
 
 // The following are the bits/flags for event group
 #define WIFI_CONNECTED_BIT                  BIT0      // connected to the access point with an IP
@@ -30,13 +32,16 @@
 
 // Private Variables
 static const char *TAG = "ThingSpeak";
+static const char THINGSPEAK_KEY[] = "Enter Your Key";
 static EventGroupHandle_t wifi_event_group;           // FreeRTOS event group to signal when we are connected
 static uint8_t wifi_connect_retry = 0;
+static bool wifi_connect_status = false;
+static QueueHandle_t      thingspeak_event = NULL;
 
 // Private Function Declaration
 static void thingspeak_connect_wifi( void );
 static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
-
+static void thingspeak_send_data( void *pvParameters );
 
 
 // Public Function Prototypes
@@ -54,12 +59,32 @@ void thingspeak_start( void )
   ESP_ERROR_CHECK(ret);
 
   thingspeak_connect_wifi();
+
+  if( wifi_connect_status )
+  {
+    // create message queue with the length THINGSPEAK_EVENT_QUEUE_LEN
+    thingspeak_event = xQueueCreate( THINGSPEAK_EVENT_QUEUE_LEN, sizeof(thingspeak_q_msg_t) );
+    if( thingspeak_event == NULL )
+    {
+      ESP_LOGE(TAG, "Unable to Create Queue");
+    }
+    xTaskCreate(&thingspeak_send_data, "ThingSpeak Send", 4096*2, NULL, 6, NULL);
+  }
 }
 
 
-BaseType_t thingspeak_send_event( thinkspeak_event_t event, uint8_t *pData )
+BaseType_t thingspeak_send_event( thingspeak_event_t event, uint8_t *pData )
 {
-  return pdTRUE;
+  BaseType_t status = pdFALSE;
+  thingspeak_q_msg_t msg;
+
+  if( event < THING_SPEAK_EV_MAX )
+  {
+    msg.event_id  = event;
+    msg.data      = pData;
+    status = xQueueSend( thingspeak_event, &msg, portMAX_DELAY );
+  }
+  return status;
 }
 
 
@@ -153,6 +178,7 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
       }
       else
       {
+        wifi_connect_status = false;
         xEventGroupSetBits(wifi_event_group, WIFI_FAIL_BIT);
         ESP_LOGE(TAG, "Failed to connect to Access Point.");
       }
@@ -163,6 +189,78 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
     ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
     ESP_LOGI(TAG, "Got IP:" IPSTR, IP2STR(&event->ip_info.ip));
     wifi_connect_retry = 0;
+    wifi_connect_status = true;
     xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
+  }
+}
+
+static void thingspeak_send_data( void *pvParameters )
+{
+  esp_err_t err;
+  thingspeak_q_msg_t msg;
+  char thingspeak_url[] = "https://api.thingspeak.com";
+  char data[] = "/update?api_key=%s&field1=%u&field2=%d";
+  char post_data[200];
+  uint8_t temperature = 0;
+  uint8_t humidity = 0;
+
+  esp_http_client_config_t config =
+  {
+    .url = thingspeak_url,
+    .method = HTTP_METHOD_GET,
+  };
+
+  esp_http_client_handle_t client = esp_http_client_init( &config );
+  esp_http_client_set_header( client, "Content-Type", "application/x-www-form-urlencoded" );
+
+  while( 1 )
+  {
+    // wait only 10 ms and then proceed
+    if( xQueueReceive(thingspeak_event, &msg, pdMS_TO_TICKS(10)) )
+    {
+      // the below is the code to handle the state machine
+      if( THING_SPEAK_EV_NONE != msg.event_id )
+      {
+        switch( msg.event_id )
+        {
+          case THING_SPEAK_EV_TEMP_HUMID:
+            sensor_data_t *sensor_data = get_temperature_humidity();
+            size_t idx = sensor_data->sensor_idx;
+            if( (idx > 0) && (idx < SENSOR_BUFF_SIZE) )
+            {
+              // before posting the event we have incremented the index and hence to get
+              // the last sensor data we have to use - 1
+              idx = (idx - 1);
+              temperature = sensor_data->temperature[idx];
+              humidity = sensor_data->humidity[idx];
+            }
+            else
+            {
+              temperature = 0;
+              humidity = 0;
+            }
+            strcpy(post_data,"");
+            snprintf(post_data, sizeof(post_data), data, THINGSPEAK_KEY, temperature, humidity);
+            ESP_LOGI(TAG, "Post Data = %s", post_data);
+            esp_http_client_set_post_field(client, post_data, strlen(post_data));
+            err = esp_http_client_perform(client);
+            if (err == ESP_OK)
+            {
+              int status_code = esp_http_client_get_status_code(client);
+              if( status_code == 200 )
+              {
+                ESP_LOGI(TAG, "Message Sent Successfully.");
+              }
+              else
+              {
+                ESP_LOGE(TAG, "Message Sending Failed.");
+              }
+            }
+            break;
+          default:
+            break;
+        } // switch case end
+      }   // if event received in limit end
+    }     // xQueueReceive end
   }
 }
