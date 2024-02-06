@@ -58,11 +58,11 @@ dht11_reading_t dht11_read( void )
 
   uint8_t data[5] = {0,0,0,0,0};
 
-  /* trigger the start signal */
-  dht11_send_start_signal();
-
   // critical section starts (this will block other tasks, but is much needed here)
   portENTER_CRITICAL(&mux);
+
+  /* trigger the start signal */
+  dht11_send_start_signal();
 
   /* Check for DHT11 Host Signal, here DHT11 should pull the line low for 80us
    * and then pull the line high for 80 us

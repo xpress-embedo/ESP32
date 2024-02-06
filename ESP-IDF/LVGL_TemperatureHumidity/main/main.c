@@ -12,7 +12,7 @@
 
 // macros
 #define DHT11_PIN                     (GPIO_NUM_12)
-#define MAIN_TASK_PERIOD              (5000)
+#define MAIN_TASK_PERIOD              (60000)
 
 // Private Variables
 static const char *TAG = "APP";
@@ -51,10 +51,10 @@ void app_main(void)
           sensor_data.temperature[sensor_data.sensor_idx] = temp;
           ESP_LOGI(TAG, "Temperature: %d", sensor_data.temperature[sensor_data.sensor_idx]);
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity[sensor_data.sensor_idx]);
+          sensor_data.sensor_idx++;
           // trigger event to display temperature and humidity
           gui_send_event(GUI_MNG_EV_TEMP_HUMID, NULL );
           thingspeak_send_event(THING_SPEAK_EV_TEMP_HUMID, NULL);
-          sensor_data.sensor_idx++;
           // reset the index
           if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )
           {
@@ -64,7 +64,7 @@ void app_main(void)
       }
       else
       {
-        ESP_LOGE(TAG, "In-correct data received from DHT11");
+        ESP_LOGE(TAG, "In-correct data received from DHT11 -> %u", temp);
       }
     }
     else
