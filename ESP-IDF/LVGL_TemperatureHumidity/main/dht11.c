@@ -37,10 +37,20 @@ static dht11_reading_t dht11_crc_error( void );
 
 
 /* Public Function Definitions */
-void dht11_init(gpio_num_t gpio_num)
+
+/**
+ * @brief Initialize DHT11 sensor
+ * @param gpio_num    gpio pin number of the DHT11 sensor
+ * @param start_delay true if we want start-up delay, else false, the reason to
+ *                    add this parameter is to have this feature configurable
+ */
+void dht11_init( gpio_num_t gpio_num, uint8_t start_delay )
 {
-  /* Wait for some seconds to make the device pass its initial unstable status */
-  vTaskDelay( pdMS_TO_TICKS(DHT11_INITIAL_WAKEUP_DELAY) );
+  if( start_delay )
+  {
+    /* Wait for some seconds to make the device pass its initial unstable status */
+    vTaskDelay( pdMS_TO_TICKS(DHT11_INITIAL_WAKEUP_DELAY) );
+  }
   dht_gpio = gpio_num;
 }
 
