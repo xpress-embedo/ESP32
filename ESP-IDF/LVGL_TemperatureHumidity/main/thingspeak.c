@@ -105,10 +105,11 @@ static void thingspeak_send_temp_humidity(void)
   esp_err_t err;
   uint8_t temperature = 0;
   uint8_t humidity = 0;
+  char thingspeak_url[200];
 
   sensor_data_t *sensor_data = get_temperature_humidity();
   size_t idx = sensor_data->sensor_idx;
-  if( (idx > 0) && (idx < SENSOR_BUFF_SIZE) )
+  if( (idx > 0) && (idx <= SENSOR_BUFF_SIZE) )
   {
     // before posting the event we have incremented the index and hence to get
     // the last sensor data we have to use - 1
@@ -116,21 +117,20 @@ static void thingspeak_send_temp_humidity(void)
     temperature = sensor_data->temperature[idx];
     humidity = sensor_data->humidity[idx];
   }
-  else
+  else if( idx == 0 )
   {
-    temperature = 0;
-    humidity = 0;
+    temperature = sensor_data->temperature[SENSOR_BUFF_SIZE-1];
+    humidity = sensor_data->humidity[SENSOR_BUFF_SIZE-1];
   }
 
-  char thingspeak_url[200];
   snprintf( thingspeak_url, sizeof(thingspeak_url), "https://api.thingspeak.com/update?api_key=%s&field1=%u&field2=%u", THINGSPEAK_KEY, temperature, humidity);
   esp_http_client_config_t config =
   {
     .url = thingspeak_url,
     .method = HTTP_METHOD_GET,
     // todo: maybe for future
-    // .transport_type = HTTP_TRANSPORT_OVER_SSL, // Specify transport type
-    // .crt_bundle_attach = esp_crt_bundle_attach, // Attach the certificate bundle
+    // .transport_type = HTTP_TRANSPORT_OVER_SSL,   // Specify transport type
+    // .crt_bundle_attach = esp_crt_bundle_attach,  // Attach the certificate bundle
   };
 
   esp_http_client_handle_t client = esp_http_client_init( &config );
