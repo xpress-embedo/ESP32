@@ -5,6 +5,7 @@ idf_component_register(
     SRCS main.c         # list the source files of this component
     display_mng.c
     gui_mng.c
+    thingspeak.c
     ili9341.c
     tft.c
     xpt2046.c

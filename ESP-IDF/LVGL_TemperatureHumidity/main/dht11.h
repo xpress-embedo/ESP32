@@ -27,8 +27,7 @@ typedef struct _dht11_reading_t
 } dht11_reading_t;
 
 /* Public Function Prototypes */
-void dht11_init(gpio_num_t);
+void dht11_init( gpio_num_t gpio_num, uint8_t start_delay );
 dht11_reading_t dht11_read( void );
-
 
 #endif /* MAIN_DHT11_H_ */
