@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>HelloWorld</name>
+	<name>ESP32_CoffeeAnimation</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -104,11 +104,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/adc_continuous.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_adc/adc_filter.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/adc_filter.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_adc/adc_oneshot.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/adc_oneshot.c</location>
@@ -159,19 +154,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/esp_clk.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/esp_ds.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/esp_ds.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_hw_support/esp_gpio_reserve.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/esp_gpio_reserve.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/esp_hmac.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/esp_hmac.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_hw_support/esp_memory_utils.c</name>
@@ -242,6 +227,11 @@
 			<name>build/ide/esp_idf_components/esp_hw_support/sleep_wake_stub.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/sleep_wake_stub.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_mm/cache_esp32.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_mm/cache_esp32.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_mm/esp_cache.c</name>
@@ -409,14 +399,14 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/brownout_hal.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/cache_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/cache_hal.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/hal/efuse_hal.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/efuse_hal.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/hal/emac_hal.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/emac_hal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/hal/gpio_hal.c</name>
@@ -449,6 +439,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/ledc_hal_iram.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/hal/mcpwm_hal.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/mcpwm_hal.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/hal/mmu_hal.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/mmu_hal.c</location>
@@ -474,6 +469,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/rtc_io_hal.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/hal/sdio_slave_hal.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/sdio_slave_hal.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/hal/sdm_hal.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/sdm_hal.c</location>
@@ -492,11 +492,6 @@
 			<name>build/ide/esp_idf_components/hal/spi_flash_hal.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/spi_flash_hal.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/spi_flash_hal_gpspi.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/spi_flash_hal_gpspi.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/hal/spi_flash_hal_iram.c</name>
@@ -522,16 +517,6 @@
 			<name>build/ide/esp_idf_components/hal/spi_slave_hal_iram.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/spi_slave_hal_iram.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/spi_slave_hd_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/spi_slave_hd_hal.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/systimer_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/systimer_hal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/hal/timer_hal.c</name>
@@ -564,29 +549,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/uart_hal_iram.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/usb_dwc_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/usb_dwc_hal.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/usb_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/usb_hal.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/usb_phy_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/usb_phy_hal.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/hal/wdt_hal_iram.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/wdt_hal_iram.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/hal/xt_wdt_hal.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/xt_wdt_hal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/heap/heap_caps.c</name>
@@ -909,26 +874,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/tcp_transport/transport_ws.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/touch_element/touch_button.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/touch_element/touch_button.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/touch_element/touch_element.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/touch_element/touch_element.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/touch_element/touch_matrix.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/touch_element/touch_matrix.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/touch_element/touch_slider.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/touch_element/touch_slider.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/unity/unity_port_esp32.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/unity/unity_port_esp32.c</location>
@@ -952,41 +897,6 @@
 			<name>build/ide/esp_idf_components/unity/unity_utils_memory.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/unity/unity_utils_memory.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/hcd_dwc.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/hcd_dwc.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/hub.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/hub.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/usb_helpers.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/usb_helpers.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/usb_host.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/usb_host.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/usb_phy.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/usb_phy.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/usb_private.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/usb_private.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/usb/usbh.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/usb/usbh.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/vfs/vfs.c</name>
@@ -1104,9 +1014,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/src/bootloader_random.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/bootloader_support/src/bootloader_random_esp32s2.c</name>
+			<name>build/ide/esp_idf_components/bootloader_support/src/bootloader_random_esp32.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/src/bootloader_random_esp32s2.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/src/bootloader_random_esp32.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/bootloader_support/src/bootloader_utility.c</name>
@@ -1234,6 +1144,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/adc_dma_legacy.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/driver/deprecated/adc_i2s_deprecated.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/adc_i2s_deprecated.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/driver/deprecated/adc_legacy.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/adc_legacy.c</location>
@@ -1249,6 +1164,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/i2s_legacy.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/driver/deprecated/mcpwm_legacy.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/mcpwm_legacy.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/driver/deprecated/pcnt_legacy.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/pcnt_legacy.c</location>
@@ -1257,11 +1177,6 @@
 			<name>build/ide/esp_idf_components/driver/deprecated/rmt_legacy.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/rmt_legacy.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/driver/deprecated/rtc_temperature_legacy.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/rtc_temperature_legacy.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/driver/deprecated/sigma_delta_legacy.c</name>
@@ -1274,11 +1189,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/timer_legacy.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/driver/gpio/dedic_gpio.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/gpio/dedic_gpio.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/driver/gpio/gpio.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/gpio/gpio.c</location>
@@ -1287,11 +1197,6 @@
 			<name>build/ide/esp_idf_components/driver/gpio/gpio_glitch_filter_ops.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/gpio/gpio_glitch_filter_ops.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/driver/gpio/gpio_pin_glitch_filter.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/gpio/gpio_pin_glitch_filter.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/driver/gpio/rtc_io.c</name>
@@ -1319,6 +1224,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/i2s/i2s_common.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/driver/i2s/i2s_pdm.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/i2s/i2s_pdm.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/driver/i2s/i2s_std.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/i2s/i2s_std.c</location>
@@ -1327,6 +1237,46 @@
 			<name>build/ide/esp_idf_components/driver/ledc/ledc.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/ledc/ledc.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_cap.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_cap.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_cmpr.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_cmpr.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_com.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_com.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_fault.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_fault.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_gen.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_gen.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_oper.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_oper.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_sync.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_sync.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/mcpwm/mcpwm_timer.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/mcpwm/mcpwm_timer.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/driver/pcnt/pulse_cnt.c</name>
@@ -1354,6 +1304,21 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/rmt/rmt_tx.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/driver/sdio_slave/sdio_slave.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/sdio_slave/sdio_slave.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/sdmmc/sdmmc_host.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/sdmmc/sdmmc_host.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/driver/sdmmc/sdmmc_transaction.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/sdmmc/sdmmc_transaction.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/driver/sigma_delta/sdm.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/sigma_delta/sdm.c</location>
@@ -1362,11 +1327,6 @@
 			<name>build/ide/esp_idf_components/driver/spi/spi_bus_lock.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/spi/spi_bus_lock.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/driver/temperature_sensor/temperature_sensor.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/temperature_sensor/temperature_sensor.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/driver/touch_sensor/touch_sensor_common.c</name>
@@ -1384,29 +1344,19 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/uart/uart.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/efuse/esp32s2/esp_efuse_fields.c</name>
+			<name>build/ide/esp_idf_components/efuse/esp32/esp_efuse_fields.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32s2/esp_efuse_fields.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32/esp_efuse_fields.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/efuse/esp32s2/esp_efuse_rtc_calib.c</name>
+			<name>build/ide/esp_idf_components/efuse/esp32/esp_efuse_table.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32s2/esp_efuse_rtc_calib.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32/esp_efuse_table.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/efuse/esp32s2/esp_efuse_rtc_table.c</name>
+			<name>build/ide/esp_idf_components/efuse/esp32/esp_efuse_utility.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32s2/esp_efuse_rtc_table.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/efuse/esp32s2/esp_efuse_table.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32s2/esp_efuse_table.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/efuse/esp32s2/esp_efuse_utility.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32s2/esp_efuse_utility.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/esp32/esp_efuse_utility.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/efuse/src/esp_efuse_api.c</name>
@@ -1434,14 +1384,14 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/deprecated/esp_adc_cal_common_legacy.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_adc/esp32s2/adc_cali_line_fitting.c</name>
+			<name>build/ide/esp_idf_components/esp_adc/esp32/adc_cali_line_fitting.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/esp32s2/adc_cali_line_fitting.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/esp32/adc_cali_line_fitting.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_coex/esp32s2/esp_coex_adapter.c</name>
+			<name>build/ide/esp_idf_components/esp_coex/esp32/esp_coex_adapter.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_coex/esp32s2/esp_coex_adapter.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_coex/esp32/esp_coex_adapter.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_common/src/esp_err_to_name.c</name>
@@ -1454,6 +1404,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_mac_esp.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_mac_esp.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_netif_glue.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_netif_glue.c</location>
@@ -1462,6 +1417,31 @@
 			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_802_3.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_802_3.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_dp83848.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_dp83848.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_ip101.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_ip101.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_ksz80xx.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_ksz80xx.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_lan87xx.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_lan87xx.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_rtl8201.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_eth/src/esp_eth_phy_rtl8201.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_gdbstub/src/gdbstub.c</name>
@@ -1542,16 +1522,6 @@
 			<name>build/ide/esp_idf_components/esp_https_ota/src/esp_https_ota.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_https_ota/src/esp_https_ota.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/dma/async_memcpy_impl_cp_dma.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/dma/async_memcpy_impl_cp_dma.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/dma/esp_async_memcpy.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/dma/esp_async_memcpy.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_hw_support/port/esp_clk_tree_common.c</name>
@@ -1639,6 +1609,11 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_netif/lwip/esp_netif_sntp.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/esp_phy/src/btbb_init.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_phy/src/btbb_init.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/esp_phy/src/lib_printf.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_phy/src/lib_printf.c</location>
@@ -1659,16 +1634,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_phy/src/phy_override.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_rom/esp32s2/usb_descriptors.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/esp32s2/usb_descriptors.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_cache_esp32s2_esp32s3.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_cache_esp32s2_esp32s3.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_crc.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_crc.c</location>
@@ -1684,11 +1649,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_longjmp.S</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_regi2c_esp32s2.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_regi2c_esp32s2.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_spiflash.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_spiflash.c</location>
@@ -1697,11 +1657,6 @@
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_sys.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_sys.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_systimer.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_systimer.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_uart.c</name>
@@ -1749,9 +1704,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_timer/src/esp_timer_impl_common.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_timer/src/esp_timer_impl_systimer.c</name>
+			<name>build/ide/esp_idf_components/esp_timer/src/esp_timer_impl_lac.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_timer/src/esp_timer_impl_systimer.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_timer/src/esp_timer_impl_lac.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_timer/src/ets_timer_legacy.c</name>
@@ -1764,9 +1719,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_timer/src/system_time.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_wifi/esp32s2/esp_adapter.c</name>
+			<name>build/ide/esp_idf_components/esp_wifi/esp32/esp_adapter.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_wifi/esp32s2/esp_adapter.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_wifi/esp32/esp_adapter.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_wifi/src/mesh_event.c</name>
@@ -1924,24 +1879,29 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/freertos/esp_additions/idf_additions.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/esp32s2/clk_tree_hal.c</name>
+			<name>build/ide/esp_idf_components/hal/esp32/cache_hal_esp32.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32s2/clk_tree_hal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32/cache_hal_esp32.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/esp32s2/cp_dma_hal.c</name>
+			<name>build/ide/esp_idf_components/hal/esp32/clk_tree_hal.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32s2/cp_dma_hal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32/clk_tree_hal.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/esp32s2/efuse_hal.c</name>
+			<name>build/ide/esp_idf_components/hal/esp32/efuse_hal.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32s2/efuse_hal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32/efuse_hal.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/hal/esp32s2/touch_sensor_hal.c</name>
+			<name>build/ide/esp_idf_components/hal/esp32/gpio_hal_workaround.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32s2/touch_sensor_hal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32/gpio_hal_workaround.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/hal/esp32/touch_sensor_hal.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/hal/esp32/touch_sensor_hal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/heap/port/memory_layout_utils.c</name>
@@ -2104,119 +2064,109 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/protocomm/proto-c/session.pb-c.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/adc_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/adc_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/adc_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/adc_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/dac_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/dac_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/dac_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/dac_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/dedic_gpio_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/dport_access.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/dedic_gpio_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/dport_access.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/gpio_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/gpio_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/gpio_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/gpio_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/i2c_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/i2c_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/i2c_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/i2c_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/i2s_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/i2s_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/i2s_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/i2s_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/interrupts.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/interrupts.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/interrupts.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/interrupts.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/lcd_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/lcd_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/lcd_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/lcd_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/ledc_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/ledc_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/ledc_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/ledc_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/pcnt_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/mcpwm_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/pcnt_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/mcpwm_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/rmt_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/pcnt_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/rmt_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/pcnt_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/rtc_io_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/rmt_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/rtc_io_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/rmt_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/sdm_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/rtc_io_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/sdm_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/rtc_io_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/spi_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/sdio_slave_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/spi_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/sdio_slave_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/temperature_sensor_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/sdm_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/temperature_sensor_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/sdm_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/timer_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/sdmmc_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/timer_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/sdmmc_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/touch_sensor_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/spi_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/touch_sensor_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/spi_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/twai_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/timer_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/twai_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/timer_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/uart_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/touch_sensor_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/uart_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/touch_sensor_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/usb_otg_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/twai_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/usb_otg_periph.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/twai_periph.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/soc/esp32s2/usb_periph.c</name>
+			<name>build/ide/esp_idf_components/soc/esp32/uart_periph.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32s2/usb_periph.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/ulp/ulp_common/ulp_adc.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/ulp/ulp_common/ulp_adc.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/ulp/ulp_common/ulp_common.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/ulp/ulp_common/ulp_common.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/soc/esp32/uart_periph.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/wifi_provisioning/proto-c/wifi_config.pb-c.c</name>
@@ -2289,9 +2239,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/bootloader_flash/src/bootloader_flash.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/bootloader_support/bootloader_flash/src/bootloader_flash_config_esp32s2.c</name>
+			<name>build/ide/esp_idf_components/bootloader_support/bootloader_flash/src/bootloader_flash_config_esp32.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/bootloader_flash/src/bootloader_flash_config_esp32s2.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/bootloader_support/bootloader_flash/src/bootloader_flash_config_esp32.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/bootloader_support/bootloader_flash/src/flash_qio_mode.c</name>
@@ -2309,14 +2259,14 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/cmock/CMock/src/cmock.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/driver/dac/esp32s2/dac_dma.c</name>
+			<name>build/ide/esp_idf_components/driver/dac/esp32/dac_dma.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/dac/esp32s2/dac_dma.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/dac/esp32/dac_dma.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/driver/deprecated/esp32s2/dac_legacy.c</name>
+			<name>build/ide/esp_idf_components/driver/deprecated/esp32/dac_legacy.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/esp32s2/dac_legacy.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/deprecated/esp32/dac_legacy.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/driver/spi/gpspi/spi_common.c</name>
@@ -2334,11 +2284,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/spi/gpspi/spi_slave.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/driver/spi/gpspi/spi_slave_hd.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/spi/gpspi/spi_slave_hd.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/driver/spi/sdspi/sdspi_crc.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/spi/sdspi/sdspi_crc.c</location>
@@ -2354,14 +2299,14 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/spi/sdspi/sdspi_transaction.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/driver/touch_sensor/esp32s2/touch_sensor.c</name>
+			<name>build/ide/esp_idf_components/driver/touch_sensor/esp32/touch_sensor.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/touch_sensor/esp32s2/touch_sensor.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/driver/touch_sensor/esp32/touch_sensor.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_adc/deprecated/esp32s2/esp_adc_cal_legacy.c</name>
+			<name>build/ide/esp_idf_components/esp_adc/deprecated/esp32/esp_adc_cal_legacy.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/deprecated/esp32s2/esp_adc_cal_legacy.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_adc/deprecated/esp32/esp_adc_cal_legacy.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_http_server/src/util/ctrl_sock.c</name>
@@ -2369,79 +2314,64 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_http_server/src/util/ctrl_sock.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/adc2_init_cal.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/cache_sram_mmu.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/adc2_init_cal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/cache_sram_mmu.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/chip_info.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/chip_info.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/chip_info.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/chip_info.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/cpu_region_protect.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/cpu_region_protect.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/cpu_region_protect.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/cpu_region_protect.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/esp_clk_tree.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/esp_clk_tree.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/esp_clk_tree.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/esp_clk_tree.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/esp_crypto_lock.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/io_mux.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/esp_crypto_lock.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/io_mux.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/io_mux.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/rtc_clk.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/io_mux.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/rtc_clk.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/memprot.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/rtc_clk_init.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/memprot.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/rtc_clk_init.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/rtc_clk.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/rtc_init.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/rtc_clk.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/rtc_init.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/rtc_clk_init.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/rtc_sleep.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/rtc_clk_init.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/rtc_sleep.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/rtc_init.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/rtc_time.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/rtc_init.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/rtc_time.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/rtc_sleep.c</name>
+			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32/sar_periph_ctrl.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/rtc_sleep.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32/sar_periph_ctrl.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/rtc_time.c</name>
+			<name>build/ide/esp_idf_components/esp_mm/port/esp32/ext_mem_layout.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/rtc_time.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/sar_periph_ctrl.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/sar_periph_ctrl.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_hw_support/port/esp32s2/systimer.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_hw_support/port/esp32s2/systimer.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_mm/port/esp32s2/ext_mem_layout.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_mm/port/esp32s2/ext_mem_layout.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_mm/port/esp32/ext_mem_layout.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_netif/lwip/netif/esp_pbuf_ref.c</name>
@@ -2469,9 +2399,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/freertos/FreeRTOS-Kernel/portable/port_systick.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/heap/port/esp32s2/memory_layout.c</name>
+			<name>build/ide/esp_idf_components/heap/port/esp32/memory_layout.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/heap/port/esp32s2/memory_layout.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/heap/port/esp32/memory_layout.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/lwip/apps/dhcpserver/dhcpserver.c</name>
@@ -3064,14 +2994,9 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/aes/esp_aes_xts.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/esp32s2/bignum.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/esp32/bignum.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/esp32s2/bignum.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/esp_ds/esp_rsa_sign_alt.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/esp_ds/esp_rsa_sign_alt.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/esp32/bignum.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/mbedtls/port/md/esp_md.c</name>
@@ -3589,6 +3514,21 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/debug_stubs.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/esp_system/port/arch/xtensa/esp_ipc_isr.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/esp_ipc_isr.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_system/port/arch/xtensa/esp_ipc_isr_handler.S</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/esp_ipc_isr_handler.S</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_system/port/arch/xtensa/esp_ipc_isr_routines.S</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/esp_ipc_isr_routines.S</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/esp_system/port/arch/xtensa/expression_with_stack.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/expression_with_stack.c</location>
@@ -3614,29 +3554,29 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/arch/xtensa/trax.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32s2/cache_err_int.c</name>
+			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32/cache_err_int.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32s2/cache_err_int.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32/cache_err_int.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32s2/clk.c</name>
+			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32/clk.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32s2/clk.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32/clk.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32s2/highint_hdl.S</name>
+			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32/highint_hdl.S</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32s2/highint_hdl.S</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32/highint_hdl.S</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32s2/reset_reason.c</name>
+			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32/reset_reason.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32s2/reset_reason.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32/reset_reason.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32s2/system_internal.c</name>
+			<name>build/ide/esp_idf_components/esp_system/port/soc/esp32/system_internal.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32s2/system_internal.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_system/port/soc/esp32/system_internal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/espcoredump/src/port/xtensa/core_dump_port.c</name>
@@ -3829,39 +3769,29 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m_driver_entrypoints.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/aes/dma/esp_aes.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/aes/block/esp_aes.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/aes/dma/esp_aes.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/aes/block/esp_aes.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/aes/dma/esp_aes_crypto_dma_impl.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/sha/parallel_engine/esp_sha1.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/aes/dma/esp_aes_crypto_dma_impl.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/parallel_engine/esp_sha1.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/sha/dma/esp_sha1.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/sha/parallel_engine/esp_sha256.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/dma/esp_sha1.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/parallel_engine/esp_sha256.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/sha/dma/esp_sha256.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/sha/parallel_engine/esp_sha512.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/dma/esp_sha256.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/parallel_engine/esp_sha512.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/sha/dma/esp_sha512.c</name>
+			<name>build/ide/esp_idf_components/mbedtls/port/sha/parallel_engine/sha.c</name>
 			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/dma/esp_sha512.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/sha/dma/esp_sha_crypto_dma_impl.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/dma/esp_sha_crypto_dma_impl.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/mbedtls/port/sha/dma/sha.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/dma/sha.c</location>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/port/sha/parallel_engine/sha.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/protocomm/src/crypto/srp6a/esp_srp.c</name>
@@ -3902,11 +3832,6 @@
 			<name>build/ide/esp_idf_components/wpa_supplicant/esp_supplicant/src/crypto/tls_mbedtls.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/wpa_supplicant/esp_supplicant/src/crypto/tls_mbedtls.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/efuse/src/efuse_controller/keys/with_key_purposes/esp_efuse_api_key.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/src/efuse_controller/keys/with_key_purposes/esp_efuse_api_key.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/lwip/lwip/src/apps/netbiosns/netbiosns.c</name>
@@ -4152,6 +4077,11 @@
 			<name>build/ide/esp_idf_components/mbedtls/mbedtls/3rdparty/p256-m/p256-m/p256-m.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m/p256-m.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/efuse/src/efuse_controller/keys/without_key_purposes/three_key_blocks/esp_efuse_api_key.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/efuse/src/efuse_controller/keys/without_key_purposes/three_key_blocks/esp_efuse_api_key.c</location>
 		</link>
 	</linkedResources>
 </projectDescription>
