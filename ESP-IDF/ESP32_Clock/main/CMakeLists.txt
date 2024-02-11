@@ -13,6 +13,7 @@ idf_component_register(
     ui/screens/ui_MainScreen.c
     ui/images/ui_img_bg_png.c
     ui/images/ui_img_clock_sec_png.c
+    ui/images/ui_img_sec_dot_png.c
     INCLUDE_DIRS "." "ui"        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)

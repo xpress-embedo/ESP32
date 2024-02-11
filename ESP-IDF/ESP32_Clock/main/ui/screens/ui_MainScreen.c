@@ -31,4 +31,15 @@ void ui_MainScreen_screen_init(void)
     lv_obj_clear_flag(ui_imgSecond, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_pivot(ui_imgSecond, 8, 95);
 
+    ui_imgSecDot = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgSecDot, &ui_img_sec_dot_png);
+    lv_obj_set_width(ui_imgSecDot, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgSecDot, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgSecDot, 0);
+    lv_obj_set_y(ui_imgSecDot, -115);
+    lv_obj_set_align(ui_imgSecDot, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgSecDot, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgSecDot, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(ui_imgSecDot, 4, 118);
+
 }

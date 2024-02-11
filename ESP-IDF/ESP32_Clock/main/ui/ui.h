@@ -19,10 +19,12 @@ void ui_MainScreen_screen_init(void);
 extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_imgBackground;
 extern lv_obj_t * ui_imgSecond;
+extern lv_obj_t * ui_imgSecDot;
 extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_bg_png);    // assets\bg.png
 LV_IMG_DECLARE(ui_img_clock_sec_png);    // assets\clock_sec.png
+LV_IMG_DECLARE(ui_img_sec_dot_png);    // assets\sec_dot.png
 
 
 

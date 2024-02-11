@@ -14,6 +14,7 @@ void ui_MainScreen_screen_init(void);
 lv_obj_t * ui_MainScreen;
 lv_obj_t * ui_imgBackground;
 lv_obj_t * ui_imgSecond;
+lv_obj_t * ui_imgSecDot;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
