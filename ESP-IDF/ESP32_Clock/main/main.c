@@ -59,6 +59,9 @@ void app_main(void)
     sntp_time_sync_start();
   }
 
+  // start the GUI manager
+  gui_start();
+
   while (true)
   {
     sleep(10);
