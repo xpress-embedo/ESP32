@@ -12,7 +12,10 @@
 #include "esp_system.h"
 #include "esp_log.h"
 #include "esp_wifi.h"
+#include "esp_timer.h"
 
+#include "gui_mng.h"
+#include "time.h"
 #include "sntp_time_sync.h"
 
 // Private Macros
@@ -25,15 +28,23 @@
 #define WIFI_CONNECTED_BIT                  BIT0      // connected to the access point with an IP
 #define WIFI_FAIL_BIT                       BIT1      // failed to connect after the max. amount of retries
 
+#define MAIN_TASK_TIME                      (1000u)
+#define SNTP_TIME_SYNC                      (1000u*60u/MAIN_TASK_TIME)   // synchronize every 60seconds with NTP server
+#define TOD_INCREMENT_PERIOD_MS             (1000u)   // for local timer, to increment Time of Day
+
 // Private Variables
 static const char *TAG = "APP";
 /* WiFi Connection Related Variables */
-static EventGroupHandle_t wifi_event_group;           // FreeRTOS event group to signal when we are connected
+static EventGroupHandle_t wifi_event_group;   // FreeRTOS event group to signal when we are connected
 static uint8_t wifi_connect_retry = 0;
 static bool wifi_connect_status = false;
+static uint8_t time_sync_counter = 0;         // counter to synchronize with NTP server
+static struct tm time_info = { 0 };           // local copy of time information, this gets updated every second
+                                              // using micro-controller clock, and every minutes using NTP server
 
 // Private Function Declarations
 static void app_connect_wifi( void );
+static void tod_increment( void *arg );
 static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
 
 void app_main(void)
@@ -62,10 +73,26 @@ void app_main(void)
   // start the GUI manager
   gui_start();
 
+  // Tod Update timer
+  const esp_timer_create_args_t tod_increment_timer_args =
+  {
+    .callback = &tod_increment,
+    .name = "ToD Increment"
+  };
+  esp_timer_handle_t tod_increment_timer;
+  ESP_ERROR_CHECK(esp_timer_create(&tod_increment_timer_args, &tod_increment_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(tod_increment_timer, TOD_INCREMENT_PERIOD_MS * 1000));  // here time is in micro seconds
+
   while (true)
   {
-    sleep(10);
-    sntp_time_sync_get_time();
+    vTaskDelay(MAIN_TASK_TIME/portTICK_PERIOD_MS);
+    time_sync_counter++;
+    if( time_sync_counter > SNTP_TIME_SYNC )
+    {
+      time_sync_counter = 0;
+      ESP_LOGI(TAG, "Synchronizing Time");
+      sntp_time_sync_get_time_tm( &time_info );
+    }
   }
 }
 
@@ -142,6 +169,18 @@ static void app_connect_wifi( void )
     ESP_LOGE(TAG, "Unexpected Event" );
   }
   vEventGroupDelete(wifi_event_group);
+}
+
+/**
+ * @brief Increment Time of Day every second
+ *        In this function second value is updated and event is posted to gui
+ *        manager, so that it can update seconds dial
+ * @param arg 
+ */
+static void tod_increment( void *arg )
+{
+  time_info.tm_sec++;
+  gui_send_event(GUI_MNG_EV_TIME_UPDATE, (uint8_t*)&time_info );
 }
 
 /**

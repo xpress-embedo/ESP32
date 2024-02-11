@@ -11,5 +11,6 @@
 // Public Function Declaration
 void sntp_time_sync_start( void );
 char * sntp_time_sync_get_time( void );
+void sntp_time_sync_get_time_tm( struct tm *time_info );
 
 #endif /* MAIN_SNTP_TIME_SYNC_H_ */

@@ -60,8 +60,19 @@ char * sntp_time_sync_get_time( void )
   return (time_buffer);
 }
 
-// Private Function Definition
+/**
+ * @brief Get the time directly in the time structure
+ * @param time_info pointer to time structure
+ */
+void sntp_time_sync_get_time_tm( struct tm *time_info )
+{
+  time_t now = 0;
+  // get the current time
+  time(&now);
+  localtime_r(&now, time_info);
+}
 
+// Private Function Definition
 /**
  * @brief SNTP Time Sync Task
  * @param pvParameter 
@@ -71,7 +82,7 @@ static void sntp_time_sync_task( void *pvParameter )
   while(1)
   {
     sntp_time_sync_obtain_time();
-    vTaskDelay(10000/portTICK_PERIOD_MS);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
   }
   vTaskDelete(NULL);
 }

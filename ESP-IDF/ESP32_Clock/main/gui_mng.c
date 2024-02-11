@@ -11,6 +11,7 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 
+#include "time.h"
 #include "ui.h"
 #include "lvgl.h"
 #include "gui_mng.h"
@@ -33,6 +34,7 @@ static QueueHandle_t      gui_event = NULL;
 static void gui_init( void );
 static void gui_task(void *pvParameter);
 static void gui_refresh( void );
+static void gui_update_time( uint8_t *pData );
 
 // Public Function Definition
 
@@ -148,6 +150,9 @@ static void gui_task(void *pvParameter)
         {
           case GUI_MNG_EV_TEMP_HUMID:
             break;
+          case GUI_MNG_EV_TIME_UPDATE:
+            gui_update_time( msg.data );
+            break;
           default:
             break;
         } // switch case end
@@ -185,4 +190,25 @@ static void gui_refresh( void )
     }
     GUI_UNLOCK();
   }
+}
+
+/**
+ * @brief Update the Time of the display, this function is called whenever we
+ *        receive GUI_MNG_EV_TIME_UPDATE event, the pointer to time information
+ *        is passed in the message queue, which is used to fetch the time info
+ *        directly, otherwise we have to use some helper function to get this.
+ * @param pData pointer to time information
+ * @note  Need to investigate if usage of pointer is safe or not, because we are
+ *        updating the time every 1 second.
+ */
+static void gui_update_time( uint8_t *pData )
+{
+  struct tm *time_info;
+  time_info = (struct tm*)pData;
+  int16_t seconds_angle = (int16_t)(time_info->tm_sec *60);
+  lv_img_set_angle(ui_imgSecond, seconds_angle);
+  // the below commented part is the simple method without using the pointer
+  // int16_t sec_angle = get_seconds();   // this helper function is needed.
+  // int16_t sec_angle = pData
+  // lv_img_set_angle(ui_imgSecond, sec_angle*60);
 }

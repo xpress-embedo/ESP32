@@ -14,6 +14,7 @@
 typedef enum {
   GUI_MNG_EV_NONE = 0,
   GUI_MNG_EV_TEMP_HUMID = 1,    // Event for temperature and humidity update
+  GUI_MNG_EV_TIME_UPDATE = 2,   // Event for updating the time on clock
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
