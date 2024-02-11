@@ -16,10 +16,8 @@
 #include "sntp_time_sync.h"
 
 // Private Macros
-//#define APP_WIFI_SSID                       "Enter WIFI SSID"
-//#define APP_WIFI_PSWD                       "Enter WiFI Password"
-#define APP_WIFI_SSID                       "gigacube-D733"
-#define APP_WIFI_PSWD                       "5yR8m2B6Y4egrJQ5"
+#define APP_WIFI_SSID                       "Enter WIFI SSID"
+#define APP_WIFI_PSWD                       "Enter WiFI Password"
 #define WIFI_MAX_RETRY                      (5)
 #define WIFI_CONNECT_DELAY                  (500)     // Initial delay in milliseconds
 #define WIFI_MAX_DELAY                      (60000)   // Maximum delay in milliseconds
