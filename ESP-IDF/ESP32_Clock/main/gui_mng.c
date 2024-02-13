@@ -120,8 +120,8 @@ static void gui_init( void )
   display_init();
 
   // main user interface
-  // ui_init();
-
+  ui_init();
+  /*
   static lv_obj_t * main_screen;
   static lv_obj_t * clock;
 
@@ -148,6 +148,7 @@ static void gui_init( void )
 
   // add a hand for the image
   lv_meter_indicator_t * indic_min = lv_meter_add_needle_img(clock, scale_min, &img_hand, 5, 5);
+  */
 
   // it's important to load screen, else nothing will be displayed
   lv_disp_load_scr(main_screen);
@@ -238,6 +239,7 @@ static void gui_update_time( uint8_t *pData )
   int16_t seconds_angle = (int16_t)(time_info->tm_sec *60);
   lv_img_set_angle(ui_imgSecond, seconds_angle);
   lv_img_set_angle(ui_imgSecDot, seconds_angle);
+  lv_img_set_angle(ui_imgMinute, seconds_angle + 900);
   // the below commented part is the simple method without using the pointer
   // int16_t sec_angle = get_seconds();   // this helper function is needed.
   // int16_t sec_angle = pData

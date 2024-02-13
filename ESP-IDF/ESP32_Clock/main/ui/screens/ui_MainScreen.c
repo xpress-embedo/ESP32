@@ -20,17 +20,6 @@ void ui_MainScreen_screen_init(void)
     lv_obj_add_flag(ui_imgBackground, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgBackground, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_imgSecond = lv_img_create(ui_MainScreen);
-    lv_img_set_src(ui_imgSecond, &ui_img_clock_sec_png);
-    lv_obj_set_width(ui_imgSecond, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_imgSecond, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_imgSecond, 0);
-    lv_obj_set_y(ui_imgSecond, -40);
-    lv_obj_set_align(ui_imgSecond, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_imgSecond, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_imgSecond, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_pivot(ui_imgSecond, 8, 95);
-
     ui_imgSecDot = lv_img_create(ui_MainScreen);
     lv_img_set_src(ui_imgSecDot, &ui_img_sec_dot_png);
     lv_obj_set_width(ui_imgSecDot, LV_SIZE_CONTENT);   /// 1
@@ -41,5 +30,27 @@ void ui_MainScreen_screen_init(void)
     lv_obj_add_flag(ui_imgSecDot, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgSecDot, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_pivot(ui_imgSecDot, 4, 118);
+
+    ui_imgMinute = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgMinute, &ui_img_clock_min_png);
+    lv_obj_set_width(ui_imgMinute, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgMinute, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgMinute, 0);
+    lv_obj_set_y(ui_imgMinute, -48);
+    lv_obj_set_align(ui_imgMinute, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgMinute, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgMinute, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_imgSecond = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgSecond, &ui_img_clock_sec_png);
+    lv_obj_set_width(ui_imgSecond, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgSecond, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgSecond, 0);
+    lv_obj_set_y(ui_imgSecond, -26);
+    lv_obj_set_align(ui_imgSecond, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgSecond, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgSecond, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(ui_imgSecond, 5, 95);
+    lv_img_set_angle(ui_imgSecond, 9);
 
 }
