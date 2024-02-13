@@ -148,10 +148,10 @@ static void gui_init( void )
 
   // add a hand for the image
   lv_meter_indicator_t * indic_min = lv_meter_add_needle_img(clock, scale_min, &img_hand, 5, 5);
-  */
 
   // it's important to load screen, else nothing will be displayed
   lv_disp_load_scr(main_screen);
+  */
 }
 
 /**

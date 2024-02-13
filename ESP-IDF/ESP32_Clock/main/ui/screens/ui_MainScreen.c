@@ -40,6 +40,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_imgMinute, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_imgMinute, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgMinute, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(ui_imgMinute, 9, 105);
 
     ui_imgSecond = lv_img_create(ui_MainScreen);
     lv_img_set_src(ui_imgSecond, &ui_img_clock_sec_png);
