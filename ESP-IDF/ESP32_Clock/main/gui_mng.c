@@ -120,7 +120,37 @@ static void gui_init( void )
   display_init();
 
   // main user interface
-  ui_init();
+  // ui_init();
+
+  static lv_obj_t * main_screen;
+  static lv_obj_t * clock;
+
+  main_screen = lv_obj_create(NULL);
+  lv_obj_set_style_bg_color(main_screen, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_opa(main_screen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+  clock = lv_meter_create(main_screen);
+  lv_obj_center( clock );
+  lv_obj_set_size(clock, 220, 220);
+
+  // create a scale for minutes
+  lv_meter_scale_t * scale_min = lv_meter_add_scale( clock );
+  lv_meter_set_scale_ticks(clock, scale_min, 61, 1, 10, lv_palette_main(LV_PALETTE_GREY));
+  lv_meter_set_scale_range(clock, scale_min, 0, 60, 360, 270);
+
+  // create an other scale for the hours. It's only visual and contains only major ticks
+  lv_meter_scale_t * scale_hour = lv_meter_add_scale(clock);
+  lv_meter_set_scale_ticks(clock, scale_hour, 12, 0, 0, lv_palette_main(LV_PALETTE_GREY));  // 12 ticks
+  lv_meter_set_scale_major_ticks(clock, scale_hour, 1, 2, 20, lv_color_black(), 10);        // Every tick is major
+  lv_meter_set_scale_range(clock, scale_hour, 1, 12, 330, 300);                             // [1..12] values in an almost full circle
+
+  LV_IMG_DECLARE( img_hand )
+
+  // add a hand for the image
+  lv_meter_indicator_t * indic_min = lv_meter_add_needle_img(clock, scale_min, &img_hand, 5, 5);
+
+  // it's important to load screen, else nothing will be displayed
+  lv_disp_load_scr(main_screen);
 }
 
 /**
@@ -207,6 +237,7 @@ static void gui_update_time( uint8_t *pData )
   time_info = (struct tm*)pData;
   int16_t seconds_angle = (int16_t)(time_info->tm_sec *60);
   lv_img_set_angle(ui_imgSecond, seconds_angle);
+  lv_img_set_angle(ui_imgSecDot, seconds_angle);
   // the below commented part is the simple method without using the pointer
   // int16_t sec_angle = get_seconds();   // this helper function is needed.
   // int16_t sec_angle = pData
