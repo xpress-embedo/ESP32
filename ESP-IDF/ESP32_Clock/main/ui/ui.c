@@ -12,8 +12,16 @@
 // SCREEN: ui_MainScreen
 void ui_MainScreen_screen_init(void);
 lv_obj_t * ui_MainScreen;
+lv_obj_t * ui_lblConnecting;
+lv_obj_t * ui_spinnerBusy;
+
+
+// SCREEN: ui_ClockScreen
+void ui_ClockScreen_screen_init(void);
+lv_obj_t * ui_ClockScreen;
 lv_obj_t * ui_imgBackground;
 lv_obj_t * ui_imgSecDot;
+lv_obj_t * ui_imgHour;
 lv_obj_t * ui_imgMinute;
 lv_obj_t * ui_imgSecond;
 lv_obj_t * ui____initial_actions0;
@@ -39,6 +47,7 @@ void ui_init(void)
                                                true, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_MainScreen_screen_init();
+    ui_ClockScreen_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_MainScreen);
 }

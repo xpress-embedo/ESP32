@@ -38,6 +38,7 @@ static const char *TAG = "APP";
 static EventGroupHandle_t wifi_event_group;   // FreeRTOS event group to signal when we are connected
 static uint8_t wifi_connect_retry = 0;
 static bool wifi_connect_status = false;
+static bool first_time_sync = false;          // variable to track if time is sync
 static uint8_t time_sync_counter = 0;         // counter to synchronize with NTP server
 static struct tm time_info = { 0 };           // local copy of time information, this gets updated every second
                                               // using micro-controller clock, and every minutes using NTP server
@@ -62,36 +63,63 @@ void app_main(void)
   }
   ESP_ERROR_CHECK(ret);
 
-  // connect with WiFi (it will take some time)
-  app_connect_wifi();
-
-  if( wifi_connect_status )
-  {
-    sntp_time_sync_start();
-  }
-
   // start the GUI manager
   gui_start();
 
-  // Tod Update timer
-  const esp_timer_create_args_t tod_increment_timer_args =
-  {
-    .callback = &tod_increment,
-    .name = "ToD Increment"
-  };
-  esp_timer_handle_t tod_increment_timer;
-  ESP_ERROR_CHECK(esp_timer_create(&tod_increment_timer_args, &tod_increment_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(tod_increment_timer, TOD_INCREMENT_PERIOD_MS * 1000));  // here time is in micro seconds
-
   while (true)
   {
-    vTaskDelay(MAIN_TASK_TIME/portTICK_PERIOD_MS);
-    time_sync_counter++;
-    if( time_sync_counter > SNTP_TIME_SYNC )
+    if( wifi_connect_status == false )
     {
-      time_sync_counter = 0;
-      ESP_LOGI(TAG, "Synchronizing Time");
-      sntp_time_sync_get_time_tm( &time_info );
+      // wifi not connected, connect with WiFi (it will take some time)
+      app_connect_wifi();
+      if( wifi_connect_status )
+      {
+        gui_send_event(GUI_MNG_EV_WIFI_CONNECTED, (uint8_t*)&time_info );
+        ESP_LOGI(TAG, "WiFi connected, now synchronizing with NTP server.");
+
+        // connection establish, start the SNTP task
+        sntp_time_sync_start();
+      }
+    }
+    else
+    {
+      // check if synchronization with NTP server is cone or not
+      if( first_time_sync == false )
+      {
+        sntp_time_sync_get_time_tm( &time_info );
+        if( time_info.tm_year > (2016-1900) )
+        {
+          gui_send_event(GUI_MNG_EV_SNTP_SYNC, NULL);
+          ESP_LOGI(TAG, "Time Synchronization done move to next screen.");
+          first_time_sync = true;
+          // now start a periodic timer to update the clock every second
+          // Tod Update timer
+          const esp_timer_create_args_t tod_increment_timer_args =
+          {
+            .callback = &tod_increment,
+            .name = "ToD Increment"
+          };
+          esp_timer_handle_t tod_increment_timer;
+          ESP_ERROR_CHECK(esp_timer_create(&tod_increment_timer_args, &tod_increment_timer));
+          ESP_ERROR_CHECK(esp_timer_start_periodic(tod_increment_timer, TOD_INCREMENT_PERIOD_MS * 1000));  // here time is in micro seconds
+        }
+        else
+        {
+          ESP_LOGI(TAG, "Time not synchronize, will try again..");
+        }
+      }
+      else
+      {
+        time_sync_counter++;
+        if( time_sync_counter > SNTP_TIME_SYNC )
+        {
+          time_sync_counter = 0;
+          ESP_LOGI(TAG, "Synchronizing Time");
+          sntp_time_sync_get_time_tm( &time_info );
+        }
+      }
+      // common delay for both scenarios
+      vTaskDelay(MAIN_TASK_TIME/portTICK_PERIOD_MS);
     }
   }
 }
@@ -180,7 +208,24 @@ static void app_connect_wifi( void )
 static void tod_increment( void *arg )
 {
   time_info.tm_sec++;
+  /*
+  if( time_info.tm_sec >= 60 )
+  {
+    time_info.tm_sec = 0;
+    time_info.tm_min++;
+  }
+  if( time_info.tm_min >= 60 )
+  {
+    time_info.tm_min = 0;
+    time_info.tm_hour++;
+  }
+  if( time_info.tm_hour >= 12 )
+  {
+    time_info.tm_hour = 0;
+  }
+  */
   gui_send_event(GUI_MNG_EV_TIME_UPDATE, (uint8_t*)&time_info );
+  ESP_LOGI(TAG, "1sec Event to update display");
 }
 
 /**
