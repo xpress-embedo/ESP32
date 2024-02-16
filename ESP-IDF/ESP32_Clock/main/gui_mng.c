@@ -213,9 +213,20 @@ static void gui_update_time( uint8_t *pData )
 {
   struct tm *time_info;
   time_info = (struct tm*)pData;
-  int16_t seconds_angle = (int16_t)(time_info->tm_sec *60);
-  int16_t minute_angle = (int16_t)(time_info->tm_min *60);
-  int16_t hour_angle = (int16_t)(time_info->tm_hour*5 *60);
+  // one second increment is equals to 6 degrees, full round is 360 and total
+  // seconds is 60, hence 360/60 = 6 and then for LVGL * 10
+  int16_t seconds_angle = (int16_t)(time_info->tm_sec * 60);
+  // same as seconds for minutes
+  int16_t minute_angle =  (int16_t)(time_info->tm_min * 60);
+  // one hour increment is equal to 30 degrees, full round is 360 degree & total
+  // hours is 12, hence 360/12 = 30 degrees, and then for LVGL x 10
+  // also compensate for minute changes also, hour angle = hour*30 + (minute/60)*30 and then for LVGL multiply by 10
+  // hour angle = (hour*30 + (minute*30/60))*10 => this 10 is for LVGL
+  // simplified as = hour*30*10 + minute*300/60
+  // further simplified as = hour*300 + minute*5
+  int16_t hour_angle = (int16_t)((time_info->tm_hour * 300) + (time_info->tm_min*5) );
+  ESP_LOGI(TAG, "Time Values: %d:%d:%d", time_info->tm_hour, time_info->tm_min, time_info->tm_sec);
+  ESP_LOGI(TAG, "Time Angles: %d, %d, %d", hour_angle, minute_angle, seconds_angle );
   lv_img_set_angle(ui_imgSecond, seconds_angle);
   lv_img_set_angle(ui_imgSecDot, seconds_angle);
   lv_img_set_angle(ui_imgMinute, minute_angle);

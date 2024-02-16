@@ -47,7 +47,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  80
+                  60
                 ],
                 "InheritedType": 7
               },
@@ -525,18 +525,12 @@
                         "nid": -746150792,
                         "strtype": "_style/Arc_Color",
                         "intarray": [
-                          0,
-                          255,
-                          232,
+                          136,
+                          134,
+                          134,
                           255
                         ],
                         "InheritedType": 7
-                      },
-                      {
-                        "nid": 1131038344,
-                        "strtype": "_style/Arc_Rounded",
-                        "strval": "False",
-                        "InheritedType": 2
                       }
                     ],
                     "InheritedType": 1
@@ -2534,7 +2528,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_Clock\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 88,
+    "backup_cnt": 99,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

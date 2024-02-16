@@ -16,7 +16,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_lblConnecting, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lblConnecting, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_lblConnecting, 0);
-    lv_obj_set_y(ui_lblConnecting, 80);
+    lv_obj_set_y(ui_lblConnecting, 60);
     lv_obj_set_align(ui_lblConnecting, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblConnecting, "Connecting with Router.....");
     lv_obj_set_style_text_color(ui_lblConnecting, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -31,8 +31,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_spinnerBusy, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_spinnerBusy, LV_OBJ_FLAG_CLICKABLE);      /// Flags
 
-    lv_obj_set_style_arc_color(ui_spinnerBusy, lv_color_hex(0x00FFE8), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_color(ui_spinnerBusy, lv_color_hex(0x888686), LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_opa(ui_spinnerBusy, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_rounded(ui_spinnerBusy, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
 }

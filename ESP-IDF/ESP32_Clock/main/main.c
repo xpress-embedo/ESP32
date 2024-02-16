@@ -208,7 +208,7 @@ static void app_connect_wifi( void )
 static void tod_increment( void *arg )
 {
   time_info.tm_sec++;
-  /*
+  // this is temporary alignment, in actual this will be updated with ntp sync
   if( time_info.tm_sec >= 60 )
   {
     time_info.tm_sec = 0;
@@ -219,13 +219,12 @@ static void tod_increment( void *arg )
     time_info.tm_min = 0;
     time_info.tm_hour++;
   }
-  if( time_info.tm_hour >= 12 )
+  if( time_info.tm_hour >= 24 )
   {
     time_info.tm_hour = 0;
   }
-  */
   gui_send_event(GUI_MNG_EV_TIME_UPDATE, (uint8_t*)&time_info );
-  ESP_LOGI(TAG, "1sec Event to update display");
+  // ESP_LOGI(TAG, "1sec Event to update display");
 }
 
 /**
