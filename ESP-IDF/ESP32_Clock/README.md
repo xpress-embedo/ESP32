@@ -2,7 +2,7 @@ ESP32 Clock Using SNTP Time Synchronization
 ====================
 [Want to Read this on my Blog, then Click Here](https://embeddedlaboratory.blogspot.com/2024/02/analog-clock-using-esp32-with-sntp-time.html)  
 
-[<img src=http://i3.ytimg.com/vi/RO30kXc-ogI/hqdefault.jp">](https://youtu.be/RO30kXc-ogI)  
+[![YouTube Video](http://i3.ytimg.com/vi/RO30kXc-ogI/hqdefault.jp)](https://youtu.be/RO30kXc-ogI)  
 
 Analog clocks have a timeless appeal, and adding internet-based time synchronization can make them even more fascinating.  
 In this repository, we'll utilize the ESP-IDF framework and an ILI9341 display controller to create a simple analog clock synchronized with accurate time obtained via SNTP, for this post I am using India's time zone, but this can be easily changed to any other time zone. I am using the LVGL graphics library, some image assets for the background, and some images for displaying the hours, minutes, and seconds dials.  
