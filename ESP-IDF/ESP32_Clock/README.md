@@ -1,7 +1,8 @@
 ESP32 Clock Using SNTP Time Synchronization
 ====================
 [Want to Read this on my Blog, then Click Here](https://embeddedlaboratory.blogspot.com/2024/02/analog-clock-using-esp32-with-sntp-time.html)  
-[Click Here to watch the YouTube Video](https://youtu.be/RO30kXc-ogI)  
+
+[<img src=http://i3.ytimg.com/vi/RO30kXc-ogI/hqdefault.jp">](https://youtu.be/RO30kXc-ogI)  
 
 Analog clocks have a timeless appeal, and adding internet-based time synchronization can make them even more fascinating.  
 In this repository, we'll utilize the ESP-IDF framework and an ILI9341 display controller to create a simple analog clock synchronized with accurate time obtained via SNTP, for this post I am using India's time zone, but this can be easily changed to any other time zone. I am using the LVGL graphics library, some image assets for the background, and some images for displaying the hours, minutes, and seconds dials.  
@@ -9,7 +10,7 @@ In this repository, we'll utilize the ESP-IDF framework and an ILI9341 display c
 The following image illustrates the demo of this small project, as you can see the ESP32 automatically synchronizes the time in India using the NTP servers.  
 ![Demo GIF](doc/AnalogClockUsingESP32.gif)
 
-![alt text](image.png)  
+[<img src="doc/pcbway.png">](https://www.pcbway.com/)  
 This post is sponsored by PCBWay, with more than a decade in the field of PCB prototype and fabrication, PCBWay is committed to meeting the needs of their customers from different industries in terms of quality, delivery, cost-effectiveness, and any other demanding requests.
 As one of the most experienced PCB manufacturers in the World, PCBWay prides itself on being your best business partner as well as a good friend in every aspect of your PCB needs.
 
