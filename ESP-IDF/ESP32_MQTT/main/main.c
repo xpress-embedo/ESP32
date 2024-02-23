@@ -15,7 +15,12 @@
 #include "nvs_flash.h"
 #include "mqtt_client.h"
 
+#include "dht11.h"
+
 // Private Macros
+#define DHT11_PIN                           (GPIO_NUM_12)
+#define MAIN_TASK_PERIOD                    (8000)
+
 #define APP_WIFI_SSID                       "Enter WIFI SSID"
 #define APP_WIFI_PSWD                       "Enter WiFI Password"
 #define WIFI_MAX_RETRY                      (5)
@@ -25,11 +30,18 @@
 #define WIFI_CONNECTED_BIT                  BIT0      // connected to the access point with an IP
 #define WIFI_FAIL_BIT                       BIT1      // failed to connect after the max. amount of retries
 
+// Private Variables
 static const char *TAG = "APP";
 /* WiFi Connection Related Variables */
 static EventGroupHandle_t wifi_event_group;   // FreeRTOS event group to signal when we are connected
 static uint8_t wifi_connect_retry = 0;
 static bool wifi_connect_status = false;
+// mqtt client for global access to publish and subscribe
+static esp_mqtt_client_handle_t mqtt_client;
+// variables to hold sensor data, i.e. temperature and humidity
+static bool led_state = false;
+static uint8_t temperature = 0;
+static uint8_t humidity = 0;
 
 // Private Function Declarations
 static void app_connect_wifi( void );
@@ -50,10 +62,17 @@ void app_main(void)
   ESP_LOGI(TAG, "Free memory: %" PRIu32 " bytes", esp_get_free_heap_size());
   ESP_LOGI(TAG, "IDF version: %s", esp_get_idf_version());
 
+  // Disable default logging messages
   esp_log_level_set("wifi", ESP_LOG_NONE);
+  esp_log_level_set("gpio", ESP_LOG_NONE);
 
+  // initialize dht sensor library
+  dht11_init(DHT11_PIN, true);
+
+  // connect with WiFi router
   app_connect_wifi();
 
+  // connect with mqtt server if connection is successful
   if( wifi_connect_status )
   {
     mqtt_app_start();
@@ -61,8 +80,38 @@ void app_main(void)
 
   while (true)
   {
-    // printf("Hello from app_main!\n");
-    sleep(10);
+    // Get DHT11 Temperature and Humidity Values
+    if( dht11_read().status == DHT11_OK )
+    {
+      uint8_t temp = (uint8_t)dht11_read().humidity;
+      // humidity can't be greater than 100%, that means invalid data
+      if( temp < 100 )
+      {
+        humidity = temp;
+        temp = (uint8_t)dht11_read().temperature;
+        temperature = temp;
+        ESP_LOGI(TAG, "Temperature: %d C", temperature);
+        ESP_LOGI(TAG, "Humidity: %d %%", humidity);
+        // Publish this data to mqtt server
+        if( wifi_connect_status )
+        {
+          char sensor_data[6] = { 0 };
+          int len = snprintf( sensor_data, sizeof(sensor_data), "%d,%d", temperature, humidity);
+          int msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", sensor_data, len, 0, 0);
+          ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+        }
+      }
+      else
+      {
+        ESP_LOGE(TAG, "In-correct data received from DHT11 -> %u", temp);
+      }
+    }
+    else
+    {
+      ESP_LOGE(TAG, "Unable to Read DHT11 Status");
+    }
+    // Wait before next measurement
+    vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
 }
 
@@ -140,17 +189,22 @@ static void app_connect_wifi( void )
   vEventGroupDelete(wifi_event_group);
 }
 
+/**
+ * @brief MQTT application start
+ * @param  none
+ */
 static void mqtt_app_start( void )
 {
+  // configure MQTT host/broker related stuff here
   esp_mqtt_client_config_t mqtt_cfg =
   {
-    .broker.address.uri = "mqtt://mqtt.eclipseprojects.io",
+    .broker.address.uri = "mqtt://test.mosquitto.org:1883",
   };
 
-  esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
+  mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
   // The last argument may be used to pass data to the event handler, in this example mqtt_event_handler
-  esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
-  esp_mqtt_client_start(client);
+  esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
+  esp_mqtt_client_start(mqtt_client);
 }
 
 /**
@@ -198,6 +252,13 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
   }
 }
 
+/**
+ * @brief MQTT Event Handler Function
+ * @param arg
+ * @param event_base Event Base MQTT Event
+ * @param event_id   Event ID
+ * @param event_data Data with Event
+ */
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
   ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%" PRIi32 "", event_base, event_id);
@@ -208,11 +269,16 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
   switch ( (esp_mqtt_event_id_t)event_id )
   {
     case MQTT_EVENT_CONNECTED:
+      char led_state_char = led_state ? '1':'0';
       ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-      msg_id = esp_mqtt_client_publish(client, "my_topic", "Hello World from ESP32", 0, 1, 0);
+      // when connected publish led state
+      msg_id = esp_mqtt_client_publish(client, "LedTopic", &led_state_char, 1, 0, 0);
       ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
-      msg_id = esp_mqtt_client_subscribe(client, "my_topic", 0);
+      // Subscribe to Slider Data and also Led data
+      msg_id = esp_mqtt_client_subscribe(client, "SliderTopic", 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      msg_id = esp_mqtt_client_subscribe(client, "LedTopic", 0);
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
       break;
     case MQTT_EVENT_DISCONNECTED:
@@ -220,8 +286,6 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       break;
     case MQTT_EVENT_SUBSCRIBED:
       ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-      msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
-      ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
       break;
     case MQTT_EVENT_UNSUBSCRIBED:
       ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
