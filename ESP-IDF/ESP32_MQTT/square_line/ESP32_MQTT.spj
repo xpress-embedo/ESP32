@@ -739,27 +739,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": 286659305,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": 836863613,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      57,
-                      60,
-                      57,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": -1060262227,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -2182,27 +2162,7 @@
           },
           {
             "part": "lv.PART.MAIN",
-            "childs": [
-              {
-                "nid": -1911272862,
-                "strtype": "_style/StyleState",
-                "strval": "DEFAULT",
-                "childs": [
-                  {
-                    "nid": -106243562,
-                    "strtype": "_style/Bg_Color",
-                    "intarray": [
-                      57,
-                      60,
-                      57,
-                      255
-                    ],
-                    "InheritedType": 7
-                  }
-                ],
-                "InheritedType": 1
-              }
-            ],
+            "childs": [],
             "nid": -1315902221,
             "strtype": "SCREEN/Style_main",
             "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -2262,7 +2222,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_MQTT\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 144,
+    "backup_cnt": 145,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

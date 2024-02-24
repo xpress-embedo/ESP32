@@ -29,6 +29,7 @@ static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_load_dashboard( uint8_t *data );
 static void gui_update_sensor_data( uint8_t *data );
+static void gui_update_switch_led( uint8_t *data );
 
 // Parivate Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
@@ -37,10 +38,12 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_MQTT_CONNECTING,     gui_mqtt_connecting     },
   { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_dashboard      },
   { GUI_MNG_EV_TEMP_HUMID,          gui_update_sensor_data  },
+  { GUI_MNG_EV_SWITCH_LED,          gui_update_switch_led   },
+  { GUI_MNG_EV_RGB_LED,             NULL },
 };
 static lv_obj_t * switch_led;
 static lv_obj_t * switch_led_ctrl;
-static lv_obj_t * slider_led;
+static lv_obj_t * rgb_led;
 
 // Public Function Definitions
 
@@ -130,16 +133,16 @@ static void gui_load_dashboard( uint8_t *data )
   lv_obj_set_style_bg_opa(switch_led_ctrl, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
   lv_obj_add_event_cb(switch_led_ctrl, gui_switch_led_event, LV_EVENT_ALL, NULL);
 
-  slider_led = lv_obj_create( ui_Dashboard );
-  lv_obj_align(slider_led, LV_ALIGN_CENTER, 0, 0);
-  lv_obj_set_width(slider_led, 100);
-  lv_obj_set_height(slider_led, 100);
-  lv_obj_set_style_radius(slider_led, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+  rgb_led = lv_obj_create( ui_Dashboard );
+  lv_obj_align(rgb_led, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_width(rgb_led, 100);
+  lv_obj_set_height(rgb_led, 100);
+  lv_obj_set_style_radius(rgb_led, LV_RADIUS_CIRCLE, LV_PART_MAIN);
   // adjusting offset from center
-  lv_obj_set_x(slider_led, 60);
-  lv_obj_set_y(slider_led, 20);
+  lv_obj_set_x(rgb_led, 60);
+  lv_obj_set_y(rgb_led, 20);
   // Set style properties
-  lv_obj_set_style_bg_color(slider_led, lv_color_hex(0x1F1F1F), LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(rgb_led, lv_color_hex(0x1F1F1F), LV_STATE_DEFAULT);
 }
 
 /**
@@ -161,9 +164,44 @@ static void gui_update_sensor_data( uint8_t *data )
 static void gui_switch_led_event(lv_event_t * e)
 {
   lv_event_code_t event_code = lv_event_get_code(e);
-  // lv_obj_t * target = lv_event_get_target(e); // not used for now
+  lv_obj_t * target = lv_event_get_target(e);
   if(event_code == LV_EVENT_CLICKED) 
   {
-    lv_led_toggle(switch_led);
+    // toggle the led state
+    if( lv_obj_has_state(target, LV_STATE_CHECKED) )
+    {
+      lv_led_on(switch_led);
+      app_publish_switch_led(true);
+    }
+    else
+    {
+      lv_led_off(switch_led);
+      app_publish_switch_led(false);
+    }
+    // lv_led_toggle(switch_led);
+  }
+}
+
+/**
+ * @brief Update the Switch Led state on display, and also publish event so that
+ *        all other applications or devices synchronize with each other
+ * @param data pointer to switch led state data
+ */
+static void gui_update_switch_led( uint8_t *data )
+{
+  // here we need to update the LED on display and also publish so that all
+  // controls are also updated
+  if( *data )
+  {
+    lv_led_on(switch_led);
+    // to get the state use the function lv_obj_has_state(switch, LV_STATE_CHECKED)
+    // and to se the state use the function lv_obj_add/clear_state(switch, LV_STATE_CHECKED)
+    lv_obj_add_state(switch_led_ctrl, LV_STATE_CHECKED);
+  }
+  else
+  {
+    lv_led_off(switch_led);
+    // clear the state
+    lv_obj_clear_state(switch_led_ctrl, LV_STATE_CHECKED);
   }
 }

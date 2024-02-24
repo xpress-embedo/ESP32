@@ -48,7 +48,7 @@ static void app_connect_wifi( void );
 static void mqtt_app_start( void );
 static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data);
-static void app_handle_mqtt_data(esp_mqtt_event_handle_t *event);
+static void app_handle_mqtt_data(esp_mqtt_event_handle_t event);
 
 void app_main(void)
 {
@@ -102,14 +102,7 @@ void app_main(void)
         ESP_LOGI(TAG, "Temperature: %d C", sensor_data.temperature);
         ESP_LOGI(TAG, "Humidity: %d %%", sensor_data.humidity);
         // Publish this data to mqtt server
-        if( wifi_connect_status && mqtt_connect_status )
-        {
-          char buffer[6] = { 0 };
-          int len = snprintf( buffer, sizeof(buffer), "%d,%d", sensor_data.temperature, sensor_data.humidity);
-
-          int msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", buffer, len, 0, 0);
-          ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-        }
+        app_publish_sensor_data();
         gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
       }
       else
@@ -124,6 +117,50 @@ void app_main(void)
 
     // Wait before next measurement
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
+  }
+}
+
+/**
+ * @brief Publish message to MQTT broker with Led State, this is done to update
+ *        the Switch LED controls everywhere
+ * @param  led_status 
+ */
+void app_publish_switch_led( bool led_status )
+{
+  int msg_id;
+
+  // even if connected or not connected, sync the status with "led_state"
+  led_state = led_status;
+
+  if( wifi_connect_status && mqtt_connect_status )
+  {
+    if( led_state )
+    {
+      msg_id = esp_mqtt_client_publish(mqtt_client, "LedTopic", "1", 1, 0, 0);
+    }
+    else
+    {
+      msg_id = esp_mqtt_client_publish(mqtt_client, "LedTopic", "0", 1, 0, 0);
+    }
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+  }
+}
+
+/**
+ * @brief Publish message to MQTT broker with Sensor Data
+ * @param  none 
+ */
+void app_publish_sensor_data( void )
+{
+  char buffer[8] = { 0 };
+  int len = 0;
+  int msg_id;
+
+  if( wifi_connect_status && mqtt_connect_status )
+  {
+    snprintf( buffer, sizeof(buffer), "%d,%d", sensor_data.temperature, sensor_data.humidity);
+    msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", buffer, len, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
   }
 }
 
@@ -218,10 +255,28 @@ static void mqtt_app_start( void )
   esp_mqtt_client_start(mqtt_client);
 }
 
-static void app_handle_mqtt_data(esp_mqtt_event_handle_t *event)
+/**
+ * @brief Function to handle all mqtt subscribtion
+ * @param event pointer to event data this is a pointer check typedef
+ */
+static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
 {
-  // printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-  // printf("DATA=%.*s\r\n", event->data_len, event->data);
+  printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+  printf("DATA=%.*s\r\n", event->data_len, event->data);
+  // handle the subscribe topics here
+  if( strcmp( (event->topic), "LedTopic") == 0 )
+  {
+    if( strcmp( (event->data), "1" ) == 0 )
+    {
+      led_state = true;
+    }
+    else
+    {
+      led_state = false;
+    }
+    // send the event to GUI manager
+    gui_send_event( GUI_MNG_EV_SWITCH_LED, (uint8_t*)(&led_state) );
+  }
 }
 
 /**
@@ -287,12 +342,10 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
   switch ( (esp_mqtt_event_id_t)event_id )
   {
     case MQTT_EVENT_CONNECTED:
-      char led_state_char = led_state ? '1':'0';
       mqtt_connect_status = true;
       ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-      // when connected publish led state
-      msg_id = esp_mqtt_client_publish(client, "LedTopic", &led_state_char, 1, 0, 0);
-      ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+      // publish with led state off
+      app_publish_switch_led(false);
 
       // Subscribe to Slider Data and also Led data
       msg_id = esp_mqtt_client_subscribe(client, "SliderTopic", 0);
@@ -319,7 +372,7 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
     case MQTT_EVENT_DATA:
       ESP_LOGI(TAG, "MQTT_EVENT_DATA");
       // this function handles all the mqtt related topics and data
-      app_handle_mqtt_data( &event );
+      app_handle_mqtt_data( event );
       break;
     case MQTT_EVENT_ERROR:
       ESP_LOGI(TAG, "MQTT_EVENT_ERROR");

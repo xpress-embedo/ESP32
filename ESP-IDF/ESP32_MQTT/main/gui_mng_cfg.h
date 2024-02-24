@@ -14,6 +14,8 @@ typedef enum {
   GUI_MNG_EV_MQTT_CONNECTING,     // Event for device connecting with MQTT broker
   GUI_MNG_EV_MQTT_CONNECTED,      // Event for device connected with MQTT broker
   GUI_MNG_EV_TEMP_HUMID,          // Event for temperature and humidity update
+  GUI_MNG_EV_SWITCH_LED,          // Event for Switch LED
+  GUI_MNG_EV_RGB_LED,             // Event for RGB Led
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
