@@ -12,6 +12,7 @@ idf_component_register(
     gui_mng_cfg.c
     ui/ui.c
     ui/screens/ui_MainScreen.c
+    ui/screens/ui_Dashboard.c
     INCLUDE_DIRS        # optional, add here public include directories
     "." "ui"
     PRIV_INCLUDE_DIRS   # optional, add here private include directories

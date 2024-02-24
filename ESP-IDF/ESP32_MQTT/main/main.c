@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <unistd.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
@@ -15,6 +11,7 @@
 #include "nvs_flash.h"
 #include "mqtt_client.h"
 
+#include "main.h"
 #include "dht11.h"
 #include "gui_mng.h"
 
@@ -44,8 +41,7 @@ static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
 // variables to hold sensor data, i.e. temperature and humidity
 static bool led_state = false;
-static uint8_t temperature = 0;
-static uint8_t humidity = 0;
+static sensor_data_t sensor_data;
 
 // Private Function Declarations
 static void app_connect_wifi( void );
@@ -99,19 +95,21 @@ void app_main(void)
       // humidity can't be greater than 100%, that means invalid data
       if( temp < 100 )
       {
-        humidity = temp;
+        sensor_data.humidity = temp;
         temp = (uint8_t)dht11_read().temperature;
-        temperature = temp;
-        ESP_LOGI(TAG, "Temperature: %d C", temperature);
-        ESP_LOGI(TAG, "Humidity: %d %%", humidity);
+        sensor_data.temperature = temp;
+        ESP_LOGI(TAG, "Temperature: %d C", sensor_data.temperature);
+        ESP_LOGI(TAG, "Humidity: %d %%", sensor_data.humidity);
         // Publish this data to mqtt server
-        if( wifi_connect_status )
+        if( wifi_connect_status && mqtt_connect_status )
         {
-          char sensor_data[6] = { 0 };
-          int len = snprintf( sensor_data, sizeof(sensor_data), "%d,%d", temperature, humidity);
-          int msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", sensor_data, len, 0, 0);
+          char buffer[6] = { 0 };
+          int len = snprintf( buffer, sizeof(buffer), "%d,%d", sensor_data.temperature, sensor_data.humidity);
+
+          int msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", buffer, len, 0, 0);
           ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         }
+        gui_send_event(GUI_MNG_EV_TEMP_HUMID, &sensor_data);
       }
       else
       {

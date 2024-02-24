@@ -19,6 +19,13 @@ void ui_MainScreen_screen_init(void);
 extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_lblConnecting;
 extern lv_obj_t * ui_spinnerBusy;
+// SCREEN: ui_Dashboard
+void ui_Dashboard_screen_init(void);
+extern lv_obj_t * ui_Dashboard;
+extern lv_obj_t * ui_lblTemperature;
+extern lv_obj_t * ui_lblHumidity;
+extern lv_obj_t * ui_lblTemperatureValue;
+extern lv_obj_t * ui_lblHumidityValue;
 extern lv_obj_t * ui____initial_actions0;
 
 
