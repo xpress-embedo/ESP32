@@ -30,6 +30,7 @@ static void gui_mqtt_connecting( uint8_t *data );
 static void gui_load_dashboard( uint8_t *data );
 static void gui_update_sensor_data( uint8_t *data );
 static void gui_update_switch_led( uint8_t *data );
+static void gui_update_rgb_led( uint8_t * data );
 
 // Parivate Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
@@ -39,7 +40,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_dashboard      },
   { GUI_MNG_EV_TEMP_HUMID,          gui_update_sensor_data  },
   { GUI_MNG_EV_SWITCH_LED,          gui_update_switch_led   },
-  { GUI_MNG_EV_RGB_LED,             NULL },
+  { GUI_MNG_EV_RGB_LED,             gui_update_rgb_led      },
 };
 static lv_obj_t * switch_led;
 static lv_obj_t * switch_led_ctrl;
@@ -204,4 +205,16 @@ static void gui_update_switch_led( uint8_t *data )
     // clear the state
     lv_obj_clear_state(switch_led_ctrl, LV_STATE_CHECKED);
   }
+}
+
+/**
+ * @brief Callback function to update the RGB Color of the LED based on rgb value
+ * @param data pointer to rgb value data
+ */
+static void gui_update_rgb_led( uint8_t * data )
+{
+  int32_t *p_rgb = (int32_t*)(data);
+  uint32_t rgb_color = (uint32_t)(*p_rgb & 0xFFFFFF);
+  printf("RGB Color: %lu\r\n", rgb_color);
+  lv_obj_set_style_bg_color(rgb_led, lv_color_hex(rgb_color), LV_STATE_DEFAULT);
 }
