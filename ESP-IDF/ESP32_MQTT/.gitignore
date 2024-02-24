@@ -1,2 +1,6 @@
 /build/
-/.vscode/
+/managed_components/
+/square_line/backup/
+/square_line/autosave/
+/square_line/cache/
+main/ui/filelist.txt

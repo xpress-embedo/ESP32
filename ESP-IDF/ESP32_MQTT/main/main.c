@@ -16,14 +16,17 @@
 #include "mqtt_client.h"
 
 #include "dht11.h"
+#include "gui_mng.h"
 
 // Private Macros
 #define DHT11_PIN                           (GPIO_NUM_12)
 #define MAIN_TASK_PERIOD                    (8000)
 
-#define APP_WIFI_SSID                       "Enter WIFI SSID"
-#define APP_WIFI_PSWD                       "Enter WiFI Password"
-#define WIFI_MAX_RETRY                      (5)
+// #define APP_WIFI_SSID                       "Enter WIFI SSID"
+// #define APP_WIFI_PSWD                       "Enter WiFI Password"
+#define APP_WIFI_SSID                       "WiFi Router 21"
+#define APP_WIFI_PSWD                       "5139300621152829"
+#define WIFI_MAX_RETRY                      (100)
 #define WIFI_CONNECT_DELAY                  (500)     // Initial delay in milliseconds
 #define WIFI_MAX_DELAY                      (60000)   // Maximum delay in milliseconds
 // The following are the bits/flags for event group
@@ -38,6 +41,7 @@ static uint8_t wifi_connect_retry = 0;
 static bool wifi_connect_status = false;
 // mqtt client for global access to publish and subscribe
 static esp_mqtt_client_handle_t mqtt_client;
+static bool mqtt_connect_status = false;
 // variables to hold sensor data, i.e. temperature and humidity
 static bool led_state = false;
 static uint8_t temperature = 0;
@@ -66,8 +70,14 @@ void app_main(void)
   esp_log_level_set("wifi", ESP_LOG_NONE);
   esp_log_level_set("gpio", ESP_LOG_NONE);
 
+  // start the GUI manager
+  gui_start();
+
   // initialize dht sensor library
-  dht11_init(DHT11_PIN, true);
+  dht11_init(DHT11_PIN, false);
+
+  // send an event to GUI manager
+  gui_send_event(GUI_MNG_EV_WIFI_CONNECTING, NULL);
 
   // connect with WiFi router
   app_connect_wifi();
@@ -75,6 +85,8 @@ void app_main(void)
   // connect with mqtt server if connection is successful
   if( wifi_connect_status )
   {
+    // send an event to GUI manager
+    gui_send_event(GUI_MNG_EV_MQTT_CONNECTING, NULL);
     mqtt_app_start();
   }
 
@@ -186,7 +198,6 @@ static void app_connect_wifi( void )
   {
     ESP_LOGE(TAG, "Unexpected Event" );
   }
-  vEventGroupDelete(wifi_event_group);
 }
 
 /**
@@ -224,6 +235,7 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
     }
     else if( WIFI_EVENT_STA_DISCONNECTED == event_id )
     {
+      wifi_connect_status = false;
       if( wifi_connect_retry < WIFI_MAX_RETRY )
       {
         uint32_t delay = (1 << wifi_connect_retry) * WIFI_CONNECT_DELAY;
@@ -270,6 +282,7 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
   {
     case MQTT_EVENT_CONNECTED:
       char led_state_char = led_state ? '1':'0';
+      mqtt_connect_status = true;
       ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
       // when connected publish led state
       msg_id = esp_mqtt_client_publish(client, "LedTopic", &led_state_char, 1, 0, 0);
@@ -280,9 +293,13 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
       msg_id = esp_mqtt_client_subscribe(client, "LedTopic", 0);
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+      // send an event to GUI manager that we are connected
+      gui_send_event(GUI_MNG_EV_MQTT_CONNECTED, NULL);
       break;
     case MQTT_EVENT_DISCONNECTED:
       ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+      mqtt_connect_status = false;
       break;
     case MQTT_EVENT_SUBSCRIBED:
       ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
