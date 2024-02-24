@@ -48,6 +48,7 @@ static void app_connect_wifi( void );
 static void mqtt_app_start( void );
 static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data);
+static void app_handle_mqtt_data(esp_mqtt_event_handle_t *event);
 
 void app_main(void)
 {
@@ -109,7 +110,7 @@ void app_main(void)
           int msg_id = esp_mqtt_client_publish(mqtt_client, "SensorTopic", buffer, len, 0, 0);
           ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         }
-        gui_send_event(GUI_MNG_EV_TEMP_HUMID, &sensor_data);
+        gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
       }
       else
       {
@@ -120,6 +121,7 @@ void app_main(void)
     {
       ESP_LOGE(TAG, "Unable to Read DHT11 Status");
     }
+
     // Wait before next measurement
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
@@ -216,6 +218,12 @@ static void mqtt_app_start( void )
   esp_mqtt_client_start(mqtt_client);
 }
 
+static void app_handle_mqtt_data(esp_mqtt_event_handle_t *event)
+{
+  // printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+  // printf("DATA=%.*s\r\n", event->data_len, event->data);
+}
+
 /**
  * @brief WiFi Event Handler Function
  * @param arg
@@ -310,8 +318,8 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       break;
     case MQTT_EVENT_DATA:
       ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-      printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-      printf("DATA=%.*s\r\n", event->data_len, event->data);
+      // this function handles all the mqtt related topics and data
+      app_handle_mqtt_data( &event );
       break;
     case MQTT_EVENT_ERROR:
       ESP_LOGI(TAG, "MQTT_EVENT_ERROR");

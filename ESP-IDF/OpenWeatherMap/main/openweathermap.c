@@ -28,8 +28,8 @@ static const char *TAG = "OpenWeatherMap";
 static const char *CLIENT_KEY = "Content-Type";
 static const char *CLIENT_VALUE = "application/x-www-form-urlencoded";
 static const char *CLIENT_REQ_PRE = "https://api.openweathermap.org/data/2.5/weather?q=";
-static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
-
+// static const char *CLIENT_REQ_POST = "&APPID=ENTER_YOUR_KEY_HERE&units=metric";
+static const char *CLIENT_REQ_POST = "&APPID=fbd756d6387c660e650b533ff585c70e&units=metric";
 static weather_data_t city_weather[NUM_OF_CITIES];
 static uint8_t city_weather_index = 0;
 char response_data[HTTP_RESP_LEN] = {0};

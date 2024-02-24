@@ -24,13 +24,13 @@ typedef struct _gui_mng_event_cb_t
 } gui_mng_event_cb_t;
 
 // Private Functions
+static void gui_switch_led_event(lv_event_t * e);
 static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_load_dashboard( uint8_t *data );
 static void gui_update_sensor_data( uint8_t *data );
 
 // Parivate Variables
-static const char *TAG = "GUI_CFG";
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
   { GUI_MNG_EV_WIFI_CONNECTING,     gui_wifi_connecting     },
@@ -38,6 +38,9 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_dashboard      },
   { GUI_MNG_EV_TEMP_HUMID,          gui_update_sensor_data  },
 };
+static lv_obj_t * switch_led;
+static lv_obj_t * switch_led_ctrl;
+static lv_obj_t * slider_led;
 
 // Public Function Definitions
 
@@ -102,6 +105,41 @@ static void gui_mqtt_connecting( uint8_t *data )
 static void gui_load_dashboard( uint8_t *data )
 {
   lv_disp_load_scr(ui_Dashboard);
+  // there are some widgets that are still not available in square line studio
+  // hence creating them manually
+  // switch_led = lv_led_create( lv_scr_act() );
+  switch_led = lv_led_create( ui_Dashboard );
+  lv_obj_align(switch_led, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_width(switch_led, 100);
+  lv_obj_set_height(switch_led, 100);
+  // adjusting offset from center
+  lv_obj_set_x(switch_led, -60);
+  lv_obj_set_y(switch_led, 20);
+  lv_led_set_color(switch_led, lv_palette_main(LV_PALETTE_RED));
+  // turn off the led
+  lv_led_off(switch_led);
+
+  // switch control to control the switch led
+  switch_led_ctrl = lv_switch_create(ui_Dashboard);
+  lv_obj_set_width(switch_led_ctrl, 50);
+  lv_obj_set_height(switch_led_ctrl, 25);
+  lv_obj_set_x(switch_led_ctrl, -60);
+  lv_obj_set_y(switch_led_ctrl, 90);
+  lv_obj_set_align(switch_led_ctrl, LV_ALIGN_CENTER);
+  lv_obj_set_style_bg_color(switch_led_ctrl, lv_color_hex(0x8B8583), LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_opa(switch_led_ctrl, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(switch_led_ctrl, gui_switch_led_event, LV_EVENT_ALL, NULL);
+
+  slider_led = lv_obj_create( ui_Dashboard );
+  lv_obj_align(slider_led, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_width(slider_led, 100);
+  lv_obj_set_height(slider_led, 100);
+  lv_obj_set_style_radius(slider_led, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+  // adjusting offset from center
+  lv_obj_set_x(slider_led, 60);
+  lv_obj_set_y(slider_led, 20);
+  // Set style properties
+  lv_obj_set_style_bg_color(slider_led, lv_color_hex(0x1F1F1F), LV_STATE_DEFAULT);
 }
 
 /**
@@ -114,4 +152,18 @@ static void gui_update_sensor_data( uint8_t *data )
   sensor_data = (sensor_data_t*)data;
   lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", sensor_data->temperature );
   lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", sensor_data->humidity );
+}
+
+/**
+ * @brief Callback Function configured for Switch Led Control
+ * @param e 
+ */
+static void gui_switch_led_event(lv_event_t * e)
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  // lv_obj_t * target = lv_event_get_target(e); // not used for now
+  if(event_code == LV_EVENT_CLICKED) 
+  {
+    lv_led_toggle(switch_led);
+  }
 }
