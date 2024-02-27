@@ -32,7 +32,7 @@ static void gui_update_sensor_data( uint8_t *data );
 static void gui_update_switch_led( uint8_t *data );
 static void gui_update_rgb_led( uint8_t * data );
 
-// Parivate Variables
+// Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
   { GUI_MNG_EV_WIFI_CONNECTING,     gui_wifi_connecting     },
