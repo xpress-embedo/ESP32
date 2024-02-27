@@ -15,7 +15,7 @@ The following is a demo animation of this project.
 As you can see in the above animated image the ESP32 is connected with the DHT11 sensor to sense the temperature and humidity data and it is also connected with the TFT display, which is used to display the temperature and humidity values.  
 You can see on the display there are 2 LEDs, one is a normal Red LED and one is a RGB LED. I didn’t use the physical LEDs instead I am simulating the LEDs using the LVGL graphics library. There is a switch, which is used to control the single-color LED state.  
 
-<[![alt text](docs/image.png)](https://www.pcbway.com/)  >
+![alt text](docs/image.png)
 
 *This project is sponsored by PCBWay, with more than a decade in the field of PCB prototype and fabrication, PCBWay is committed to meeting the needs of their customers from different industries in terms of quality, delivery, cost-effectiveness, and any other demanding requests.*
 *As one of the most experienced PCB manufacturers in the World, PCBWay prides itself on being your best business partner as well as a good friend in every aspect of your PCB needs.*
