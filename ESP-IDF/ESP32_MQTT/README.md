@@ -4,7 +4,7 @@ Get Sensor Data and Controlling Devices Using ESP32 and Android Application over
 ### [Click Here If You Want to Read the Blog](https://embeddedlaboratory.blogspot.com/2024/02/get-sensor-data-and-controlling-devices.html)
 
 ### YouTube Video
-[<img src="http://i3.ytimg.com/vi/xyCAHg4jrOE/hqdefault.jpg">](https://www.youtube.com/watch?v=xyCAHg4jrOE)
+[![](docs/thumbnail.jpg)](https://www.youtube.com/watch?v=xyCAHg4jrOE)
 
 Hello everyone, In this post I will explain the working of my project based on the ESP32 microcontroller.  
 In this project, I will show you, how to control the devices and get sensor data using ESP32 microcontroller and MQTT.  
