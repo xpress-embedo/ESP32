@@ -1774,11 +1774,6 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_psram/esp32s3/esp_psram_impl_octal.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_psram/esp32s3/esp_psram_impl_quad.c</name>
-			<type>1</type>
-			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_psram/esp32s3/esp_psram_impl_quad.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_cache_esp32s2_esp32s3.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_rom/patches/esp_rom_cache_esp32s2_esp32s3.c</location>
