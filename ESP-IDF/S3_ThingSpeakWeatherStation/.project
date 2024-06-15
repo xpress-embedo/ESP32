@@ -299,6 +299,16 @@
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_pm/pm_trace.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/esp_psram/esp_psram.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_psram/esp_psram.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_psram/mmu_psram_flash.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_psram/mmu_psram_flash.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/esp_ringbuf/ringbuf.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_ringbuf/ringbuf.c</location>
@@ -1757,6 +1767,11 @@
 			<name>build/ide/esp_idf_components/esp_phy/src/phy_override.c</name>
 			<type>1</type>
 			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_phy/src/phy_override.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/esp_psram/esp32s3/esp_psram_impl_octal.c</name>
+			<type>1</type>
+			<location>C:/Espressif/frameworks/esp-idf-v5.1.2/components/esp_psram/esp32s3/esp_psram_impl_octal.c</location>
 		</link>
 		<link>
 			<name>build/ide/esp_idf_components/esp_rom/patches/esp_rom_cache_esp32s2_esp32s3.c</name>
