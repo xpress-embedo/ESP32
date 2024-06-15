@@ -45,13 +45,15 @@ void app_main(void)
         if( sensor_data.sensor_idx < SENSOR_BUFF_SIZE )
         {
           sensor_data.humidity[sensor_data.sensor_idx] = temp;
+          sensor_data.humidity_current = temp;
           temp = (uint8_t)dht11_read().temperature;
           sensor_data.temperature[sensor_data.sensor_idx] = temp;
+          sensor_data.temperature_current = temp;
           ESP_LOGI(TAG, "Temperature: %d", sensor_data.temperature[sensor_data.sensor_idx]);
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity[sensor_data.sensor_idx]);
           sensor_data.sensor_idx++;
           // trigger event to display temperature and humidity
-          // gui_send_event(GUI_MNG_EV_TEMP_HUMID, NULL );
+          gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
           // if wifi is connected, trigger event to send data to ThingSpeak
           // if( wifi_connect_status )
           {

@@ -8,6 +8,22 @@
 #include "main.h"
 #include "lvgl.h"
 #include "gui_mng.h"
+#include "gui_mng_cfg.h"
+
+// Private Macros
+#define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
+
+// function template for callback function
+typedef void (*gui_mng_callback)(uint8_t * data);
+
+typedef struct _gui_mng_event_cb_t
+{
+  gui_mng_event_t   event;
+  gui_mng_callback  callback;
+} gui_mng_event_cb_t;
+
+// Private Function Prototypes
+static void gui_update_sensor_data( uint8_t *data );
 
 // Private Variables
 static lv_obj_t * ui_lblHeadLine;
@@ -19,17 +35,22 @@ static lv_obj_t * ui_chart;
 static lv_chart_series_t * temp_series;
 static lv_chart_series_t * humid_series;
 
+static const gui_mng_event_cb_t gui_mng_event_cb[] =
+{
+  { GUI_MNG_EV_TEMP_HUMID,          gui_update_sensor_data  },
+};
+
 // Public Function Definitions
 void gui_cfg_init( void )
 {
   sensor_data_t *sensor_data = get_temperature_humidity();
-  uint8_t *temp_data = sensor_data->temperature;
-  uint8_t *humid_data = sensor_data->humidity;
+  // uint8_t *temp_data = sensor_data->temperature;
+  // uint8_t *humid_data = sensor_data->humidity;
 
   uint16_t disp_width = lv_disp_get_hor_res(NULL);
   uint16_t disp_height = lv_disp_get_ver_res(NULL);
-  LV_LOG_USER("Display Width %d", disp_width);
-  LV_LOG_USER("Display Height %d", disp_height);
+  // LV_LOG_USER("Display Width %d", disp_width);
+  // LV_LOG_USER("Display Height %d", disp_height);
 
   // Headline or let's say title starts
   ui_lblHeadLine = lv_label_create( lv_scr_act() );
@@ -118,4 +139,41 @@ void gui_cfg_init( void )
     humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
   }
   */
+}
+
+/**
+ * @brief Process the events posted to GUI manager module
+ *        This function calls the dedicated function based on the event posted
+ *        to GUI manager queue, I will think of moving this function to GUI manager
+ * @param event event name
+ * @param data event data pointer
+ */
+void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
+{
+  uint8_t idx = 0;
+  for( idx=0; idx < NUM_ELEMENTS(gui_mng_event_cb); idx++ )
+  {
+    // check if event matches the table
+    if( event == gui_mng_event_cb[idx].event )
+    {
+      // call the callback function with arguments, if not NULL
+      if( gui_mng_event_cb[idx].callback != NULL )
+      {
+        gui_mng_event_cb[idx].callback(data);
+      }
+    }
+  }
+}
+
+// Private Function Definitions
+/**
+ * @brief Update the Temperature and Humidity data on display
+ * @param data pointer to sensor data
+ */
+static void gui_update_sensor_data( uint8_t *data )
+{
+  sensor_data_t *sensor_data;
+  sensor_data = (sensor_data_t*)data;
+  lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", sensor_data->temperature_current );
+  lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", sensor_data->humidity_current );
 }

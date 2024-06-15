@@ -15,6 +15,8 @@
 
 typedef struct _sensor_data_t
 {
+  uint8_t temperature_current;
+  uint8_t humidity_current;
   uint8_t temperature[SENSOR_BUFF_SIZE];
   uint8_t humidity[SENSOR_BUFF_SIZE];
   size_t  sensor_idx;

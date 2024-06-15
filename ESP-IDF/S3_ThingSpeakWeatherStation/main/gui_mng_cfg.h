@@ -10,18 +10,14 @@
 
 typedef enum {
   GUI_MNG_EV_NONE = 0,
-  GUI_MNG_EV_WIFI_CONNECTING,     // Event for device connecting with WiFi
-  GUI_MNG_EV_MQTT_CONNECTING,     // Event for device connecting with MQTT broker
-  GUI_MNG_EV_MQTT_CONNECTED,      // Event for device connected with MQTT broker
   GUI_MNG_EV_TEMP_HUMID,          // Event for temperature and humidity update
-  GUI_MNG_EV_SWITCH_LED,          // Event for Switch LED
-  GUI_MNG_EV_RGB_LED,             // Event for RGB Led
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
 
 // Public Function Prototypes
 void gui_cfg_init( void );
+void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data );
 
 
 #endif /* MAIN_GUI_MNG_CFG_H_ */

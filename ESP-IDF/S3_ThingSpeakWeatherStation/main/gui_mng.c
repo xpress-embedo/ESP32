@@ -143,8 +143,7 @@ static void gui_task(void *pvParameter)
       // the below is the code to handle the state machine
       if( GUI_MNG_EV_NONE != msg.event_id )
       {
-        // todo
-        // gui_cfg_mng_process(msg.event_id, msg.data);
+        gui_cfg_mng_process(msg.event_id, msg.data);
       }   // if event received in limit end
     }     // xQueueReceive end
   }
