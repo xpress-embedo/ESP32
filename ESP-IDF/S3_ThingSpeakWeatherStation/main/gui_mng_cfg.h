@@ -20,5 +20,8 @@ typedef enum {
 } gui_mng_event_t;
 
 
+// Public Function Prototypes
+void gui_cfg_init( void );
+
 
 #endif /* MAIN_GUI_MNG_CFG_H_ */

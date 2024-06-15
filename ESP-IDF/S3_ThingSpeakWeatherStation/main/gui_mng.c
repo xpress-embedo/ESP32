@@ -117,7 +117,7 @@ static void gui_init( void )
   lcd_set_backlight(true);
 
   // main user interface
-  // gui_cfg_init();
+  gui_cfg_init();
 }
 
 /**

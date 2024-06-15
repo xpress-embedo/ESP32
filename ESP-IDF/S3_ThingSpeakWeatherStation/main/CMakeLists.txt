@@ -6,6 +6,7 @@ idf_component_register(
     dht11.c
     lcd.c
     gui_mng.c
+    gui_mng_cfg.c
     INCLUDE_DIRS        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)
