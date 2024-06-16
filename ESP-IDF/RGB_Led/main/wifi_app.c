@@ -58,14 +58,15 @@ void WiFi_App_Start( void )
                                         sizeof(WiFi_App_Queue_Msg_s) );
 
   // Create Task
+  /*
   xTaskCreate( &WiFi_App_Task, "WiFi App Task", WIFI_APP_TASK_STACK_SIZE, \
                NULL, WIFI_APP_TASK_PRIORIIRY, NULL );
-  /*
+  */
+
   xTaskCreatePinnedToCore( &WiFi_App_Task, "WiFi App Task", \
                            WIFI_APP_TASK_STACK_SIZE, NULL, \
                            WIFI_APP_TASK_PRIORIIRY, NULL, \
                            WIFI_APP_TASK_CORE_ID );
-  */
 }
 
 
