@@ -19,7 +19,7 @@
 
 // Private Variables
 static const char *TAG = "ThingSpeak";
-static const char *THINGSPEAK_KEY = "THINGSPEAK KEY";
+static const char *THINGSPEAK_KEY = "4MTE3BNV84DE6FEU";
 static const char *CLIENT_KEY = "Content-Type";
 static const char *CLIENT_VALUE = "application/x-www-form-urlencoded";
 static QueueHandle_t thingspeak_event = NULL;

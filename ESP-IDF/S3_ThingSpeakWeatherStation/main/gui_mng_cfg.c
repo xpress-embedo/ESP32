@@ -118,6 +118,36 @@ void gui_cfg_init( void )
   // lv_obj_set_x(ui_lblTemperatureValue, 270);
   // lv_obj_set_y(ui_lblTemperatureValue, 0);
 
+  // Legend Related Code
+  // Showing Legends Code Starts from Here: this is temporary stuff, not the
+  // proper way of doing things, & library also doesn't support showing legends
+  // Create an array of Points for Lines
+  static lv_point_t temp_points[] = { {0,0}, {100,0} };
+  // Create Style for temperature and humidity legends
+  static lv_style_t style_line_temp;
+  lv_style_init(&style_line_temp);
+  lv_style_set_line_width(&style_line_temp, 4);
+  lv_style_set_line_color(&style_line_temp, lv_palette_main(LV_PALETTE_BLUE));
+
+  static lv_style_t style_line_humid;
+  lv_style_init(&style_line_humid);
+  lv_style_set_line_width(&style_line_humid, 4);
+  lv_style_set_line_color(&style_line_humid, lv_palette_main(LV_PALETTE_GREEN));
+
+  // Create a line and apply the style
+  lv_obj_t * temp_line;
+  lv_obj_t * humid_line;
+  temp_line = lv_line_create( lv_scr_act() );
+  humid_line = lv_line_create( lv_scr_act() );
+  // set the points for temperature legend
+  lv_line_set_points(temp_line, temp_points, 2);
+  lv_obj_add_style(temp_line, &style_line_temp, 0);
+  lv_obj_align_to(temp_line, ui_lblTemperature, LV_ALIGN_CENTER, -160, 0);
+  // set the points for humidity legend
+  lv_line_set_points(humid_line, temp_points, 2); // Using the same temp points
+  lv_obj_add_style(humid_line, &style_line_humid, 0);
+  lv_obj_align_to(humid_line, ui_lblHumidity, LV_ALIGN_CENTER, -160, 0);
+
   // Create a chart
   ui_chart = lv_chart_create( lv_scr_act() );
   lv_obj_set_size(ui_chart, lv_pct(85), lv_pct(70) );
