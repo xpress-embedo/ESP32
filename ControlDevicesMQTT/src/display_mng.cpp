@@ -142,12 +142,11 @@ void Display_Mng( void )
       Display_StateConnectingFailed();
     break;
     case DISP_STATE_CONNECTED:
-      // connecting is passed and system will move to next screen, where IP
-      // address assigned to ESP32 is displayed
+      // connecting is passed and system will move to next screen, where Sensor
+      // Screen and LED screen is displayed
       Display_StateConnected();
     break;
-    case DISP_STATE_CONNECTED_WAIT:
-      // Will wait here, until next project 😊
+    case DISP_STATE_SENSOR_LED:
     break;
     case DISP_STATE_MAX:
     default:
@@ -238,10 +237,8 @@ static void Display_StateConnectingMenuWait( void )
     if( WiFi.status() == WL_CONNECTED )
     {
       Display_ChangeState(DISP_STATE_CONNECTED);
-      // Clear the screen
-      lv_obj_clean( lv_scr_act() );
-      // Load the second screen
-      lv_disp_load_scr(ui_ConnectedScreen);
+      // Display the IP Address
+      lv_label_set_text(ui_ConnectingLabel, WiFi.localIP().toString().c_str() );
     }
     else
     {
@@ -279,8 +276,14 @@ static void Display_StateConnectingFailed( void )
  */
 static void Display_StateConnected( void )
 {
-  lv_label_set_text(ui_IPAddressLabel, WiFi.localIP().toString().c_str() );
-  Display_ChangeState(DISP_STATE_CONNECTED_WAIT);
+  uint32_t now = millis();
+  if( (now - display_timestamp) >= 1000 )
+  {
+    display_timestamp = now;
+    // load the sensor screen, and change the state
+    // wait for 1 second and move state to next screen
+    Display_ChangeState(DISP_STATE_SENSOR_LED);
+  }
 }
 
 /**

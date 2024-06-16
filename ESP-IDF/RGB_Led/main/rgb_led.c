@@ -19,19 +19,25 @@ void RGB_PWM_Init( void )
   // RED
   led_ctrl_channel[0].channel = LEDC_CHANNEL_0;
   led_ctrl_channel[0].gpio = RGB_LED_RED_GPIO;
+#if SOC_LEDC_SUPPORT_HS_MODE
   led_ctrl_channel[0].mode = LEDC_HIGH_SPEED_MODE;
+#endif
   led_ctrl_channel[0].timer_idx = LEDC_TIMER_0;
 
   // Green
   led_ctrl_channel[1].channel = LEDC_CHANNEL_1;
   led_ctrl_channel[1].gpio = RGB_LED_GREEN_GPIO;
+#if SOC_LEDC_SUPPORT_HS_MODE
   led_ctrl_channel[1].mode = LEDC_HIGH_SPEED_MODE;
+#endif
   led_ctrl_channel[1].timer_idx = LEDC_TIMER_0;
 
   // Blue
   led_ctrl_channel[2].channel = LEDC_CHANNEL_2;
   led_ctrl_channel[2].gpio = RGB_LED_BLUE_GPIO;
+#if SOC_LEDC_SUPPORT_HS_MODE
   led_ctrl_channel[2].mode = LEDC_HIGH_SPEED_MODE;
+#endif
   led_ctrl_channel[2].timer_idx = LEDC_TIMER_0;
 
   /* Documentation available on the below mentioned page
@@ -48,7 +54,9 @@ void RGB_PWM_Init( void )
   // Configure timer zero
   ledc_timer_config_t ledc_timer =
   {
+#if SOC_LEDC_SUPPORT_HS_MODE
     .speed_mode = LEDC_HIGH_SPEED_MODE,
+#endif
     .duty_resolution = LEDC_TIMER_8_BIT,
     .timer_num = LEDC_TIMER_0,
     .freq_hz = 100,     // 100 Hz

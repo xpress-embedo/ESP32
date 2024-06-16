@@ -20,9 +20,9 @@ typedef enum _Display_States_e
   DISP_STATE_CONNECT_MENU_WAIT,   // Wait for user inputs to connect
   DISP_STATE_CONNECTING_MENU_WAIT,// Connect button is pressed, and waiting for
   DISP_STATE_CONNECT_FAIL,        // If Connection to Router Fails
-  DISP_STATE_CONNECTED,           // When Connected
-  DISP_STATE_CONNECTED_WAIT,
-  DISP_STATE_MAX
+  DISP_STATE_CONNECTED,           // When Connected, wait for sometime and move to DHT11 and LED Screen
+  DISP_STATE_SENSOR_LED,          // Display Sensor and Led screen
+  DISP_STATE_MAX,
 } Display_State_e;
 
 void Display_Init( void );

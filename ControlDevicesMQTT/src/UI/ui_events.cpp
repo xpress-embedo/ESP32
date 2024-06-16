@@ -32,6 +32,10 @@ void ConnectToRouter(lv_event_t * e)
   lv_dropdown_get_selected_str(ui_DropDownSSID, wifi_ssid, WIFI_SSID_BUFFER_SIZE);
   LV_LOG_USER("WIFI SSID: %s", wifi_ssid );
   LV_LOG_USER("WIFI PSWD: %s", lv_textarea_get_text(ui_TextAreaPassword) );
+  
+  // test code starts
+  lv_textarea_set_text(ui_TextAreaPassword, "5yR8m2B6Y4egrJQ5");
+  // test code ends
 
   // Try to Connect with the Router
   WiFi.begin( wifi_ssid, lv_textarea_get_text(ui_TextAreaPassword) );

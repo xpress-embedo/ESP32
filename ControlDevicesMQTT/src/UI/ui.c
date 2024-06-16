@@ -21,9 +21,6 @@ void ui_event_RescanButton(lv_event_t * e);
 lv_obj_t * ui_RescanButton;
 lv_obj_t * ui_RescanButtonLabel;
 lv_obj_t * ui_ConnectingLabel;
-lv_obj_t * ui_ConnectedScreen;
-lv_obj_t * ui_ConnectedLabel;
-lv_obj_t * ui_IPAddressLabel;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -171,30 +168,6 @@ void ui_MainScreen_screen_init(void)
     lv_obj_add_event_cb(ui_RescanButton, ui_event_RescanButton, LV_EVENT_ALL, NULL);
 
 }
-void ui_ConnectedScreen_screen_init(void)
-{
-    ui_ConnectedScreen = lv_obj_create(NULL);
-    lv_obj_clear_flag(ui_ConnectedScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_ConnectedLabel = lv_label_create(ui_ConnectedScreen);
-    lv_obj_set_width(ui_ConnectedLabel, lv_pct(30));
-    lv_obj_set_height(ui_ConnectedLabel, LV_SIZE_CONTENT);    /// 8
-    lv_obj_set_x(ui_ConnectedLabel, lv_pct(0));
-    lv_obj_set_y(ui_ConnectedLabel, lv_pct(-10));
-    lv_obj_set_align(ui_ConnectedLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_ConnectedLabel, "Connected");
-    lv_obj_set_style_text_align(ui_ConnectedLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ConnectedLabel, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_IPAddressLabel = lv_label_create(ui_ConnectedScreen);
-    lv_obj_set_width(ui_IPAddressLabel, lv_pct(50));
-    lv_obj_set_height(ui_IPAddressLabel, LV_SIZE_CONTENT);    /// 8
-    lv_obj_set_align(ui_IPAddressLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_IPAddressLabel, "xxx.xxx.xxx.xxx");
-    lv_obj_set_style_text_align(ui_IPAddressLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_IPAddressLabel, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-}
 
 void ui_init(void)
 {
@@ -202,6 +175,5 @@ void ui_init(void)
     lv_theme_t * theme = lv_theme_basic_init(dispp);
     lv_disp_set_theme(dispp, theme);
     ui_MainScreen_screen_init();
-    ui_ConnectedScreen_screen_init();
     lv_disp_load_scr(ui_MainScreen);
 }

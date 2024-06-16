@@ -1,15 +1,38 @@
 #include <lvgl.h>
 #include <WiFi.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <PubSubClient.h>
+
 #include "main.h"
 #include "display_mng.h"
 
 // Macros
+#define DHTPIN                              (12)
+#define DHTTYPE                             (DHT11)
 #define LVGL_REFRESH_TIME                   (5u)      // 5 milliseconds
 #define WIFI_MAX_SSID                       (7u)
+#define DHT_REFRESH_TIME                    (20000u)   // 20 seconds
+#define MQTT_PUB_BUFF_SIZE                  (20u)
+#define WIFI_NOT_CONNECT_COUNT_MAX          (10)
 
 // Private Variables
+// Task Time Related
 static uint32_t lvgl_refresh_timestamp = 0u;
+static uint32_t dht_refresh_timestamp = 0u;
+// Wi-Fi available access points drop down list
 static char wifi_dd_list[WIFI_MAX_SSID*20] = { 0 };
+// DHT11 Sensor Related
+DHT dht(DHTPIN, DHTTYPE);
+
+// MQTT Related
+const char* mqtt_server = "hairdresser.cloudmqtt.com";  // MQTT Server Name
+const int mqtt_port = 17259;                            // MQTT Server Port
+const char* user_name = "pyptiouq";                     // MQTT Server Instance User Name
+const char* mqtt_pswd = "aQp113ENJeO9";                 // MQTT Server Instance Password
+WiFiClient esp_client;
+PubSubClient client( esp_client );
+char mqtt_pub_msg[MQTT_PUB_BUFF_SIZE] = { 0 };
 
 // Private functions
 static void LVGL_TaskInit( void );
