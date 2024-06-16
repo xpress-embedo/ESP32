@@ -41,16 +41,24 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
 };
 
 // Public Function Definitions
+
+/**
+ * @brief GUI Configurable Initialization Function
+ * @param  None
+ */
 void gui_cfg_init( void )
 {
   sensor_data_t *sensor_data = get_temperature_humidity();
-  // uint8_t *temp_data = sensor_data->temperature;
-  // uint8_t *humid_data = sensor_data->humidity;
+  uint8_t *temp_data = sensor_data->temperature;
+  uint8_t *humid_data = sensor_data->humidity;
 
-  uint16_t disp_width = lv_disp_get_hor_res(NULL);
-  uint16_t disp_height = lv_disp_get_ver_res(NULL);
+  // uint16_t disp_width = lv_disp_get_hor_res(NULL);
+  // uint16_t disp_height = lv_disp_get_ver_res(NULL);
   // LV_LOG_USER("Display Width %d", disp_width);
   // LV_LOG_USER("Display Height %d", disp_height);
+
+  // make screen non-scrollable
+  lv_obj_clear_flag( lv_scr_act(), LV_OBJ_FLAG_SCROLLABLE );
 
   // Headline or let's say title starts
   ui_lblHeadLine = lv_label_create( lv_scr_act() );
@@ -73,7 +81,7 @@ void gui_cfg_init( void )
   lv_obj_set_style_text_font(ui_lblHumidity, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_width(ui_lblHumidity, 200);
   lv_obj_set_height(ui_lblHumidity, 30);
-  lv_obj_align_to(ui_lblHumidity, ui_lblHeadLine, LV_ALIGN_BOTTOM_MID, 200, 50);
+  lv_obj_align_to(ui_lblHumidity, ui_lblHeadLine, LV_ALIGN_BOTTOM_MID, 200, 30);
   // NOTE: Instead of using set_x and set_y function, I used the align_to function
   // this helps in aligning things properly, and when using this lv_obj_set_align is not needed
   // lv_obj_set_align(ui_lblHumidity, LV_ALIGN_CENTER);
@@ -110,21 +118,31 @@ void gui_cfg_init( void )
   // lv_obj_set_x(ui_lblTemperatureValue, 270);
   // lv_obj_set_y(ui_lblTemperatureValue, 0);
 
-  /*
   // Create a chart
   ui_chart = lv_chart_create( lv_scr_act() );
-  lv_obj_set_size(ui_chart, (disp_width*2)/3, (disp_height*2)/3 );
+  lv_obj_set_size(ui_chart, lv_pct(85), lv_pct(70) );
   lv_obj_center(ui_chart);
+  lv_obj_set_pos( ui_chart, 0, 30 );
+  lv_chart_set_type(ui_chart, LV_CHART_TYPE_LINE);
+  lv_chart_set_range(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 60);
+  lv_chart_set_range(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 20, 100);
+  // Tick Marks and Labels
+  // 2nd argument is axis, 3rd argument is major tick length, 4th is minor tick length
+  // 5th is number of major ticks on the axis
+  // 6th is number of minor ticks between two major ticks
+  // 7th is enable label drawing on major ticks
+  // 8th is extra size required to draw labels and ticks
+  lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 0, 2, false, 50);
+  lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 6, 2, true, 50);
+  lv_chart_set_axis_tick(ui_chart, LV_CHART_AXIS_SECONDARY_Y, 10, 5, 5, 2, true, 25);
 
   // this should match with the temperature & humidity buffer length
   // NOTE: if generating using the Square Line Studio, make sure it matches the same value
   uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
   // By default the number of points are 10, update it to chart width
   lv_chart_set_point_count( ui_chart, chart_hor_res );
-
   // Do not display points on the data
   lv_obj_set_style_size( ui_chart, 0, LV_PART_INDICATOR);
-
   // Update mode shift or circular, here shift is selected
   lv_chart_set_update_mode( ui_chart, LV_CHART_UPDATE_MODE_SHIFT );
 
@@ -138,7 +156,6 @@ void gui_cfg_init( void )
     temp_series->y_points[idx] = (lv_coord_t)*(temp_data+idx);
     humid_series->y_points[idx] = (lv_coord_t)*(humid_data+idx);
   }
-  */
 }
 
 /**
@@ -176,4 +193,15 @@ static void gui_update_sensor_data( uint8_t *data )
   sensor_data = (sensor_data_t*)data;
   lv_label_set_text_fmt(ui_lblTemperatureValue, "%d °C", sensor_data->temperature_current );
   lv_label_set_text_fmt(ui_lblHumidityValue, "%d %%", sensor_data->humidity_current );
+
+  // this should match the temperature buffer length
+  uint16_t chart_hor_res = SENSOR_BUFF_SIZE;
+  size_t idx = 0;
+
+  for( idx=0; idx<chart_hor_res; idx++ )
+  {
+    temp_series->y_points[idx] = (sensor_data->temperature[idx]);
+    humid_series->y_points[idx] = (sensor_data->humidity[idx]);
+  }
+  lv_chart_refresh(ui_chart);
 }
