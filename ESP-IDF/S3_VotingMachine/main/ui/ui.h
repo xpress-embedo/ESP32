@@ -20,38 +20,33 @@ void ui_MainScreen_screen_init(void);
 extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_panelMain;
 extern lv_obj_t * ui_panelParty1;
-extern lv_obj_t * ui_lblParty1;
-extern lv_obj_t * ui_imgParty1;
+extern lv_obj_t * ui_lblPartyName;
+extern lv_obj_t * ui_imgPartyLogo1;
 extern lv_obj_t * ui_btnVoteParty1;
+extern lv_obj_t * ui_lblPartyTotalVotes1;
+extern lv_obj_t * ui_lblPartyTotalVotesPercentage1;
 extern lv_obj_t * ui_panelParty2;
-extern lv_obj_t * ui_lblParty2;
-extern lv_obj_t * ui_imgParty2;
+extern lv_obj_t * ui_lblPartyName1;
+extern lv_obj_t * ui_imgPartyLogo2;
 extern lv_obj_t * ui_btnVoteParty2;
+extern lv_obj_t * ui_lblPartyTotalVotes2;
+extern lv_obj_t * ui_lblPartyTotalVotesPercentage2;
 extern lv_obj_t * ui_panelParty3;
-extern lv_obj_t * ui_lblParty3;
-extern lv_obj_t * ui_imgParty3;
+extern lv_obj_t * ui_lblPartyName2;
+extern lv_obj_t * ui_imgPartyLogo3;
 extern lv_obj_t * ui_btnVoteParty3;
-extern lv_obj_t * ui_panelParty4;
-extern lv_obj_t * ui_lblParty4;
-extern lv_obj_t * ui_imgParty4;
-extern lv_obj_t * ui_btnVoteParty4;
-extern lv_obj_t * ui_panelParty5;
-extern lv_obj_t * ui_lblParty5;
-extern lv_obj_t * ui_imgParty5;
-extern lv_obj_t * ui_btnVoteParty5;
-extern lv_obj_t * ui_panelParty6;
-extern lv_obj_t * ui_lblParty6;
-extern lv_obj_t * ui_imgParty6;
-extern lv_obj_t * ui_btnVoteParty6;
+extern lv_obj_t * ui_lblPartyTotalVotes3;
+extern lv_obj_t * ui_lblPartyTotalVotesPercentage3;
 extern lv_obj_t * ui____initial_actions0;
 
 
-LV_IMG_DECLARE(ui_img_aap_png);    // assets/AAP.png
 LV_IMG_DECLARE(ui_img_bjp_png);    // assets/BJP.png
+LV_IMG_DECLARE(ui_img_aap_png);    // assets/AAP.png
 LV_IMG_DECLARE(ui_img_bsp_png);    // assets/BSP.png
 LV_IMG_DECLARE(ui_img_congress_png);    // assets/Congress.png
 LV_IMG_DECLARE(ui_img_cpi_png);    // assets/CPI.png
 LV_IMG_DECLARE(ui_img_ncp_png);    // assets/NCP.png
+LV_IMG_DECLARE(ui_img_sp_png);    // assets/SP.png
 
 
 
