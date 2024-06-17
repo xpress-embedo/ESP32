@@ -37,14 +37,15 @@ extern lv_obj_t * ui_imgPartyLogo3;
 extern lv_obj_t * ui_btnVoteParty3;
 extern lv_obj_t * ui_lblPartyTotalVotes3;
 extern lv_obj_t * ui_lblPartyTotalVotesPercentage3;
+extern lv_obj_t * ui_lblTitle;
 extern lv_obj_t * ui____initial_actions0;
 
 
 LV_IMG_DECLARE(ui_img_bjp_png);    // assets/BJP.png
-LV_IMG_DECLARE(ui_img_aap_png);    // assets/AAP.png
 LV_IMG_DECLARE(ui_img_bsp_png);    // assets/BSP.png
-LV_IMG_DECLARE(ui_img_congress_png);    // assets/Congress.png
 LV_IMG_DECLARE(ui_img_cpi_png);    // assets/CPI.png
+LV_IMG_DECLARE(ui_img_aap_png);    // assets/AAP.png
+LV_IMG_DECLARE(ui_img_congress_png);    // assets/Congress.png
 LV_IMG_DECLARE(ui_img_ncp_png);    // assets/NCP.png
 LV_IMG_DECLARE(ui_img_sp_png);    // assets/SP.png
 

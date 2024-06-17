@@ -31,6 +31,7 @@ lv_obj_t * ui_imgPartyLogo3;
 lv_obj_t * ui_btnVoteParty3;
 lv_obj_t * ui_lblPartyTotalVotes3;
 lv_obj_t * ui_lblPartyTotalVotesPercentage3;
+lv_obj_t * ui_lblTitle;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////

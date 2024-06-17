@@ -94,7 +94,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyName1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo2 = lv_img_create(ui_panelParty2);
-    lv_img_set_src(ui_imgPartyLogo2, &ui_img_bjp_png);
+    lv_img_set_src(ui_imgPartyLogo2, &ui_img_bsp_png);
     lv_obj_set_width(ui_imgPartyLogo2, 50);
     lv_obj_set_height(ui_imgPartyLogo2, 50);
     lv_obj_set_align(ui_imgPartyLogo2, LV_ALIGN_CENTER);
@@ -147,7 +147,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyName2, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo3 = lv_img_create(ui_panelParty3);
-    lv_img_set_src(ui_imgPartyLogo3, &ui_img_bjp_png);
+    lv_img_set_src(ui_imgPartyLogo3, &ui_img_cpi_png);
     lv_obj_set_width(ui_imgPartyLogo3, 50);
     lv_obj_set_height(ui_imgPartyLogo3, 50);
     lv_obj_set_align(ui_imgPartyLogo3, LV_ALIGN_CENTER);
@@ -178,5 +178,15 @@ void ui_MainScreen_screen_init(void)
     lv_label_set_text(ui_lblPartyTotalVotesPercentage3, "0 %");
     lv_obj_set_style_text_align(ui_lblPartyTotalVotesPercentage3, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblTitle = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_lblTitle, 600);
+    lv_obj_set_height(ui_lblTitle, 40);
+    lv_obj_set_x(ui_lblTitle, 0);
+    lv_obj_set_y(ui_lblTitle, 10);
+    lv_obj_set_align(ui_lblTitle, LV_ALIGN_TOP_MID);
+    lv_label_set_text(ui_lblTitle, "Electronic Voting Machine");
+    lv_obj_set_style_text_align(ui_lblTitle, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblTitle, &lv_font_montserrat_32, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }
