@@ -7,11 +7,13 @@
 #include "freertos/task.h"
 
 #include "esp_log.h"
+
+#include "gui_mng.h"
 #include "sd_mng.h"
 
 // macros
 #define MAIN_TASK_PERIOD                (1000)
-#define MAX_PARTY_NAME_LEN              (10)       // Assuming Congress party has longest name
+#define MAX_PARTY_NAME_LEN              (10)       // Assuming Congress party has longest name + Null Character and \n
 #define MAX_NUM_OF_PARTY                (10)      // Let's assume 10 number of parties are maximum
 
 // Private Variables
@@ -73,11 +75,32 @@ void app_main(void)
     ESP_LOGI( TAG, "%.2d => %s", (idx+1), party_list[idx] );
   }
 
+  // start the gui task, this will handle all the display related stuff
+  gui_start();
+
   while (true)
   {
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
 
+}
+
+// Public Function Definitions
+uint8_t get_number_of_parties( void )
+{
+  return num_of_parties;
+}
+
+char * get_name_of_party( uint8_t party_idx )
+{
+  if( party_idx < MAX_NUM_OF_PARTY )
+  {
+    return party_list[party_idx];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 // Private Function Definition
