@@ -43,7 +43,8 @@ static const char *TAG = "GUI_CFG";
 //{
 //};
 
-static party_logo_t party_logo_table[] =
+// this is party logo database table (this consist of all the party names and logos mapped)
+static party_logo_t party_logo_db_table[] =
 {
   { "AAP",        &ui_img_aap_png        },
   { "BJP",        &ui_img_bjp_png        },
@@ -55,7 +56,8 @@ static party_logo_t party_logo_table[] =
   // { NULL,         &ui_img_na_png         },
 };
 
-static lv_obj_t * widget_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
 
 // Public Function Definitions
 
@@ -67,21 +69,27 @@ void gui_cfg_init( void )
 {
   uint8_t num_of_parties = 0;
   char *name;
-  lv_img_dsc_t *logo;
   uint8_t idx = 0;
   uint8_t jdx = 0;
 
   ui_init();
 
   // prepare widget table
-  widget_table[0] = ui_lblPartyName1;
-  widget_table[1] = ui_lblPartyName2;
-  widget_table[2] = ui_lblPartyName3;
-  widget_table[3] = ui_lblPartyName4;
-  widget_table[4] = ui_lblPartyName5;
-  widget_table[5] = ui_lblPartyName6;
-  widget_table[6] = ui_lblPartyName7;
+  party_name_table[0] = ui_lblPartyName1;
+  party_name_table[1] = ui_lblPartyName2;
+  party_name_table[2] = ui_lblPartyName3;
+  party_name_table[3] = ui_lblPartyName4;
+  party_name_table[4] = ui_lblPartyName5;
+  party_name_table[5] = ui_lblPartyName6;
+  party_name_table[6] = ui_lblPartyName7;
 
+  party_logo_table[0] = ui_imgPartyLogo1;
+  party_logo_table[1] = ui_imgPartyLogo2;
+  party_logo_table[2] = ui_imgPartyLogo3;
+  party_logo_table[3] = ui_imgPartyLogo4;
+  party_logo_table[4] = ui_imgPartyLogo5;
+  party_logo_table[5] = ui_imgPartyLogo6;
+  party_logo_table[6] = ui_imgPartyLogo7;
 
   // get the maximum number of political parties
   num_of_parties = get_number_of_parties();
@@ -91,15 +99,15 @@ void gui_cfg_init( void )
   {
     name = get_name_of_party(idx);
     ESP_LOGI( TAG, "Fetched Party Name: %s", name );
-    lv_label_set_text(widget_table[idx], name);
+    lv_label_set_text(party_name_table[idx], name);
     // search the list
-    for( jdx=0; jdx<NUM_ELEMENTS(party_logo_table); jdx++ )
+    for( jdx=0; jdx<NUM_ELEMENTS(party_logo_db_table); jdx++ )
     {
       ESP_LOGI( TAG, "JDX: %d", jdx );
-      if( strcmp( party_logo_table[jdx].name, name) == 0 )
+      if( strcmp( party_logo_db_table[jdx].name, name) == 0 )
       {
         ESP_LOGI( TAG, "Found!!");
-        logo = (lv_img_dsc_t *)(party_logo_table[jdx].logo);
+        lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
         break;
       }
     }

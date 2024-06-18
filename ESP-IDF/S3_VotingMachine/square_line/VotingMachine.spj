@@ -64,7 +64,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -287,7 +287,7 @@
                       {
                         "nid": -554451211,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -971,7 +971,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -2185,7 +2185,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -2408,7 +2408,7 @@
                       {
                         "nid": -22129111,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -3092,7 +3092,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -4306,7 +4306,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -4529,7 +4529,7 @@
                       {
                         "nid": -339938965,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -5213,7 +5213,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -6427,7 +6427,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -6650,7 +6650,7 @@
                       {
                         "nid": 104721824,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -7334,7 +7334,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -8548,7 +8548,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -8771,7 +8771,7 @@
                       {
                         "nid": 385517761,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -9455,7 +9455,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -10669,7 +10669,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -10892,7 +10892,7 @@
                       {
                         "nid": -1788364522,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -11576,7 +11576,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -12790,7 +12790,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          100,
+                          150,
                           30
                         ],
                         "InheritedType": 7
@@ -13013,7 +13013,7 @@
                       {
                         "nid": 2047718721,
                         "strtype": "LABEL/Text",
-                        "strval": "Party-1",
+                        "strval": "-",
                         "InheritedType": 10
                       },
                       {
@@ -13697,7 +13697,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          60,
                           45
                         ],
                         "InheritedType": 7
@@ -16920,7 +16920,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 37,
+    "backup_cnt": 40,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
