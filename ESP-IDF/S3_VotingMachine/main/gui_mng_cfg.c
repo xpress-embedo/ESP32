@@ -66,6 +66,7 @@ static party_logo_t party_logo_db_table[] =
 static const char *TAG = "GUI_CFG";
 static uint8_t    winner_idx = 0;
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY];
@@ -95,6 +96,14 @@ void gui_cfg_init( void )
   party_name_table[4] = ui_lblPartyName5;
   party_name_table[5] = ui_lblPartyName6;
   party_name_table[6] = ui_lblPartyName7;
+
+  party_name_result_table[0] = ui_lblBarParty1;
+  party_name_result_table[1] = ui_lblBarParty2;
+  party_name_result_table[2] = ui_lblBarParty3;
+  party_name_result_table[3] = ui_lblBarParty4;
+  party_name_result_table[4] = ui_lblBarParty5;
+  party_name_result_table[5] = ui_lblBarParty6;
+  party_name_result_table[6] = ui_lblBarParty7;
 
   party_logo_table[0] = ui_imgPartyLogo1;
   party_logo_table[1] = ui_imgPartyLogo2;
@@ -143,12 +152,20 @@ void gui_cfg_init( void )
       {
         ESP_LOGI( TAG, "Found!!");
         lv_label_set_text(party_name_table[idx], name);
+        lv_label_set_text(party_name_result_table[idx], name);
         lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
         // register the callback for vote button press
         lv_obj_add_event_cb( party_vote_btn_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
         break;
       }
     }
+  }
+  // updating the remaining entries
+  for( idx=num_of_parties; idx < MAX_NUM_OF_PARTY; idx++ )
+  {
+    lv_label_set_text(party_name_table[idx], "-" );
+    lv_label_set_text(party_name_result_table[idx], "-");
+    lv_img_set_src( party_logo_table[idx], (const lv_img_dsc_t*)&ui_img_na_png );
   }
 
   // register callback for result button
@@ -163,7 +180,7 @@ void gui_cfg_init( void )
 /**
  * @brief Process the events posted to GUI manager module
  *        This function calls the dedicated function based on the event posted
- *        to GUI manager queue, I will think of moving this function to GUI manager
+ *        to GUI manager queue,v I will think of moving this function to GUI manager
  * @param event event name
  * @param data event data pointer
  */
@@ -269,25 +286,33 @@ static void gui_reset_button_event( lv_event_t *e )
   }
 }
 
+/**
+ * @brief Callback Function for changing screen to Election Results Screen
+ * @param e
+ */
 static void gui_main_screen_event( lv_event_t *e )
 {
   lv_event_code_t event_code = lv_event_get_code(e);
-  lv_obj_t * target = lv_event_get_target(e);
+  // lv_obj_t * target = lv_event_get_target(e);    // not used
+
   if( (event_code == LV_EVENT_GESTURE) &&  (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) )
   {
-    ESP_LOGI( TAG, "LEFT" );
     lv_indev_wait_release(lv_indev_get_act());
     _ui_screen_change(&ui_ResultsBarScreen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_ResultsBarScreen_screen_init);
   }
 }
 
+/**
+ * @brief Callback Function changing screen back to main screen
+ * @param e
+ */
 static void gui_election_result_screen_event( lv_event_t *e )
 {
   lv_event_code_t event_code = lv_event_get_code(e);
-  lv_obj_t * target = lv_event_get_target(e);
+  // lv_obj_t * target = lv_event_get_target(e);    // not used
+
   if( (event_code == LV_EVENT_GESTURE) &&  (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) )
   {
-    ESP_LOGI( TAG, "RIGHT" );
     lv_indev_wait_release(lv_indev_get_act());
     _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_MainScreen_screen_init);
   }
