@@ -8,13 +8,12 @@
 
 #include "esp_log.h"
 
+#include "main.h"
 #include "gui_mng.h"
 #include "sd_mng.h"
 
 // macros
 #define MAIN_TASK_PERIOD                (1000)
-#define MAX_PARTY_NAME_LEN              (10)       // Assuming Congress party has longest name + Null Character and \n
-#define MAX_NUM_OF_PARTY                (10)      // Let's assume 10 number of parties are maximum
 
 // Private Variables
 static const char *TAG = "MAIN";
@@ -82,15 +81,25 @@ void app_main(void)
   {
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
-
 }
 
 // Public Function Definitions
+
+/**
+ * @brief Number of Political Parties
+ * @param  None
+ * @return num of political parties
+ */
 uint8_t get_number_of_parties( void )
 {
   return num_of_parties;
 }
 
+/**
+ * @brief Returns the name of the Party
+ * @param party_idx 
+ * @return Pointer to the name of the party
+ */
 char * get_name_of_party( uint8_t party_idx )
 {
   if( party_idx < MAX_NUM_OF_PARTY )

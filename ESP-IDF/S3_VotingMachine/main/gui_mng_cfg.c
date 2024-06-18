@@ -5,15 +5,22 @@
  *      Author: xpress_embedo
  */
 
+#include "esp_log.h"
+
 #include "main.h"
+#include "ui.h"
 #include "lvgl.h"
 #include "gui_mng.h"
 #include "gui_mng_cfg.h"
 
-#include "ui.h"
-
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
+
+typedef struct _party_logo_t
+{
+  char *name;
+  const lv_img_dsc_t logo;
+} party_logo_t;
 
 // function template for callback function
 typedef void (*gui_mng_callback)(uint8_t * data);
@@ -26,11 +33,23 @@ typedef struct _gui_mng_event_cb_t
 
 // Private Function Prototypes
 
-
 // Private Variables
+static const char *TAG = "GUI_CFG";
 
 //static const gui_mng_event_cb_t gui_mng_event_cb[] =
 //{
+//};
+
+//static const party_logo_t party_logo_table[] =
+//{
+//  { "AAP",        ui_img_aap_png        },
+//  { "BJP",        ui_img_bjp_png        },
+//  { "BSP",        ui_img_bsp_png        },
+//  { "Congress",   ui_img_congress_png   },
+//  { "CPI",        ui_img_cpi_png        },
+//  { "NCP",        ui_img_ncp_png        },
+//  { "SP",         ui_img_sp_png         },
+//  { NULL,         ui_img_na_png         },
 //};
 
 // Public Function Definitions
@@ -41,7 +60,32 @@ typedef struct _gui_mng_event_cb_t
  */
 void gui_cfg_init( void )
 {
+  uint8_t num_of_parties = 0;
+  char *name;
+  lv_img_dsc_t logo;
+  uint8_t idx = 0;
+  uint8_t jdx = 0;
+
   ui_init();
+  // get the maximum number of political parties
+  num_of_parties = get_number_of_parties();
+  ESP_LOGI( TAG, "Fetched Party Number: %d", num_of_parties );
+
+  for( idx=0; idx < num_of_parties; idx++ )
+  {
+    name = get_name_of_party(idx);
+    ESP_LOGI( TAG, "Fetched Party Name: %s", name );
+
+//    // search the list
+//    for( jdx=0; jdx<NUM_ELEMENTS(party_logo_table); jdx++ )
+//    {
+//      if( strcmp( party_logo_table[jdx].name, name) == 0 )
+//      {
+//        ESP_LOGI( TAG, "Found at: %d", jdx);
+//        logo = party_logo_table[jdx].logo;
+//      }
+//    }
+  }
 }
 
 /**
