@@ -23,7 +23,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 46,
+    "backup_cnt": 56,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",

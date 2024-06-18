@@ -38,14 +38,14 @@ typedef struct _gui_mng_event_cb_t
 static void gui_vote_button_event( lv_event_t * e );
 static void gui_results_button_event( lv_event_t * e );
 static void gui_reset_button_event( lv_event_t *e );
+static void winning_timer_anim_cb( lv_timer_t *timer );
 
 // Private Variables
-static const char *TAG = "GUI_CFG";
-
-//static const gui_mng_event_cb_t gui_mng_event_cb[] =
-//{
-//};
-
+/* todo: will be used if new features will be added
+static const gui_mng_event_cb_t gui_mng_event_cb[] =
+{
+};
+*/
 // this is party logo database table (this consist of all the party names and logos mapped)
 static party_logo_t party_logo_db_table[] =
 {
@@ -61,6 +61,8 @@ static party_logo_t party_logo_db_table[] =
 //{ NULL,         &ui_img_na_png         },
 };
 
+static const char *TAG = "GUI_CFG";
+static uint8_t    winner_idx = 0;
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY];
@@ -212,11 +214,17 @@ static void gui_results_button_event( lv_event_t * e )
   lv_obj_t * target = lv_event_get_target(e);
   uint8_t idx;
   uint16_t total_votes = 0;
+  uint16_t max_votes = 0;
 
   if( (event_code == LV_EVENT_PRESSED) && (target == ui_btnResults) )
   {
     for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
     {
+      if( max_votes < votes[idx] )
+      {
+        max_votes = votes[idx];
+        winner_idx = idx;
+      }
       lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
       total_votes += votes[idx];
     }
@@ -225,8 +233,13 @@ static void gui_results_button_event( lv_event_t * e )
     {
       lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", (votes[idx]*100)/total_votes, (votes[idx]*100)%total_votes  );
     }
-  }
 
+    // Play Animation Using Timer
+    ESP_LOGI( TAG, "Starting Timer, Winner Index: %d", winner_idx );
+    lv_timer_t * winner_timer_anim = lv_timer_create( winning_timer_anim_cb, 300, NULL );
+    // repeat animation 20 times
+    lv_timer_set_repeat_count( winner_timer_anim, 20 );
+  }
 }
 
 /**
@@ -237,8 +250,40 @@ static void gui_reset_button_event( lv_event_t *e )
 {
   lv_event_code_t event_code = lv_event_get_code(e);
   lv_obj_t * target = lv_event_get_target(e);
+  uint8_t idx;
+
   if( (event_code == LV_EVENT_PRESSED) && (target == ui_btnReset) )
-  { 
-    
+  {
+    for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
+    {
+      votes[idx] = 0;
+      winner_idx = 0;
+      lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
+      lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
+    }
+  }
+}
+
+/**
+ * @brief Winning Timer Animation Function Callback
+ *        Here for winning party a small manual animation is displayed
+ * @param timer 
+ */
+static void winning_timer_anim_cb( lv_timer_t *timer )
+{
+  static bool toggle = true;
+
+  if( toggle )
+  {
+    toggle = false;
+    lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // NOTE: this bg_opa function is mandatory to see the effects, no idea but will read about it
+    lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+  }
+  else
+  {
+    toggle = true;
+    lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
 }

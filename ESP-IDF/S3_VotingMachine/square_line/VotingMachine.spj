@@ -4251,7 +4251,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID59832404-105486S26663170",
@@ -6372,7 +6373,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID46480435-109927S41993170",
@@ -8493,7 +8495,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID2167942-114368S66143170",
@@ -10614,7 +10617,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID71937913-118809S88463170",
@@ -12735,7 +12739,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID61253735-123250S5483170",
@@ -14856,7 +14861,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               }
             ],
             "locked": false,
@@ -16060,7 +16066,8 @@
                 "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "BUTTON"
+            "saved_objtypeKey": "BUTTON",
+            "tree_closed": true
           },
           {
             "guid": "GUID85824006-125618S5023170",
@@ -16658,7 +16665,8 @@
                 "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "BUTTON"
+            "saved_objtypeKey": "BUTTON",
+            "tree_closed": true
           }
         ],
         "isPage": true,
@@ -16920,7 +16928,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 45,
+    "backup_cnt": 55,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
