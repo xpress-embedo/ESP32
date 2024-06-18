@@ -11,7 +11,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_clear_flag(ui_MainScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_panelMain = lv_obj_create(ui_MainScreen);
-    lv_obj_set_width(ui_panelMain, 520);
+    lv_obj_set_width(ui_panelMain, 540);
     lv_obj_set_height(ui_panelMain, 410);
     lv_obj_set_x(ui_panelMain, 20);
     lv_obj_set_y(ui_panelMain, 20);
@@ -23,7 +23,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_column(ui_panelMain, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty1 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty1, 500);
+    lv_obj_set_width(ui_panelParty1, 520);
     lv_obj_set_height(ui_panelParty1, 55);
     lv_obj_set_x(ui_panelParty1, 0);
     lv_obj_set_y(ui_panelParty1, 70);
@@ -74,7 +74,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage1 = lv_label_create(ui_panelParty1);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage1, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage1, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage1, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage1, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage1, "0 %");
@@ -82,7 +82,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty2 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty2, 500);
+    lv_obj_set_width(ui_panelParty2, 520);
     lv_obj_set_height(ui_panelParty2, 55);
     lv_obj_set_x(ui_panelParty2, 0);
     lv_obj_set_y(ui_panelParty2, 70);
@@ -133,7 +133,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes2, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage2 = lv_label_create(ui_panelParty2);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage2, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage2, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage2, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage2, "0 %");
@@ -141,7 +141,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage2, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty3 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty3, 500);
+    lv_obj_set_width(ui_panelParty3, 520);
     lv_obj_set_height(ui_panelParty3, 55);
     lv_obj_set_x(ui_panelParty3, 0);
     lv_obj_set_y(ui_panelParty3, 70);
@@ -192,7 +192,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage3 = lv_label_create(ui_panelParty3);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage3, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage3, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage3, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage3, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage3, "0 %");
@@ -200,7 +200,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty4 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty4, 500);
+    lv_obj_set_width(ui_panelParty4, 520);
     lv_obj_set_height(ui_panelParty4, 55);
     lv_obj_set_x(ui_panelParty4, 0);
     lv_obj_set_y(ui_panelParty4, 70);
@@ -251,7 +251,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes4, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage4 = lv_label_create(ui_panelParty4);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage4, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage4, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage4, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage4, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage4, "0 %");
@@ -259,7 +259,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage4, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty5 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty5, 500);
+    lv_obj_set_width(ui_panelParty5, 520);
     lv_obj_set_height(ui_panelParty5, 55);
     lv_obj_set_x(ui_panelParty5, 0);
     lv_obj_set_y(ui_panelParty5, 70);
@@ -310,7 +310,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes5, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage5 = lv_label_create(ui_panelParty5);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage5, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage5, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage5, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage5, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage5, "0 %");
@@ -318,7 +318,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage5, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty6 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty6, 500);
+    lv_obj_set_width(ui_panelParty6, 520);
     lv_obj_set_height(ui_panelParty6, 55);
     lv_obj_set_x(ui_panelParty6, 0);
     lv_obj_set_y(ui_panelParty6, 70);
@@ -369,7 +369,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes6, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage6 = lv_label_create(ui_panelParty6);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage6, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage6, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage6, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage6, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage6, "0 %");
@@ -377,7 +377,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotesPercentage6, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelParty7 = lv_obj_create(ui_panelMain);
-    lv_obj_set_width(ui_panelParty7, 500);
+    lv_obj_set_width(ui_panelParty7, 520);
     lv_obj_set_height(ui_panelParty7, 55);
     lv_obj_set_x(ui_panelParty7, 0);
     lv_obj_set_y(ui_panelParty7, 70);
@@ -428,7 +428,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblPartyTotalVotes7, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblPartyTotalVotesPercentage7 = lv_label_create(ui_panelParty7);
-    lv_obj_set_width(ui_lblPartyTotalVotesPercentage7, 80);
+    lv_obj_set_width(ui_lblPartyTotalVotesPercentage7, 100);
     lv_obj_set_height(ui_lblPartyTotalVotesPercentage7, 30);
     lv_obj_set_align(ui_lblPartyTotalVotesPercentage7, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblPartyTotalVotesPercentage7, "0 %");
@@ -448,7 +448,7 @@ void ui_MainScreen_screen_init(void)
     ui_btnResults = lv_btn_create(ui_MainScreen);
     lv_obj_set_width(ui_btnResults, 100);
     lv_obj_set_height(ui_btnResults, 50);
-    lv_obj_set_x(ui_btnResults, -100);
+    lv_obj_set_x(ui_btnResults, -80);
     lv_obj_set_y(ui_btnResults, -100);
     lv_obj_set_align(ui_btnResults, LV_ALIGN_RIGHT_MID);
     lv_obj_add_flag(ui_btnResults, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -466,7 +466,7 @@ void ui_MainScreen_screen_init(void)
     ui_btnReset = lv_btn_create(ui_MainScreen);
     lv_obj_set_width(ui_btnReset, 100);
     lv_obj_set_height(ui_btnReset, 50);
-    lv_obj_set_x(ui_btnReset, -100);
+    lv_obj_set_x(ui_btnReset, -80);
     lv_obj_set_y(ui_btnReset, 0);
     lv_obj_set_align(ui_btnReset, LV_ALIGN_RIGHT_MID);
     lv_obj_add_flag(ui_btnReset, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags

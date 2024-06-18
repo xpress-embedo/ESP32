@@ -35,7 +35,9 @@ typedef struct _gui_mng_event_cb_t
 } gui_mng_event_cb_t;
 
 // Private Function Prototypes
-static void gui_vote_button_event(lv_event_t * e);
+static void gui_vote_button_event( lv_event_t * e );
+static void gui_results_button_event( lv_event_t * e );
+static void gui_reset_button_event( lv_event_t *e );
 
 // Private Variables
 static const char *TAG = "GUI_CFG";
@@ -61,7 +63,10 @@ static party_logo_t party_logo_db_table[] =
 
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_vote_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_vote_per_table[MAX_NUM_OF_PARTY];
+static uint16_t   votes[MAX_NUM_OF_PARTY] = { 0 };
 
 
 // Public Function Definitions
@@ -95,13 +100,29 @@ void gui_cfg_init( void )
   party_logo_table[5] = ui_imgPartyLogo6;
   party_logo_table[6] = ui_imgPartyLogo7;
 
-  party_vote_table[0] = ui_btnVoteParty1;
-  party_vote_table[1] = ui_btnVoteParty2;
-  party_vote_table[2] = ui_btnVoteParty3;
-  party_vote_table[3] = ui_btnVoteParty4;
-  party_vote_table[4] = ui_btnVoteParty5;
-  party_vote_table[5] = ui_btnVoteParty6;
-  party_vote_table[6] = ui_btnVoteParty7;
+  party_vote_btn_table[0] = ui_btnVoteParty1;
+  party_vote_btn_table[1] = ui_btnVoteParty2;
+  party_vote_btn_table[2] = ui_btnVoteParty3;
+  party_vote_btn_table[3] = ui_btnVoteParty4;
+  party_vote_btn_table[4] = ui_btnVoteParty5;
+  party_vote_btn_table[5] = ui_btnVoteParty6;
+  party_vote_btn_table[6] = ui_btnVoteParty7;
+
+  party_vote_rslt_table[0] = ui_lblPartyTotalVotes1;
+  party_vote_rslt_table[1] = ui_lblPartyTotalVotes2;
+  party_vote_rslt_table[2] = ui_lblPartyTotalVotes3;
+  party_vote_rslt_table[3] = ui_lblPartyTotalVotes4;
+  party_vote_rslt_table[4] = ui_lblPartyTotalVotes5;
+  party_vote_rslt_table[5] = ui_lblPartyTotalVotes6;
+  party_vote_rslt_table[6] = ui_lblPartyTotalVotes7;
+
+  party_vote_per_table[0] = ui_lblPartyTotalVotesPercentage1;
+  party_vote_per_table[1] = ui_lblPartyTotalVotesPercentage2;
+  party_vote_per_table[2] = ui_lblPartyTotalVotesPercentage3;
+  party_vote_per_table[3] = ui_lblPartyTotalVotesPercentage4;
+  party_vote_per_table[4] = ui_lblPartyTotalVotesPercentage5;
+  party_vote_per_table[5] = ui_lblPartyTotalVotesPercentage6;
+  party_vote_per_table[6] = ui_lblPartyTotalVotesPercentage7;
 
   // get the maximum number of political parties
   num_of_parties = get_number_of_parties();
@@ -120,11 +141,16 @@ void gui_cfg_init( void )
         lv_label_set_text(party_name_table[idx], name);
         lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
         // register the callback for vote button press
-        lv_obj_add_event_cb( party_vote_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
+        lv_obj_add_event_cb( party_vote_btn_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
         break;
       }
     }
   }
+
+  // register callback for result button
+  lv_obj_add_event_cb( ui_btnResults, gui_results_button_event, LV_EVENT_PRESSED, NULL );
+  // register callback for reset button
+  lv_obj_add_event_cb( ui_btnReset, gui_reset_button_event, LV_EVENT_PRESSED, NULL );
 }
 
 /**
@@ -160,9 +186,59 @@ static void gui_vote_button_event(lv_event_t * e)
 {
   lv_event_code_t event_code = lv_event_get_code(e);
   lv_obj_t * target = lv_event_get_target(e);
+  uint8_t idx;
 
   if( event_code == LV_EVENT_PRESSED )
   {
-    ESP_LOGI( TAG, "Button Pressed");
+    for( idx=0; idx < MAX_NUM_OF_PARTY; idx++ )
+    {
+      if( target == party_vote_btn_table[idx] )
+      {
+        votes[idx]++;
+        // ESP_LOGI( TAG, "Party Name: %s, Votes: %d", party_name_table[idx], votes[idx] );
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * @brief Callback Function configured for Result Buttons
+ * @param e 
+ */
+static void gui_results_button_event( lv_event_t * e )
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  lv_obj_t * target = lv_event_get_target(e);
+  uint8_t idx;
+  uint16_t total_votes = 0;
+
+  if( (event_code == LV_EVENT_PRESSED) && (target == ui_btnResults) )
+  {
+    for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
+    {
+      lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
+      total_votes += votes[idx];
+    }
+
+    for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
+    {
+      lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", (votes[idx]*100)/total_votes, (votes[idx]*100)%total_votes  );
+    }
+  }
+
+}
+
+/**
+ * @brief Callback Function configured for Reset Button
+ * @param e 
+ */
+static void gui_reset_button_event( lv_event_t *e )
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  lv_obj_t * target = lv_event_get_target(e);
+  if( (event_code == LV_EVENT_PRESSED) && (target == ui_btnReset) )
+  { 
+    
   }
 }

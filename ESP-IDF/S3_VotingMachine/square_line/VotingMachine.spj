@@ -1574,7 +1574,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -1886,7 +1886,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -3695,7 +3695,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -4007,7 +4007,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -5816,7 +5816,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -6128,7 +6128,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -7937,7 +7937,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -8249,7 +8249,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -10058,7 +10058,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -10370,7 +10370,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -12179,7 +12179,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -12491,7 +12491,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -14300,7 +14300,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Size",
                         "intarray": [
-                          80,
+                          100,
                           30
                         ],
                         "InheritedType": 7
@@ -14612,7 +14612,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      500,
+                      520,
                       55
                     ],
                     "InheritedType": 7
@@ -14905,7 +14905,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  520,
+                  540,
                   410
                 ],
                 "InheritedType": 7
@@ -15812,7 +15812,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -100,
+                  -80,
                   -100
                 ],
                 "InheritedType": 7
@@ -16410,7 +16410,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -100,
+                  -80,
                   0
                 ],
                 "InheritedType": 7
@@ -16920,7 +16920,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 40,
+    "backup_cnt": 45,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
