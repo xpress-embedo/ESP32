@@ -14,7 +14,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_panelMain, 520);
     lv_obj_set_height(ui_panelMain, 410);
     lv_obj_set_x(ui_panelMain, 20);
-    lv_obj_set_y(ui_panelMain, 10);
+    lv_obj_set_y(ui_panelMain, 20);
     lv_obj_set_align(ui_panelMain, LV_ALIGN_LEFT_MID);
     lv_obj_set_flex_flow(ui_panelMain, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_panelMain, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -34,13 +34,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty1, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName = lv_label_create(ui_panelParty1);
-    lv_obj_set_width(ui_lblPartyName, 100);
-    lv_obj_set_height(ui_lblPartyName, 30);
-    lv_obj_set_align(ui_lblPartyName, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName1 = lv_label_create(ui_panelParty1);
+    lv_obj_set_width(ui_lblPartyName1, 100);
+    lv_obj_set_height(ui_lblPartyName1, 30);
+    lv_obj_set_align(ui_lblPartyName1, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName1, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo1 = lv_img_create(ui_panelParty1);
     lv_img_set_src(ui_imgPartyLogo1, &ui_img_na_png);
@@ -93,13 +93,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty2, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName1 = lv_label_create(ui_panelParty2);
-    lv_obj_set_width(ui_lblPartyName1, 100);
-    lv_obj_set_height(ui_lblPartyName1, 30);
-    lv_obj_set_align(ui_lblPartyName1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName1, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName1, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName2 = lv_label_create(ui_panelParty2);
+    lv_obj_set_width(ui_lblPartyName2, 100);
+    lv_obj_set_height(ui_lblPartyName2, 30);
+    lv_obj_set_align(ui_lblPartyName2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName2, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName2, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo2 = lv_img_create(ui_panelParty2);
     lv_img_set_src(ui_imgPartyLogo2, &ui_img_na_png);
@@ -152,13 +152,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty3, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName2 = lv_label_create(ui_panelParty3);
-    lv_obj_set_width(ui_lblPartyName2, 100);
-    lv_obj_set_height(ui_lblPartyName2, 30);
-    lv_obj_set_align(ui_lblPartyName2, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName2, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName2, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName3 = lv_label_create(ui_panelParty3);
+    lv_obj_set_width(ui_lblPartyName3, 100);
+    lv_obj_set_height(ui_lblPartyName3, 30);
+    lv_obj_set_align(ui_lblPartyName3, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName3, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName3, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo3 = lv_img_create(ui_panelParty3);
     lv_img_set_src(ui_imgPartyLogo3, &ui_img_na_png);
@@ -211,13 +211,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty4, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName3 = lv_label_create(ui_panelParty4);
-    lv_obj_set_width(ui_lblPartyName3, 100);
-    lv_obj_set_height(ui_lblPartyName3, 30);
-    lv_obj_set_align(ui_lblPartyName3, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName3, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName3, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName4 = lv_label_create(ui_panelParty4);
+    lv_obj_set_width(ui_lblPartyName4, 100);
+    lv_obj_set_height(ui_lblPartyName4, 30);
+    lv_obj_set_align(ui_lblPartyName4, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName4, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName4, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName4, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo4 = lv_img_create(ui_panelParty4);
     lv_img_set_src(ui_imgPartyLogo4, &ui_img_na_png);
@@ -270,13 +270,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty5, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName4 = lv_label_create(ui_panelParty5);
-    lv_obj_set_width(ui_lblPartyName4, 100);
-    lv_obj_set_height(ui_lblPartyName4, 30);
-    lv_obj_set_align(ui_lblPartyName4, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName4, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName4, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName4, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName5 = lv_label_create(ui_panelParty5);
+    lv_obj_set_width(ui_lblPartyName5, 100);
+    lv_obj_set_height(ui_lblPartyName5, 30);
+    lv_obj_set_align(ui_lblPartyName5, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName5, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName5, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName5, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo5 = lv_img_create(ui_panelParty5);
     lv_img_set_src(ui_imgPartyLogo5, &ui_img_na_png);
@@ -329,13 +329,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty6, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName5 = lv_label_create(ui_panelParty6);
-    lv_obj_set_width(ui_lblPartyName5, 100);
-    lv_obj_set_height(ui_lblPartyName5, 30);
-    lv_obj_set_align(ui_lblPartyName5, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName5, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName5, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName5, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName6 = lv_label_create(ui_panelParty6);
+    lv_obj_set_width(ui_lblPartyName6, 100);
+    lv_obj_set_height(ui_lblPartyName6, 30);
+    lv_obj_set_align(ui_lblPartyName6, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName6, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName6, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName6, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo6 = lv_img_create(ui_panelParty6);
     lv_img_set_src(ui_imgPartyLogo6, &ui_img_na_png);
@@ -388,13 +388,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_pad_row(ui_panelParty7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_panelParty7, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblPartyName6 = lv_label_create(ui_panelParty7);
-    lv_obj_set_width(ui_lblPartyName6, 100);
-    lv_obj_set_height(ui_lblPartyName6, 30);
-    lv_obj_set_align(ui_lblPartyName6, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblPartyName6, "Party-1");
-    lv_obj_set_style_text_align(ui_lblPartyName6, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblPartyName6, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblPartyName7 = lv_label_create(ui_panelParty7);
+    lv_obj_set_width(ui_lblPartyName7, 100);
+    lv_obj_set_height(ui_lblPartyName7, 30);
+    lv_obj_set_align(ui_lblPartyName7, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblPartyName7, "Party-1");
+    lv_obj_set_style_text_align(ui_lblPartyName7, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblPartyName7, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgPartyLogo7 = lv_img_create(ui_panelParty7);
     lv_img_set_src(ui_imgPartyLogo7, &ui_img_na_png);
@@ -461,6 +461,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_height(ui_lblResults, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_lblResults, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblResults, "Results");
+    lv_obj_set_style_text_font(ui_lblResults, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_btnReset = lv_btn_create(ui_MainScreen);
     lv_obj_set_width(ui_btnReset, 100);
@@ -478,5 +479,6 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_height(ui_lblReset, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_lblReset, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblReset, "Reset");
+    lv_obj_set_style_text_font(ui_lblReset, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

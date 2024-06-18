@@ -23,7 +23,7 @@
                       {
                         "nid": 1368908910,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName",
+                        "strval": "lblPartyName1",
                         "InheritedType": 10
                       },
                       {
@@ -2144,7 +2144,7 @@
                       {
                         "nid": -842778338,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName1",
+                        "strval": "lblPartyName2",
                         "InheritedType": 10
                       },
                       {
@@ -4265,7 +4265,7 @@
                       {
                         "nid": 1660965137,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName2",
+                        "strval": "lblPartyName3",
                         "InheritedType": 10
                       },
                       {
@@ -6386,7 +6386,7 @@
                       {
                         "nid": -1974127424,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName3",
+                        "strval": "lblPartyName4",
                         "InheritedType": 10
                       },
                       {
@@ -8507,7 +8507,7 @@
                       {
                         "nid": 1048320187,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName4",
+                        "strval": "lblPartyName5",
                         "InheritedType": 10
                       },
                       {
@@ -10628,7 +10628,7 @@
                       {
                         "nid": 1641041338,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName5",
+                        "strval": "lblPartyName6",
                         "InheritedType": 10
                       },
                       {
@@ -12749,7 +12749,7 @@
                       {
                         "nid": -1411740880,
                         "strtype": "OBJECT/Name",
-                        "strval": "lblPartyName6",
+                        "strval": "lblPartyName7",
                         "InheritedType": 10
                       },
                       {
@@ -14896,7 +14896,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   20,
-                  10
+                  20
                 ],
                 "InheritedType": 7
               },
@@ -15751,7 +15751,22 @@
                   },
                   {
                     "part": "lv.PART.MAIN",
-                    "childs": [],
+                    "childs": [
+                      {
+                        "nid": 2002373071,
+                        "strtype": "_style/StyleState",
+                        "strval": "DEFAULT",
+                        "childs": [
+                          {
+                            "nid": -360419967,
+                            "strtype": "_style/Text_Font",
+                            "strval": "montserrat_24",
+                            "InheritedType": 3
+                          }
+                        ],
+                        "InheritedType": 1
+                      }
+                    ],
                     "nid": 137056196,
                     "strtype": "LABEL/Style_main",
                     "strval": "lv.PART.MAIN, Text, Rectangle, Pad",
@@ -16334,7 +16349,22 @@
                   },
                   {
                     "part": "lv.PART.MAIN",
-                    "childs": [],
+                    "childs": [
+                      {
+                        "nid": 1141618477,
+                        "strtype": "_style/StyleState",
+                        "strval": "DEFAULT",
+                        "childs": [
+                          {
+                            "nid": -1608585763,
+                            "strtype": "_style/Text_Font",
+                            "strval": "montserrat_24",
+                            "InheritedType": 3
+                          }
+                        ],
+                        "InheritedType": 1
+                      }
+                    ],
                     "nid": -638725114,
                     "strtype": "LABEL/Style_main",
                     "strval": "lv.PART.MAIN, Text, Rectangle, Pad",
@@ -16890,7 +16920,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 33,
+    "backup_cnt": 37,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
