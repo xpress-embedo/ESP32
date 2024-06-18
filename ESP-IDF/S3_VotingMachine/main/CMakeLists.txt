@@ -17,6 +17,8 @@ idf_component_register(
     ui/images/ui_img_cpi_png.c
     ui/images/ui_img_ncp_png.c
     ui/images/ui_img_sp_png.c
+    ui/images/ui_img_tmc_png.c
+    ui/images/ui_img_jdu_png.c
     ui/images/ui_img_na_png.c
     INCLUDE_DIRS        # optional, add here public include directories
     "." "ui"

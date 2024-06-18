@@ -53,6 +53,8 @@ static party_logo_t party_logo_db_table[] =
   { "CPI",        &ui_img_cpi_png        },
   { "NCP",        &ui_img_ncp_png        },
   { "SP",         &ui_img_sp_png         },
+  { "TMC",        &ui_img_tmc_png        },
+  { "JDU",        &ui_img_jdu_png        },
   // { NULL,         &ui_img_na_png         },
 };
 
