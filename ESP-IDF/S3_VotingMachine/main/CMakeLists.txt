@@ -9,6 +9,7 @@ idf_component_register(
     gui_mng_cfg.c
     ui/ui.c
     ui/screens/ui_MainScreen.c
+    ui/screens/ui_ResultsBarScreen.c
     ui/ui_helpers.c
     ui/images/ui_img_aap_png.c
     ui/images/ui_img_bjp_png.c

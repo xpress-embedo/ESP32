@@ -38,6 +38,8 @@ typedef struct _gui_mng_event_cb_t
 static void gui_vote_button_event( lv_event_t * e );
 static void gui_results_button_event( lv_event_t * e );
 static void gui_reset_button_event( lv_event_t *e );
+static void gui_main_screen_event( lv_event_t *e );
+static void gui_election_result_screen_event( lv_event_t *e );
 static void winning_timer_anim_cb( lv_timer_t *timer );
 
 // Private Variables
@@ -153,6 +155,9 @@ void gui_cfg_init( void )
   lv_obj_add_event_cb( ui_btnResults, gui_results_button_event, LV_EVENT_PRESSED, NULL );
   // register callback for reset button
   lv_obj_add_event_cb( ui_btnReset, gui_reset_button_event, LV_EVENT_PRESSED, NULL );
+  // register callback for left and right swipe gesture (swipe events will be handled in the callback functions)
+  lv_obj_add_event_cb( ui_MainScreen, gui_main_screen_event, LV_EVENT_ALL, NULL );
+  lv_obj_add_event_cb( ui_ResultsBarScreen, gui_election_result_screen_event, LV_EVENT_ALL, NULL );
 }
 
 /**
@@ -261,6 +266,30 @@ static void gui_reset_button_event( lv_event_t *e )
       lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
       lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
     }
+  }
+}
+
+static void gui_main_screen_event( lv_event_t *e )
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  lv_obj_t * target = lv_event_get_target(e);
+  if( (event_code == LV_EVENT_GESTURE) &&  (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) )
+  {
+    ESP_LOGI( TAG, "LEFT" );
+    lv_indev_wait_release(lv_indev_get_act());
+    _ui_screen_change(&ui_ResultsBarScreen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_ResultsBarScreen_screen_init);
+  }
+}
+
+static void gui_election_result_screen_event( lv_event_t *e )
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  lv_obj_t * target = lv_event_get_target(e);
+  if( (event_code == LV_EVENT_GESTURE) &&  (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) )
+  {
+    ESP_LOGI( TAG, "RIGHT" );
+    lv_indev_wait_release(lv_indev_get_act());
+    _ui_screen_change(&ui_MainScreen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_MainScreen_screen_init);
   }
 }
 

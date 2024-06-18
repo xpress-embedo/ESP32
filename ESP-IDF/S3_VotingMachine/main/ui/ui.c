@@ -67,6 +67,23 @@ lv_obj_t * ui_btnResults;
 lv_obj_t * ui_lblResults;
 lv_obj_t * ui_btnReset;
 lv_obj_t * ui_lblReset;
+
+
+// SCREEN: ui_ResultsBarScreen
+void ui_ResultsBarScreen_screen_init(void);
+lv_obj_t * ui_ResultsBarScreen;
+lv_obj_t * ui_chartResults;
+lv_obj_t * ui_lblElectionResults;
+lv_obj_t * ui_panelBarChartLabel;
+lv_obj_t * ui_lblBarParty1;
+lv_obj_t * ui_lblBarParty2;
+lv_obj_t * ui_lblBarParty3;
+lv_obj_t * ui_lblBarParty4;
+lv_obj_t * ui_lblBarParty5;
+lv_obj_t * ui_lblBarParty6;
+lv_obj_t * ui_lblBarParty7;
+lv_obj_t * ui_lblBarParty8;
+lv_obj_t * ui_lblBarParty9;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -90,6 +107,7 @@ void ui_init(void)
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_MainScreen_screen_init();
+    ui_ResultsBarScreen_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_MainScreen);
 }

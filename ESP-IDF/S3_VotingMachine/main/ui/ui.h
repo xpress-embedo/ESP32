@@ -73,6 +73,21 @@ extern lv_obj_t * ui_btnResults;
 extern lv_obj_t * ui_lblResults;
 extern lv_obj_t * ui_btnReset;
 extern lv_obj_t * ui_lblReset;
+// SCREEN: ui_ResultsBarScreen
+void ui_ResultsBarScreen_screen_init(void);
+extern lv_obj_t * ui_ResultsBarScreen;
+extern lv_obj_t * ui_chartResults;
+extern lv_obj_t * ui_lblElectionResults;
+extern lv_obj_t * ui_panelBarChartLabel;
+extern lv_obj_t * ui_lblBarParty1;
+extern lv_obj_t * ui_lblBarParty2;
+extern lv_obj_t * ui_lblBarParty3;
+extern lv_obj_t * ui_lblBarParty4;
+extern lv_obj_t * ui_lblBarParty5;
+extern lv_obj_t * ui_lblBarParty6;
+extern lv_obj_t * ui_lblBarParty7;
+extern lv_obj_t * ui_lblBarParty8;
+extern lv_obj_t * ui_lblBarParty9;
 extern lv_obj_t * ui____initial_actions0;
 
 
