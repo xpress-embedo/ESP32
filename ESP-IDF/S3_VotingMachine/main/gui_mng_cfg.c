@@ -35,6 +35,7 @@ typedef struct _gui_mng_event_cb_t
 } gui_mng_event_cb_t;
 
 // Private Function Prototypes
+static void gui_vote_button_event(lv_event_t * e);
 
 // Private Variables
 static const char *TAG = "GUI_CFG";
@@ -55,14 +56,15 @@ static party_logo_t party_logo_db_table[] =
   { "SP",         &ui_img_sp_png         },
   { "TMC",        &ui_img_tmc_png        },
   { "JDU",        &ui_img_jdu_png        },
-  // { NULL,         &ui_img_na_png         },
+//{ NULL,         &ui_img_na_png         },
 };
 
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
+static lv_obj_t * party_vote_table[MAX_NUM_OF_PARTY];
+
 
 // Public Function Definitions
-
 /**
  * @brief GUI Configurable Initialization Function
  * @param  None
@@ -93,6 +95,14 @@ void gui_cfg_init( void )
   party_logo_table[5] = ui_imgPartyLogo6;
   party_logo_table[6] = ui_imgPartyLogo7;
 
+  party_vote_table[0] = ui_btnVoteParty1;
+  party_vote_table[1] = ui_btnVoteParty2;
+  party_vote_table[2] = ui_btnVoteParty3;
+  party_vote_table[3] = ui_btnVoteParty4;
+  party_vote_table[4] = ui_btnVoteParty5;
+  party_vote_table[5] = ui_btnVoteParty6;
+  party_vote_table[6] = ui_btnVoteParty7;
+
   // get the maximum number of political parties
   num_of_parties = get_number_of_parties();
   ESP_LOGI( TAG, "Fetched Party Number: %d", num_of_parties );
@@ -101,15 +111,16 @@ void gui_cfg_init( void )
   {
     name = get_name_of_party(idx);
     ESP_LOGI( TAG, "Fetched Party Name: %s", name );
-    lv_label_set_text(party_name_table[idx], name);
     // search the list
     for( jdx=0; jdx<NUM_ELEMENTS(party_logo_db_table); jdx++ )
     {
-      ESP_LOGI( TAG, "JDX: %d", jdx );
       if( strcmp( party_logo_db_table[jdx].name, name) == 0 )
       {
         ESP_LOGI( TAG, "Found!!");
+        lv_label_set_text(party_name_table[idx], name);
         lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
+        // register the callback for vote button press
+        lv_obj_add_event_cb( party_vote_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
         break;
       }
     }
@@ -141,4 +152,17 @@ void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
 }
 
 // Private Function Definitions
+/**
+ * @brief Callback Function configured for Voting Buttons
+ * @param e 
+ */
+static void gui_vote_button_event(lv_event_t * e)
+{
+  lv_event_code_t event_code = lv_event_get_code(e);
+  lv_obj_t * target = lv_event_get_target(e);
 
+  if( event_code == LV_EVENT_PRESSED )
+  {
+    ESP_LOGI( TAG, "Button Pressed");
+  }
+}
