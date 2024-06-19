@@ -61,21 +61,22 @@ void app_main(void)
   vTaskDelay(10);
 
   // Check if data fetched is correct or not
-  if( num_of_parties < MAX_NUM_OF_PARTY )
+  if( num_of_parties <= MAX_NUM_OF_PARTY )
   {
     ESP_LOGI( TAG, "Number of Parties: %d", num_of_parties );
+    // optional: logging/printing parties on terminal
+    for( uint8_t idx = 0; idx < num_of_parties; idx++ )
+    {
+      ESP_LOGI( TAG, "%.2d => %s", (idx+1), party_list[idx] );
+    }
+
+    // start the gui task, this will handle all the display related stuff
+    gui_start();
   }
   else
   {
     ESP_LOGE( TAG, "Number of Parties: %d, is greater or equal %d", num_of_parties, MAX_NUM_OF_PARTY );
   }
-  for( uint8_t idx = 0; idx < num_of_parties; idx++ )
-  {
-    ESP_LOGI( TAG, "%.2d => %s", (idx+1), party_list[idx] );
-  }
-
-  // start the gui task, this will handle all the display related stuff
-  gui_start();
 
   while (true)
   {
