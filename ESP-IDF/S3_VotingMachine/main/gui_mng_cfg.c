@@ -65,14 +65,14 @@ static party_logo_t party_logo_db_table[] =
 
 static const char *TAG = "GUI_CFG";
 static uint8_t    winner_idx = 0;
-static lv_chart_series_t * ui_chartResults_series;
 static lv_coord_t chart_series_array[MAX_NUM_OF_PARTY] = { 0 };
-static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY];
-static lv_obj_t * party_vote_per_table[MAX_NUM_OF_PARTY];
+static lv_chart_series_t * ui_chartResults_series = { NULL };
+static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY] = { NULL };
+static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY] = { NULL };
+static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY] = { NULL };
+static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY] = { NULL };
+static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY] = { NULL };
+static lv_obj_t * party_vote_per_table[MAX_NUM_OF_PARTY] = { NULL };
 static uint16_t   votes[MAX_NUM_OF_PARTY] = { 0 };
 
 // Public Function Definitions
@@ -145,13 +145,13 @@ void gui_cfg_init( void )
   for( idx=0; idx < num_of_parties; idx++ )
   {
     name = get_name_of_party(idx);
-    ESP_LOGI( TAG, "Fetched Party Name: %s", name );
+    // ESP_LOGI( TAG, "Fetched Party Name: %s", name );
     // search the list
     for( jdx=0; jdx<NUM_ELEMENTS(party_logo_db_table); jdx++ )
     {
       if( strcmp( party_logo_db_table[jdx].name, name) == 0 )
       {
-        ESP_LOGI( TAG, "Found!!");
+        // ESP_LOGI( TAG, "Found!!");
         lv_label_set_text(party_name_table[idx], name);
         lv_label_set_text(party_name_result_table[idx], name);
         lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
@@ -169,7 +169,11 @@ void gui_cfg_init( void )
     lv_img_set_src( party_logo_table[idx], (const lv_img_dsc_t*)&ui_img_na_png );
   }
 
-  // lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
+  // initialize the bar chart series
+  ui_chartResults_series = lv_chart_add_series(ui_chartResults, lv_color_hex(0x5B7C72), LV_CHART_AXIS_PRIMARY_Y);
+  // for now keep the range 0-10, but in get results section the range will be updated automatically based on the votes
+  lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, 10 );
+  lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
 
   // register callback for result button
   lv_obj_add_event_cb( ui_btnResults, gui_results_button_event, LV_EVENT_PRESSED, NULL );
@@ -260,14 +264,13 @@ static void gui_results_button_event( lv_event_t * e )
     }
 
     // update bar chart data
-    ui_chartResults_series = lv_chart_add_series(ui_chartResults, lv_color_hex(0x5B7C72), LV_CHART_AXIS_PRIMARY_Y);
     lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, ((max_votes/10)+1)*10 );
 
-    // // update the votes in a format understandable by the
-    // for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
-    // {
-    //   chart_series_array[idx] = (lv_coord_t)(votes[idx]);
-    // }
+    // update the votes in a format understandable by the
+    for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
+    {
+      chart_series_array[idx] = (lv_coord_t)(votes[idx]);
+    }
     // lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
 
     // Play Animation Using Timer
