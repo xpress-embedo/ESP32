@@ -1,6 +1,6 @@
 #
 # Automatically generated file. DO NOT EDIT.
-# Espressif IoT Development Framework (ESP-IDF)  Project Configuration
+# Espressif IoT Development Framework (ESP-IDF) 5.1.2 Project Configuration
 #
 CONFIG_SOC_MPU_MIN_REGION_SIZE=0x20000000
 CONFIG_SOC_MPU_REGIONS_MAX_NUM=8
@@ -889,7 +889,7 @@ CONFIG_SPIRAM_SPEED_80M=y
 # CONFIG_SPIRAM_SPEED_40M is not set
 CONFIG_SPIRAM_SPEED=80
 CONFIG_SPIRAM_BOOT_INIT=y
-CONFIG_SPIRAM_IGNORE_NOTFOUND=y
+# CONFIG_SPIRAM_IGNORE_NOTFOUND is not set
 # CONFIG_SPIRAM_USE_MEMMAP is not set
 # CONFIG_SPIRAM_USE_CAPS_ALLOC is not set
 CONFIG_SPIRAM_USE_MALLOC=y

@@ -21,6 +21,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_PRIMARY_X, 10, 5, 7, 2, false, 50);
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_SECONDARY_Y, 0, 0, 0, 0, false, 25);
+    lv_obj_set_style_radius(ui_chartResults, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 
 
@@ -43,6 +44,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_flex_flow(ui_panelBarChartLabel, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(ui_panelBarChartLabel, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(ui_panelBarChartLabel, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_panelBarChartLabel, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty1 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty1, 20);
@@ -50,7 +52,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty1, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty1, "-");
     lv_obj_set_style_text_align(ui_lblBarParty1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty1, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty1, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty2 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty2, 20);
@@ -58,7 +60,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty2, "-");
     lv_obj_set_style_text_align(ui_lblBarParty2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty2, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty2, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty3 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty3, 20);
@@ -66,7 +68,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty3, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty3, "-");
     lv_obj_set_style_text_align(ui_lblBarParty3, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty3, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty3, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty4 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty4, 20);
@@ -74,7 +76,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty4, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty4, "-");
     lv_obj_set_style_text_align(ui_lblBarParty4, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty4, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty4, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty5 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty5, 20);
@@ -82,7 +84,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty5, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty5, "-");
     lv_obj_set_style_text_align(ui_lblBarParty5, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty5, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty5, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty6 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty6, 20);
@@ -90,7 +92,7 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty6, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty6, "-");
     lv_obj_set_style_text_align(ui_lblBarParty6, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty6, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty6, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblBarParty7 = lv_label_create(ui_panelBarChartLabel);
     lv_obj_set_height(ui_lblBarParty7, 20);
@@ -98,6 +100,6 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_align(ui_lblBarParty7, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblBarParty7, "-");
     lv_obj_set_style_text_align(ui_lblBarParty7, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty7, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblBarParty7, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

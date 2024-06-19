@@ -67,6 +67,7 @@ static const char *TAG = "GUI_CFG";
 static uint8_t    winner_idx = 0;
 static lv_coord_t chart_series_array[MAX_NUM_OF_PARTY] = { 0 };
 static lv_chart_series_t * ui_chartResults_series = { NULL };
+static lv_obj_t * party_panel_table[MAX_NUM_OF_PARTY] = { NULL };
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY] = { NULL };
 static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY] = { NULL };
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY] = { NULL };
@@ -97,6 +98,14 @@ void gui_cfg_init( void )
   party_name_table[4] = ui_lblPartyName5;
   party_name_table[5] = ui_lblPartyName6;
   party_name_table[6] = ui_lblPartyName7;
+
+  party_panel_table[0] = ui_panelParty1;
+  party_panel_table[1] = ui_panelParty2;
+  party_panel_table[2] = ui_panelParty3;
+  party_panel_table[3] = ui_panelParty4;
+  party_panel_table[4] = ui_panelParty5;
+  party_panel_table[5] = ui_panelParty6;
+  party_panel_table[6] = ui_panelParty7;
 
   party_name_result_table[0] = ui_lblBarParty1;
   party_name_result_table[1] = ui_lblBarParty2;
@@ -348,14 +357,19 @@ static void winning_timer_anim_cb( lv_timer_t *timer )
   if( toggle )
   {
     toggle = false;
-    lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
     // NOTE: this bg_opa function is mandatory to see the effects, no idea but will read about it
-    lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // NOTE: this bg_opa function is mandatory to see the effects, no idea but will read about it
+    lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
   else
   {
     toggle = true;
-    lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
 }

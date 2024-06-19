@@ -2104,6 +2104,11 @@
                         "strval": "DEFAULT",
                         "childs": [
                           {
+                            "nid": -1741493039,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
+                          {
                             "nid": -1685219243,
                             "strtype": "_style/Padding_RowCol",
                             "intarray": [
@@ -2130,7 +2135,8 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL"
+                "saved_objtypeKey": "PANEL",
+                "tree_closed": true
               },
               {
                 "guid": "GUID82572278-101045S753170",
@@ -4225,6 +4231,11 @@
                         "strval": "DEFAULT",
                         "childs": [
                           {
+                            "nid": -2026928544,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
+                          {
                             "nid": -465250121,
                             "strtype": "_style/Padding_RowCol",
                             "intarray": [
@@ -4244,7 +4255,21 @@
                   },
                   {
                     "part": "lv.PART.SCROLLBAR",
-                    "childs": [],
+                    "childs": [
+                      {
+                        "nid": -990893894,
+                        "strtype": "_style/StyleState",
+                        "strval": "DEFAULT",
+                        "childs": [
+                          {
+                            "nid": 2028607799,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 1
+                      }
+                    ],
                     "nid": 108933862,
                     "strtype": "PANEL/Style_scrollbar",
                     "strval": "lv.PART.SCROLLBAR, Rectangle, Pad",
@@ -6346,6 +6371,11 @@
                         "strtype": "_style/StyleState",
                         "strval": "DEFAULT",
                         "childs": [
+                          {
+                            "nid": 1103894308,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
                           {
                             "nid": 1600338087,
                             "strtype": "_style/Padding_RowCol",
@@ -8469,6 +8499,11 @@
                         "strval": "DEFAULT",
                         "childs": [
                           {
+                            "nid": -689896599,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
+                          {
                             "nid": 1391582549,
                             "strtype": "_style/Padding_RowCol",
                             "intarray": [
@@ -10590,6 +10625,11 @@
                         "strtype": "_style/StyleState",
                         "strval": "DEFAULT",
                         "childs": [
+                          {
+                            "nid": 978415086,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
                           {
                             "nid": -1286094998,
                             "strtype": "_style/Padding_RowCol",
@@ -12713,6 +12753,11 @@
                         "strval": "DEFAULT",
                         "childs": [
                           {
+                            "nid": 1882375903,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
+                          {
                             "nid": 733696958,
                             "strtype": "_style/Padding_RowCol",
                             "intarray": [
@@ -14835,6 +14880,11 @@
                         "strval": "DEFAULT",
                         "childs": [
                           {
+                            "nid": 1501068920,
+                            "strtype": "_style/Bg_Radius",
+                            "InheritedType": 6
+                          },
+                          {
                             "nid": 903936737,
                             "strtype": "_style/Padding_RowCol",
                             "intarray": [
@@ -15129,6 +15179,11 @@
                     "strval": "DEFAULT",
                     "childs": [
                       {
+                        "nid": 19450387,
+                        "strtype": "_style/Bg_Radius",
+                        "InheritedType": 6
+                      },
+                      {
                         "nid": 1840405281,
                         "strtype": "_style/Padding_RowCol",
                         "intarray": [
@@ -15155,8 +15210,7 @@
                 "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "PANEL",
-            "tree_closed": true
+            "saved_objtypeKey": "PANEL"
           },
           {
             "guid": "GUID2805372-588216S2313169",
@@ -17154,6 +17208,7 @@
               },
               {
                 "nid": 884179218,
+                "flags": 1048576,
                 "strtype": "CHART/Chart",
                 "InheritedType": 1
               },
@@ -17189,6 +17244,7 @@
               },
               {
                 "nid": -228632659,
+                "flags": 1048576,
                 "strtype": "CHART/X_Axis",
                 "InheritedType": 1
               },
@@ -17224,6 +17280,7 @@
               },
               {
                 "nid": -798001728,
+                "flags": 1048576,
                 "strtype": "CHART/Primary_Y_Axis",
                 "InheritedType": 1
               },
@@ -17268,6 +17325,7 @@
               },
               {
                 "nid": -1554072,
+                "flags": 1048576,
                 "strtype": "CHART/Secondary_Y_Axis",
                 "InheritedType": 1
               },
@@ -17323,7 +17381,21 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": -1775679649,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 1906639776,
+                        "strtype": "_style/Bg_Radius",
+                        "InheritedType": 6
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": 1073180912,
                 "strtype": "CHART/Style_bg",
                 "strval": "lv.PART.MAIN, Rectangle, Line, Pad",
@@ -17979,7 +18051,7 @@
                           {
                             "nid": -925076475,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -18293,7 +18365,7 @@
                           {
                             "nid": 1589959070,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -18607,7 +18679,7 @@
                           {
                             "nid": -1417674936,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -18921,7 +18993,7 @@
                           {
                             "nid": 731420791,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -19235,7 +19307,7 @@
                           {
                             "nid": -447859431,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -19549,7 +19621,7 @@
                           {
                             "nid": 736887484,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -19863,7 +19935,7 @@
                           {
                             "nid": 447316042,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_14",
+                            "strval": "montserrat_16",
                             "InheritedType": 3
                           }
                         ],
@@ -20137,7 +20209,21 @@
               },
               {
                 "part": "lv.PART.MAIN",
-                "childs": [],
+                "childs": [
+                  {
+                    "nid": 1681678852,
+                    "strtype": "_style/StyleState",
+                    "strval": "DEFAULT",
+                    "childs": [
+                      {
+                        "nid": 1584200919,
+                        "strtype": "_style/Bg_Radius",
+                        "InheritedType": 6
+                      }
+                    ],
+                    "InheritedType": 1
+                  }
+                ],
                 "nid": -1218666251,
                 "strtype": "PANEL/Style_main",
                 "strval": "lv.PART.MAIN, Rectangle, Pad, Text",
@@ -20414,7 +20500,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_VotingMachine\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 95,
+    "backup_cnt": 107,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
