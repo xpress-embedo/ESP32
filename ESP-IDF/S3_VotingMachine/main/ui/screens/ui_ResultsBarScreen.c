@@ -15,16 +15,12 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_obj_set_height(ui_chartResults, 380);
     lv_obj_set_align(ui_chartResults, LV_ALIGN_CENTER);
     lv_chart_set_type(ui_chartResults, LV_CHART_TYPE_BAR);
-    lv_chart_set_point_count(ui_chartResults, 9);
+    lv_chart_set_point_count(ui_chartResults, 7);
     lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, 10);
     lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_SECONDARY_Y, 0, 0);
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_PRIMARY_X, 10, 5, 7, 2, false, 50);
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
     lv_chart_set_axis_tick(ui_chartResults, LV_CHART_AXIS_SECONDARY_Y, 0, 0, 0, 0, false, 25);
-    lv_chart_series_t * ui_chartResults_series_1 = lv_chart_add_series(ui_chartResults, lv_color_hex(0x5B7C72),
-                                                                       LV_CHART_AXIS_PRIMARY_Y);
-    static lv_coord_t ui_chartResults_series_1_array[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    lv_chart_set_ext_y_array(ui_chartResults, ui_chartResults_series_1, ui_chartResults_series_1_array);
 
 
 
@@ -103,21 +99,5 @@ void ui_ResultsBarScreen_screen_init(void)
     lv_label_set_text(ui_lblBarParty7, "-");
     lv_obj_set_style_text_align(ui_lblBarParty7, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblBarParty7, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_lblBarParty8 = lv_label_create(ui_panelBarChartLabel);
-    lv_obj_set_height(ui_lblBarParty8, 20);
-    lv_obj_set_flex_grow(ui_lblBarParty8, 1);
-    lv_obj_set_align(ui_lblBarParty8, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblBarParty8, "-");
-    lv_obj_set_style_text_align(ui_lblBarParty8, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty8, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_lblBarParty9 = lv_label_create(ui_panelBarChartLabel);
-    lv_obj_set_height(ui_lblBarParty9, 20);
-    lv_obj_set_flex_grow(ui_lblBarParty9, 1);
-    lv_obj_set_align(ui_lblBarParty9, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblBarParty9, "-");
-    lv_obj_set_style_text_align(ui_lblBarParty9, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblBarParty9, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

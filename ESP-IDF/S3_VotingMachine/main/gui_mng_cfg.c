@@ -65,6 +65,8 @@ static party_logo_t party_logo_db_table[] =
 
 static const char *TAG = "GUI_CFG";
 static uint8_t    winner_idx = 0;
+static lv_chart_series_t * ui_chartResults_series;
+static lv_coord_t chart_series_array[MAX_NUM_OF_PARTY] = { 0 };
 static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY];
@@ -72,7 +74,6 @@ static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY];
 static lv_obj_t * party_vote_per_table[MAX_NUM_OF_PARTY];
 static uint16_t   votes[MAX_NUM_OF_PARTY] = { 0 };
-
 
 // Public Function Definitions
 /**
@@ -168,6 +169,8 @@ void gui_cfg_init( void )
     lv_img_set_src( party_logo_table[idx], (const lv_img_dsc_t*)&ui_img_na_png );
   }
 
+  // lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
+
   // register callback for result button
   lv_obj_add_event_cb( ui_btnResults, gui_results_button_event, LV_EVENT_PRESSED, NULL );
   // register callback for reset button
@@ -256,6 +259,17 @@ static void gui_results_button_event( lv_event_t * e )
       lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", (votes[idx]*100)/total_votes, (votes[idx]*100)%total_votes  );
     }
 
+    // update bar chart data
+    ui_chartResults_series = lv_chart_add_series(ui_chartResults, lv_color_hex(0x5B7C72), LV_CHART_AXIS_PRIMARY_Y);
+    lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, ((max_votes/10)+1)*10 );
+
+    // // update the votes in a format understandable by the
+    // for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
+    // {
+    //   chart_series_array[idx] = (lv_coord_t)(votes[idx]);
+    // }
+    // lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
+
     // Play Animation Using Timer
     ESP_LOGI( TAG, "Starting Timer, Winner Index: %d", winner_idx );
     lv_timer_t * winner_timer_anim = lv_timer_create( winning_timer_anim_cb, 300, NULL );
@@ -282,6 +296,7 @@ static void gui_reset_button_event( lv_event_t *e )
       winner_idx = 0;
       lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
       lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
+      lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, 10);
     }
   }
 }

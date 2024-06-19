@@ -86,8 +86,6 @@ extern lv_obj_t * ui_lblBarParty4;
 extern lv_obj_t * ui_lblBarParty5;
 extern lv_obj_t * ui_lblBarParty6;
 extern lv_obj_t * ui_lblBarParty7;
-extern lv_obj_t * ui_lblBarParty8;
-extern lv_obj_t * ui_lblBarParty9;
 extern lv_obj_t * ui____initial_actions0;
 
 
