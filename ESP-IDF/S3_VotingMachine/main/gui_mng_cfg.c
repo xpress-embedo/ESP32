@@ -25,6 +25,17 @@ typedef struct _party_logo_t
   const lv_img_dsc_t *logo;
 } party_logo_t;
 
+typedef struct _widgets_t
+{
+  lv_obj_t * panel_table[MAX_NUM_OF_PARTY];
+  lv_obj_t * name_table[MAX_NUM_OF_PARTY];        // for main screen
+  lv_obj_t * name_rslt_table[MAX_NUM_OF_PARTY];   // for results (bar chart) screen
+  lv_obj_t * logo_table[MAX_NUM_OF_PARTY];
+  lv_obj_t * vote_btn_table[MAX_NUM_OF_PARTY];
+  lv_obj_t * vote_rslt_table[MAX_NUM_OF_PARTY];
+  lv_obj_t * vote_per_table[MAX_NUM_OF_PARTY];
+} widgets_t;
+
 // function template for callback function
 typedef void (*gui_mng_callback)(uint8_t * data);
 
@@ -63,18 +74,12 @@ static party_logo_t party_logo_db_table[] =
 //{ NULL,         &ui_img_na_png         },
 };
 
-static const char *TAG = "GUI_CFG";
-static uint8_t    winner_idx = 0;
-static lv_coord_t chart_series_array[MAX_NUM_OF_PARTY] = { 0 };
-static lv_chart_series_t * ui_chartResults_series = { NULL };
-static lv_obj_t * party_panel_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_name_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_name_result_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_logo_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_vote_btn_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_vote_rslt_table[MAX_NUM_OF_PARTY] = { NULL };
-static lv_obj_t * party_vote_per_table[MAX_NUM_OF_PARTY] = { NULL };
-static uint16_t   votes[MAX_NUM_OF_PARTY] = { 0 };
+static const char        *  TAG = "GUI_CFG";
+static uint8_t              winner_idx = 0;
+static lv_coord_t           chart_series_array[MAX_NUM_OF_PARTY] = { 0 };
+static lv_chart_series_t *  ui_chartResults_series = { NULL };
+static uint16_t             votes[MAX_NUM_OF_PARTY] = { 0 };
+static widgets_t            widgets_table = { NULL };
 
 // Public Function Definitions
 /**
@@ -91,61 +96,61 @@ void gui_cfg_init( void )
   ui_init();
 
   // prepare widget table
-  party_name_table[0] = ui_lblPartyName1;
-  party_name_table[1] = ui_lblPartyName2;
-  party_name_table[2] = ui_lblPartyName3;
-  party_name_table[3] = ui_lblPartyName4;
-  party_name_table[4] = ui_lblPartyName5;
-  party_name_table[5] = ui_lblPartyName6;
-  party_name_table[6] = ui_lblPartyName7;
+  widgets_table.name_table[0] = ui_lblPartyName1;
+  widgets_table.name_table[1] = ui_lblPartyName2;
+  widgets_table.name_table[2] = ui_lblPartyName3;
+  widgets_table.name_table[3] = ui_lblPartyName4;
+  widgets_table.name_table[4] = ui_lblPartyName5;
+  widgets_table.name_table[5] = ui_lblPartyName6;
+  widgets_table.name_table[6] = ui_lblPartyName7;
 
-  party_panel_table[0] = ui_panelParty1;
-  party_panel_table[1] = ui_panelParty2;
-  party_panel_table[2] = ui_panelParty3;
-  party_panel_table[3] = ui_panelParty4;
-  party_panel_table[4] = ui_panelParty5;
-  party_panel_table[5] = ui_panelParty6;
-  party_panel_table[6] = ui_panelParty7;
+  widgets_table.panel_table[0] = ui_panelParty1;
+  widgets_table.panel_table[1] = ui_panelParty2;
+  widgets_table.panel_table[2] = ui_panelParty3;
+  widgets_table.panel_table[3] = ui_panelParty4;
+  widgets_table.panel_table[4] = ui_panelParty5;
+  widgets_table.panel_table[5] = ui_panelParty6;
+  widgets_table.panel_table[6] = ui_panelParty7;
 
-  party_name_result_table[0] = ui_lblBarParty1;
-  party_name_result_table[1] = ui_lblBarParty2;
-  party_name_result_table[2] = ui_lblBarParty3;
-  party_name_result_table[3] = ui_lblBarParty4;
-  party_name_result_table[4] = ui_lblBarParty5;
-  party_name_result_table[5] = ui_lblBarParty6;
-  party_name_result_table[6] = ui_lblBarParty7;
+  widgets_table.name_rslt_table[0] = ui_lblBarParty1;
+  widgets_table.name_rslt_table[1] = ui_lblBarParty2;
+  widgets_table.name_rslt_table[2] = ui_lblBarParty3;
+  widgets_table.name_rslt_table[3] = ui_lblBarParty4;
+  widgets_table.name_rslt_table[4] = ui_lblBarParty5;
+  widgets_table.name_rslt_table[5] = ui_lblBarParty6;
+  widgets_table.name_rslt_table[6] = ui_lblBarParty7;
 
-  party_logo_table[0] = ui_imgPartyLogo1;
-  party_logo_table[1] = ui_imgPartyLogo2;
-  party_logo_table[2] = ui_imgPartyLogo3;
-  party_logo_table[3] = ui_imgPartyLogo4;
-  party_logo_table[4] = ui_imgPartyLogo5;
-  party_logo_table[5] = ui_imgPartyLogo6;
-  party_logo_table[6] = ui_imgPartyLogo7;
+  widgets_table.logo_table[0] = ui_imgPartyLogo1;
+  widgets_table.logo_table[1] = ui_imgPartyLogo2;
+  widgets_table.logo_table[2] = ui_imgPartyLogo3;
+  widgets_table.logo_table[3] = ui_imgPartyLogo4;
+  widgets_table.logo_table[4] = ui_imgPartyLogo5;
+  widgets_table.logo_table[5] = ui_imgPartyLogo6;
+  widgets_table.logo_table[6] = ui_imgPartyLogo7;
 
-  party_vote_btn_table[0] = ui_btnVoteParty1;
-  party_vote_btn_table[1] = ui_btnVoteParty2;
-  party_vote_btn_table[2] = ui_btnVoteParty3;
-  party_vote_btn_table[3] = ui_btnVoteParty4;
-  party_vote_btn_table[4] = ui_btnVoteParty5;
-  party_vote_btn_table[5] = ui_btnVoteParty6;
-  party_vote_btn_table[6] = ui_btnVoteParty7;
+  widgets_table.vote_btn_table[0] = ui_btnVoteParty1;
+  widgets_table.vote_btn_table[1] = ui_btnVoteParty2;
+  widgets_table.vote_btn_table[2] = ui_btnVoteParty3;
+  widgets_table.vote_btn_table[3] = ui_btnVoteParty4;
+  widgets_table.vote_btn_table[4] = ui_btnVoteParty5;
+  widgets_table.vote_btn_table[5] = ui_btnVoteParty6;
+  widgets_table.vote_btn_table[6] = ui_btnVoteParty7;
 
-  party_vote_rslt_table[0] = ui_lblPartyTotalVotes1;
-  party_vote_rslt_table[1] = ui_lblPartyTotalVotes2;
-  party_vote_rslt_table[2] = ui_lblPartyTotalVotes3;
-  party_vote_rslt_table[3] = ui_lblPartyTotalVotes4;
-  party_vote_rslt_table[4] = ui_lblPartyTotalVotes5;
-  party_vote_rslt_table[5] = ui_lblPartyTotalVotes6;
-  party_vote_rslt_table[6] = ui_lblPartyTotalVotes7;
+  widgets_table.vote_rslt_table[0] = ui_lblPartyTotalVotes1;
+  widgets_table.vote_rslt_table[1] = ui_lblPartyTotalVotes2;
+  widgets_table.vote_rslt_table[2] = ui_lblPartyTotalVotes3;
+  widgets_table.vote_rslt_table[3] = ui_lblPartyTotalVotes4;
+  widgets_table.vote_rslt_table[4] = ui_lblPartyTotalVotes5;
+  widgets_table.vote_rslt_table[5] = ui_lblPartyTotalVotes6;
+  widgets_table.vote_rslt_table[6] = ui_lblPartyTotalVotes7;
 
-  party_vote_per_table[0] = ui_lblPartyTotalVotesPercentage1;
-  party_vote_per_table[1] = ui_lblPartyTotalVotesPercentage2;
-  party_vote_per_table[2] = ui_lblPartyTotalVotesPercentage3;
-  party_vote_per_table[3] = ui_lblPartyTotalVotesPercentage4;
-  party_vote_per_table[4] = ui_lblPartyTotalVotesPercentage5;
-  party_vote_per_table[5] = ui_lblPartyTotalVotesPercentage6;
-  party_vote_per_table[6] = ui_lblPartyTotalVotesPercentage7;
+  widgets_table.vote_per_table[0] = ui_lblPartyTotalVotesPercentage1;
+  widgets_table.vote_per_table[1] = ui_lblPartyTotalVotesPercentage2;
+  widgets_table.vote_per_table[2] = ui_lblPartyTotalVotesPercentage3;
+  widgets_table.vote_per_table[3] = ui_lblPartyTotalVotesPercentage4;
+  widgets_table.vote_per_table[4] = ui_lblPartyTotalVotesPercentage5;
+  widgets_table.vote_per_table[5] = ui_lblPartyTotalVotesPercentage6;
+  widgets_table.vote_per_table[6] = ui_lblPartyTotalVotesPercentage7;
 
   // get the maximum number of political parties
   num_of_parties = get_number_of_parties();
@@ -161,11 +166,11 @@ void gui_cfg_init( void )
       if( strcmp( party_logo_db_table[jdx].name, name) == 0 )
       {
         // ESP_LOGI( TAG, "Found!!");
-        lv_label_set_text(party_name_table[idx], name);
-        lv_label_set_text(party_name_result_table[idx], name);
-        lv_img_set_src( party_logo_table[idx], party_logo_db_table[jdx].logo );
+        lv_label_set_text(widgets_table.name_table[idx], name);
+        lv_label_set_text(widgets_table.name_rslt_table[idx], name);
+        lv_img_set_src( widgets_table.logo_table[idx], party_logo_db_table[jdx].logo );
         // register the callback for vote button press
-        lv_obj_add_event_cb( party_vote_btn_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
+        lv_obj_add_event_cb( widgets_table.vote_btn_table[idx], gui_vote_button_event, LV_EVENT_PRESSED, NULL );
         break;
       }
     }
@@ -173,9 +178,9 @@ void gui_cfg_init( void )
   // updating the remaining entries
   for( idx=num_of_parties; idx < MAX_NUM_OF_PARTY; idx++ )
   {
-    lv_label_set_text(party_name_table[idx], "-" );
-    lv_label_set_text(party_name_result_table[idx], "-");
-    lv_img_set_src( party_logo_table[idx], (const lv_img_dsc_t*)&ui_img_na_png );
+    lv_label_set_text( widgets_table.name_table[idx], "-"  );
+    lv_label_set_text( widgets_table.name_rslt_table[idx], "-" );
+    lv_img_set_src( widgets_table.logo_table[idx], (const lv_img_dsc_t*)&ui_img_na_png );
   }
 
   // initialize the bar chart series
@@ -232,7 +237,7 @@ static void gui_vote_button_event(lv_event_t * e)
   {
     for( idx=0; idx < MAX_NUM_OF_PARTY; idx++ )
     {
-      if( target == party_vote_btn_table[idx] )
+      if( target == widgets_table.vote_btn_table[idx] )
       {
         votes[idx]++;
         // ESP_LOGI( TAG, "Party Name: %s, Votes: %d", party_name_table[idx], votes[idx] );
@@ -265,7 +270,7 @@ static void gui_results_button_event( lv_event_t * e )
         max_votes = votes[idx];
         winner_idx = idx;
       }
-      lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
+      lv_label_set_text_fmt( widgets_table.vote_rslt_table[idx], "%d", votes[idx] );
       total_votes += votes[idx];
       // update the votes for chart bar
       chart_series_array[idx] = (lv_coord_t)(votes[idx]);
@@ -277,13 +282,13 @@ static void gui_results_button_event( lv_event_t * e )
       {
         votes_percentage = (votes[idx]*100)/total_votes;
         votes_fraction = (votes[idx]*100)%total_votes;
-        lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", votes_percentage, votes_fraction );
+        lv_label_set_text_fmt( widgets_table.vote_per_table[idx], "%2d.%.1d %%", votes_percentage, votes_fraction );
       }
+      else
       {
         // no votes casted and user presses the Results button, this is added to protect divide by 0 condition
-        lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
+        lv_label_set_text_fmt( widgets_table.vote_per_table[idx], "0 %%" );
       }
-
     }
 
     // update bar chart data
@@ -314,11 +319,11 @@ static void gui_reset_button_event( lv_event_t *e )
       votes[idx] = 0;
       winner_idx = 0;
       chart_series_array[idx] = 0;
-      lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
-      lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
+      lv_label_set_text_fmt( widgets_table.vote_rslt_table[idx], "%d", votes[idx] );
+      lv_label_set_text_fmt( widgets_table.vote_per_table[idx], "0 %%" );
       lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, 10);
-      lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-      lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( widgets_table.panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT );
+      lv_obj_set_style_bg_opa( widgets_table.panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT );
     }
   }
 }
@@ -367,19 +372,14 @@ static void winning_timer_anim_cb( lv_timer_t *timer )
   if( toggle )
   {
     toggle = false;
-    // lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color( widgets_table.panel_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT );
     // NOTE: this bg_opa function is mandatory to see the effects, no idea but will read about it
-    // lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFA500), LV_PART_MAIN | LV_STATE_DEFAULT);
-    // NOTE: this bg_opa function is mandatory to see the effects, no idea but will read about it
-    lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa( widgets_table.panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT );
   }
   else
   {
     toggle = true;
-    // lv_obj_set_style_bg_color( party_name_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    // lv_obj_set_style_bg_opa( party_name_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color( widgets_table.panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa( widgets_table.panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
 }
