@@ -253,6 +253,8 @@ static void gui_results_button_event( lv_event_t * e )
   uint8_t idx;
   uint16_t total_votes = 0;
   uint16_t max_votes = 0;
+  uint8_t votes_percentage = 0;
+  uint8_t votes_fraction = 0;
 
   if( (event_code == LV_EVENT_PRESSED) && (target == ui_btnResults) )
   {
@@ -265,22 +267,27 @@ static void gui_results_button_event( lv_event_t * e )
       }
       lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
       total_votes += votes[idx];
+      // update the votes for chart bar
+      chart_series_array[idx] = (lv_coord_t)(votes[idx]);
     }
 
     for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
     {
-      lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", (votes[idx]*100)/total_votes, (votes[idx]*100)%total_votes  );
+      if( total_votes )
+      {
+        votes_percentage = (votes[idx]*100)/total_votes;
+        votes_fraction = (votes[idx]*100)%total_votes;
+        lv_label_set_text_fmt( party_vote_per_table[idx], "%2d.%.1d %%", votes_percentage, votes_fraction );
+      }
+      {
+        // no votes casted and user presses the Results button, this is added to protect divide by 0 condition
+        lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
+      }
+
     }
 
     // update bar chart data
     lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, ((max_votes/10)+1)*10 );
-
-    // update the votes in a format understandable by the
-    for( idx = 0; idx < MAX_NUM_OF_PARTY; idx++ )
-    {
-      chart_series_array[idx] = (lv_coord_t)(votes[idx]);
-    }
-    // lv_chart_set_ext_y_array( ui_chartResults, ui_chartResults_series, chart_series_array );
 
     // Play Animation Using Timer
     ESP_LOGI( TAG, "Starting Timer, Winner Index: %d", winner_idx );
@@ -306,9 +313,12 @@ static void gui_reset_button_event( lv_event_t *e )
     {
       votes[idx] = 0;
       winner_idx = 0;
+      chart_series_array[idx] = 0;
       lv_label_set_text_fmt( party_vote_rslt_table[idx], "%d", votes[idx] );
       lv_label_set_text_fmt( party_vote_per_table[idx], "0 %%" );
       lv_chart_set_range(ui_chartResults, LV_CHART_AXIS_PRIMARY_Y, 0, 10);
+      lv_obj_set_style_bg_color(party_panel_table[winner_idx], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_opa(party_panel_table[winner_idx], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     }
   }
 }

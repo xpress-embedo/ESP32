@@ -26,42 +26,51 @@ static char party_list[MAX_NUM_OF_PARTY][MAX_PARTY_NAME_LEN] = { 0 };
 
 void app_main(void)
 {
+  esp_err_t err;
+
   // initialize SD Card and FAT File System
-  sd_mng_init();
+  err = sd_mng_init();
 
   vTaskDelay(10);
 
-  file = fopen( filename, "r" );
-  if( NULL == file )
+  if( err == ESP_OK )
   {
-    ESP_LOGE( TAG, "Unable to Open the File");
+    file = fopen( filename, "r" );
+    if( NULL == file )
+    {
+      ESP_LOGE( TAG, "Unable to Open the File");
+    }
+    else
+    {
+      char data[MAX_PARTY_NAME_LEN] = { 0 };
+      while( fgets( data, sizeof(data), file) )
+      {
+        // find '\n' and replace with NULL character
+        char *pos = strchr( data, '\n' );
+        if( pos )
+        {
+          *pos = '\0';
+        }
+        ESP_LOGI( TAG, "Party Name: %s", data );
+        memcpy( party_list[num_of_parties], data, sizeof(data) );
+        memset( data, 0x00, sizeof(data) );
+        num_of_parties++;
+      }
+      fclose(file);
+    }
+    // unmount
+    sd_mng_unmount_card();
   }
   else
   {
-    char data[MAX_PARTY_NAME_LEN] = { 0 };
-    while( fgets( data, sizeof(data), file) )
-    {
-      // find '\n' and replace with NULL character
-      char *pos = strchr( data, '\n' );
-      if( pos )
-      {
-        *pos = '\0';
-      }
-      ESP_LOGI( TAG, "Party Name: %s", data );
-      memcpy( party_list[num_of_parties], data, sizeof(data) );
-      memset( data, 0x00, sizeof(data) );
-      num_of_parties++;
-    }
-    fclose(file);
+    ESP_LOGE( TAG, "Problem with SD Card");
+    num_of_parties = 0;
   }
-
-  // unmount
-  sd_mng_unmount_card();
 
   vTaskDelay(10);
 
   // Check if data fetched is correct or not
-  if( num_of_parties <= MAX_NUM_OF_PARTY )
+  if( num_of_parties && (num_of_parties <= MAX_NUM_OF_PARTY) )
   {
     ESP_LOGI( TAG, "Number of Parties: %d", num_of_parties );
     // optional: logging/printing parties on terminal
@@ -69,14 +78,14 @@ void app_main(void)
     {
       ESP_LOGI( TAG, "%.2d => %s", (idx+1), party_list[idx] );
     }
-
-    // start the gui task, this will handle all the display related stuff
-    gui_start();
   }
   else
   {
-    ESP_LOGE( TAG, "Number of Parties: %d, is greater or equal %d", num_of_parties, MAX_NUM_OF_PARTY );
+    ESP_LOGE( TAG, "Number of Parties: %d, which is invalid, and maximum number of parties are %d", num_of_parties, MAX_NUM_OF_PARTY );
   }
+
+  // start the gui task, this will handle all the display related stuff
+  gui_start();
 
   while (true)
   {
