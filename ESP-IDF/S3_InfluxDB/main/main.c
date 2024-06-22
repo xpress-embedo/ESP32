@@ -13,13 +13,15 @@
 #include "esp_system.h"
 #include "esp_log.h"
 #include "esp_wifi.h"
+#include "esp_mac.h"
 
 #include "main.h"
 #include "dht11.h"
+#include "influxDB.h"
 
 // macros
 #define DHT11_PIN                           (GPIO_NUM_17)
-#define MAIN_TASK_PERIOD                    (6000)
+#define MAIN_TASK_PERIOD                    (60000)
 #define APP_WIFI_SSID                       CONFIG_ESP_WIFI_SSID
 #define APP_WIFI_PSWD                       CONFIG_ESP_WIFI_PASSWORD
 #define WIFI_MAX_RETRY                      (5)
@@ -61,7 +63,7 @@ void app_main(void)
   app_connect_wifi();
   if( wifi_connect_status )
   {
-    // thingspeak_start();
+    influxdb_start();
   }
 
   // initialize dht sensor library
@@ -94,7 +96,7 @@ void app_main(void)
           // if wifi is connected, trigger event to send data to ThingSpeak
           if( wifi_connect_status )
           {
-            // thingspeak_send_event(THING_SPEAK_EV_TEMP_HUMID, NULL);
+            influxdb_send_event(INFLUXDB_EV_TEMP_HUMID, NULL);
           }
           // reset the index
           if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )
@@ -127,6 +129,17 @@ void app_main(void)
 sensor_data_t * get_temperature_humidity( void )
 {
   return &sensor_data;
+}
+
+/**
+ * @brief Get the MAC Address of the device
+ * @param mac_str used to return the mac address as string
+ */
+void get_mac_address( char *mac_str )
+{
+  uint8_t mac[6];
+  esp_read_mac( mac, ESP_MAC_WIFI_STA );
+  snprintf( mac_str, MAC_ADDR_SIZE, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
 }
 
 // Private Function Definitions
