@@ -291,7 +291,10 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
   }
 }
 
-
+/**
+ * @brief Initialize the SNTP
+ * @param  None
+ */
 static void app_sntp_init( void )
 {
   ESP_LOGI( TAG, "Initializing SNTP" );
@@ -300,6 +303,11 @@ static void app_sntp_init( void )
   esp_sntp_init();
 }
 
+/**
+ * @brief Synchronize the time from the SNTP server
+ * @param  None
+ * @return true if synchronization is successful else false
+ */
 static bool app_sntp_get_time( void )
 {
   #define MAX_RETRY_COUNT_SNTP    (20)

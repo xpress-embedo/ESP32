@@ -66,6 +66,13 @@ BaseType_t influxdb_send_event( influxdb_event_t event, uint8_t *pData )
 }
 
 // Private Function Definition
+
+/**
+ * @brief InfluxDB Task
+ * The task waits if there is some event posted in queue, and then based on the
+ * event it calls the appropriate function
+ * @param pvParameters 
+ */
 static void influxdb_task( void *pvParameters )
 {
   influxdb_q_msg_t msg;
@@ -108,10 +115,12 @@ static void influxdb_send_temp_humidity( void )
   humidity = sensor_data->humidity_current;
   get_mac_address( mac_addr );
 
-  snprintf( data, sizeof(data), "weather,device_id=%s temperature=%d,humidity=%d %lld", mac_addr, temperature, humidity, get_time_ns() );
-  ESP_LOGI( TAG, "Data: %s", data );
+  snprintf( data, sizeof(data), \
+            "weather,device_id=%s temperature=%d,humidity=%d %lld", \
+            mac_addr, temperature, humidity, get_time_ns() );
+  // ESP_LOGI( TAG, "Data: %s", data );
   snprintf( influxdb_full_url, sizeof(influxdb_full_url),   \
-            "%s/api/v2/write?org=%s&bucket=%s&precision=s", \
+            "%s/api/v2/write?org=%s&bucket=%s&precision=ns",\
             influxdb_url, influxdb_org, influxdb_bucket );
 
   esp_http_client_config_t config =
