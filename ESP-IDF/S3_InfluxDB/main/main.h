@@ -26,5 +26,6 @@ typedef struct _sensor_data_t
 // Public Function Definition
 sensor_data_t * get_temperature_humidity( void );
 void get_mac_address( char *mac_str );
+long long get_time_ns( void );
 
 #endif /* MAIN_MAIN_H_ */

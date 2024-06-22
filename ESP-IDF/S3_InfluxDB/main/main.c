@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include "driver/gpio.h"
+#include <time.h>
+#include <sys/time.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
@@ -14,6 +16,7 @@
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_mac.h"
+#include "esp_sntp.h"
 
 #include "main.h"
 #include "dht11.h"
@@ -39,10 +42,13 @@ static sensor_data_t sensor_data = { .sensor_idx = 0 };
 static EventGroupHandle_t wifi_event_group;           // FreeRTOS event group to signal when we are connected
 static uint8_t wifi_connect_retry = 0;
 static bool wifi_connect_status = false;
+static bool sntp_connect_status = false;
 
 // Private Function Declarations
 static void app_connect_wifi( void );
 static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
+static void app_sntp_init( void );
+static bool app_sntp_get_time( void );
 
 void app_main(void)
 {
@@ -50,6 +56,10 @@ void app_main(void)
   esp_log_level_set("gpio", ESP_LOG_NONE);
   // disable default wifi logging messages
   esp_log_level_set("wifi", ESP_LOG_NONE);
+  esp_log_level_set("wifi_init", ESP_LOG_NONE);
+  esp_log_level_set("sleep", ESP_LOG_NONE);
+  esp_log_level_set("spi_flash", ESP_LOG_NONE);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
 
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
@@ -63,7 +73,15 @@ void app_main(void)
   app_connect_wifi();
   if( wifi_connect_status )
   {
-    influxdb_start();
+    ESP_LOGI( TAG, "WiFi Connected, now synchronizing with NTP server." );
+    app_sntp_init();
+    sntp_connect_status = app_sntp_get_time();
+    // if time fetched then only start the influxDB server
+    if( sntp_connect_status )
+    {
+      // now start the influxDB task
+      influxdb_start();
+    }
   }
 
   // initialize dht sensor library
@@ -94,7 +112,7 @@ void app_main(void)
           // trigger event to display temperature and humidity
           // gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
           // if wifi is connected, trigger event to send data to ThingSpeak
-          if( wifi_connect_status )
+          if( wifi_connect_status && sntp_connect_status )
           {
             influxdb_send_event(INFLUXDB_EV_TEMP_HUMID, NULL);
           }
@@ -142,6 +160,15 @@ void get_mac_address( char *mac_str )
   snprintf( mac_str, MAC_ADDR_SIZE, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
 }
 
+long long get_time_ns( void )
+{
+  struct timeval now;
+  gettimeofday( &now, NULL );
+  long long time_ns = (long long)now.tv_sec * 1000000000LL + now.tv_usec * 1000LL;
+
+  return time_ns;
+}
+
 // Private Function Definitions
 /**
  * @brief Connect with the WiFi Router
@@ -151,6 +178,8 @@ void get_mac_address( char *mac_str )
 static void app_connect_wifi( void )
 {
   wifi_event_group = xEventGroupCreate();
+
+  ESP_LOGI( TAG, "Connecting with WiFi Router" );
 
   ESP_ERROR_CHECK( esp_netif_init() );
 
@@ -260,4 +289,59 @@ static void wifi_event_handler( void *arg, esp_event_base_t event_base, int32_t 
     wifi_connect_status = true;
     xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
   }
+}
+
+
+static void app_sntp_init( void )
+{
+  ESP_LOGI( TAG, "Initializing SNTP" );
+  esp_sntp_setoperatingmode( SNTP_OPMODE_POLL );
+  esp_sntp_setservername( 0, "pool.ntp.org" );  // set the SNTP server
+  esp_sntp_init();
+}
+
+static bool app_sntp_get_time( void )
+{
+  #define MAX_RETRY_COUNT_SNTP    (20)
+  bool status = false;
+  char time_buffer[50] = { 0 };   // temporary: only for printing/debugging
+
+  // set the time zone to India Standard Time (IST)
+  setenv( "TZ", "IST-5:30", 1);
+  tzset();
+
+  // wait for the time to be set
+  time_t now = 0;
+  struct tm time_info = { 0 };
+  uint8_t retry = 0;
+
+  time(&now);
+  localtime_r( &now, &time_info );
+  // the function is similar to snprintf, but is used to format the time
+  strftime(time_buffer, sizeof(time_buffer), "%d.%m.%Y %H:%M:%S", &time_info);
+  ESP_LOGI(TAG, "Sync Current Time: %s", time_buffer);
+
+  while( (time_info.tm_year < (2020-1900)) && (retry < MAX_RETRY_COUNT_SNTP) )
+  {
+    ESP_LOGI( TAG, "Synchronizing the time.....%d", retry );
+    retry++;
+    vTaskDelay( 3000/portTICK_PERIOD_MS );
+    time(&now);
+    // The localtime_r() function converts the calendar time pointed to by clock
+    // into a broken-down time stored in the structure to which result points.
+    // The localtime_r() function also returns a pointer to that same structure.
+    localtime_r( &now, &time_info );
+
+    memset(time_buffer, 0x00, sizeof(time_buffer) );
+    // the function is similar to snprintf, but is used to format the time
+    strftime(time_buffer, sizeof(time_buffer), "%d.%m.%Y %H:%M:%S", &time_info);
+    ESP_LOGI(TAG, "Sync Current Time: %s", time_buffer);
+  }
+
+  if( retry < MAX_RETRY_COUNT_SNTP )
+  {
+    // it means time is synchronized with SNTP server
+    status = true;
+  }
+  return status;
 }

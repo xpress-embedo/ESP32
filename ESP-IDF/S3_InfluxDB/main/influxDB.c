@@ -99,7 +99,7 @@ static void influxdb_send_temp_humidity( void )
 {
   uint8_t temperature = 0;
   uint8_t humidity = 0;
-  char data[100];
+  char data[150];
   char influxdb_full_url[200];
   char mac_addr[MAC_ADDR_SIZE] = { 0 };
 
@@ -108,7 +108,8 @@ static void influxdb_send_temp_humidity( void )
   humidity = sensor_data->humidity_current;
   get_mac_address( mac_addr );
 
-  snprintf( data, sizeof(data), "weather,device_id=%s temperature=%d,humidity=%d", mac_addr, temperature, humidity );
+  snprintf( data, sizeof(data), "weather,device_id=%s temperature=%d,humidity=%d %lld", mac_addr, temperature, humidity, get_time_ns() );
+  ESP_LOGI( TAG, "Data: %s", data );
   snprintf( influxdb_full_url, sizeof(influxdb_full_url),   \
             "%s/api/v2/write?org=%s&bucket=%s&precision=s", \
             influxdb_url, influxdb_org, influxdb_bucket );
