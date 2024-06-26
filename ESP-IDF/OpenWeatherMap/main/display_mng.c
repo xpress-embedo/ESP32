@@ -86,6 +86,7 @@ void display_mng(void)
     pressure = openweathermap_get_pressure(city_idx);
     humidity = openweathermap_get_humidity(city_idx);
 
+    bsp_display_lock(1000);
     // load the screen
     lv_disp_load_scr( ui_Screens[city_idx] );
     // Update the Display
@@ -101,5 +102,6 @@ void display_mng(void)
     _ui_label_set_property( ui_humidity_values[city_idx], _UI_LABEL_PROPERTY_TEXT, temp);
     // Update City Name
     _ui_label_set_property(ui_city_names[city_idx], _UI_LABEL_PROPERTY_TEXT, openweathermap_get_city_name(city_idx));
+    bsp_display_unlock();
   }
 }

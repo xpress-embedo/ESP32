@@ -125,8 +125,8 @@ esp_err_t connect_wifi(void)
   {
     .sta =
     {
-      .ssid = "ssid name",
-      .password = "password",
+      .ssid = "TestWiFi",
+      .password = "12345678",
       .threshold.authmode = WIFI_AUTH_WPA2_PSK,
       .pmf_cfg =
       {
