@@ -1,0 +1,38 @@
+# put here your custom config value
+menu "Kaluga InfluxDB Configuration"
+config ESP_WIFI_SSID
+    string "WiFi SSID"
+    default "TestWiFi"
+    help
+		SSID (network name) for the example to connect to.
+
+config ESP_WIFI_PASSWORD
+    string "WiFi Password"
+    default "myhome@123542"
+    help
+		WiFi password (WPA or WPA2) for the example to use.
+		
+config INFLUXDB_URL
+	string "InfluxDB URL"
+	default "https://us-east-1-1.aws.cloud2.influxdata.com"
+	help
+	URL of the InfluxDB Cloud Server
+	
+config INFLUXDB_ORG
+	string "InfluxDB Organization"
+	default "697c4e83a61ce79b"
+	help
+	You can find this Orgnaziation code in the web address after URL
+	
+config INFLUXDB_BUCKET
+	string "InfluxDB Bucket Name"
+	default "ESP32"
+	help
+	InfluxDB Bucket Name
+
+config INFLUXDB_TOKEN
+	string "InfluxDB Access Token"
+	default ""
+	help
+	"InfluxDB API Token, keep it in safe place"
+endmenu
