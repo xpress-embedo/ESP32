@@ -117,7 +117,7 @@ void app_main(void)
     // if wifi is connected, trigger event to send data to InfluxDB cloud
     if( wifi_connect_status && sntp_connect_status )
     {
-      // influxdb_send_event(INFLUXDB_EV_TEMP_HUMID, NULL);
+      influxdb_send_event(INFLUXDB_EV_TEMP_HUMID, NULL);
     }
     // Wait before next measurement
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
