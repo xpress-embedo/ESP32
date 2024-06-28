@@ -1,0 +1,21 @@
+[
+  {
+    "id": -1218143955,
+    "idfLocation": "/home/xpress_embedo/esp/esp-idf",
+    "idfVersion": "5.2",
+    "active": true,
+    "systemGitExecutablePath": "/usr/bin/git",
+    "systemPythonExecutablePath": "/usr/bin/python3",
+    "envVars": {
+      "PATH": "/home/xpress_embedo/.espressif/tools/xtensa-esp-elf-gdb/14.2_20240403/xtensa-esp-elf-gdb/bin:/home/xpress_embedo/.espressif/tools/riscv32-esp-elf-gdb/14.2_20240403/riscv32-esp-elf-gdb/bin:/home/xpress_embedo/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20230928/xtensa-esp-elf/bin:/home/xpress_embedo/.espressif/tools/esp-clang/16.0.1-fe4f10a809/esp-clang/bin:/home/xpress_embedo/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20230928/riscv32-esp-elf/bin:/home/xpress_embedo/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/xpress_embedo/.espressif/tools/cmake/3.24.0/bin:/home/xpress_embedo/.espressif/tools/openocd-esp32/v0.12.0-esp32-20240318/openocd-esp32/bin:/home/xpress_embedo/.espressif/tools/ninja/1.11.1/:/home/xpress_embedo/.espressif/python_env/idf5.2_py3.10_env/bin:/home/xpress_embedo/esp/esp-idf/tools:$PATH",
+      "IDF_COMPONENT_MANAGER": "1",
+      "OPENOCD_SCRIPTS": "/home/xpress_embedo/.espressif/tools/openocd-esp32/v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts",
+      "IDF_DEACTIVATE_FILE_PATH": "/tmp/tmpd6ljdx12idf_3861",
+      "IDF_MAINTAINER": "1",
+      "IDF_PATH": "/home/xpress_embedo/esp/esp-idf",
+      "IDF_PYTHON_ENV_PATH": "/home/xpress_embedo/.espressif/python_env/idf5.2_py3.10_env",
+      "ESP_IDF_VERSION": "5.2",
+      "ESP_ROM_ELF_DIR": "/home/xpress_embedo/.espressif/tools/esp-rom-elfs/20230320/"
+    }
+  }
+]
