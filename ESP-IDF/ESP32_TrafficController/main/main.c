@@ -42,7 +42,7 @@ static bool wifi_connect_status = false;
 // mqtt client for global access to publish and subscribe
 static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
-
+static char * traffic_topic = "TrafficTopic";
 
 // Private Function Declarations
 static void app_connect_wifi( void );
@@ -198,32 +198,17 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
   char * topic = event->topic;
   char * data  = event->data;
 
-//  // handle the subscribe topics here
-//  // note: here it is important to use strncmp function, rather than strcmp function
-//  // I am not sure, but it looks like that the null character was creating problem
-//  // hence I used strncmp function and check the bytes excluding the last null
-//  if( strncmp( topic, led_topic, sizeof(led_topic)-1) == 0 )
-//  {
-//    if( data[0] == '1' )
-//    {
-//      led_state = true;
-//    }
-//    else
-//    {
-//      led_state = false;
-//    }
-//    // send the event to GUI manager
-//    gui_send_event( GUI_MNG_EV_SWITCH_LED, (uint8_t*)(&led_state) );
-//  }
-//  else if( strncmp( topic, slider_topic, sizeof(slider_topic)-1) == 0 )
-//  {
-//    /* convert string into integer value, "the problem is the data is not null
-//     * terminated, hence the direct use of atoi(data) can be problematic */
-//    data[event->data_len] = 0;  // this line is added to fix the issue mentioned above
-//    rgb_value = atoi(data);
-//    // send the event to GUI manager
-//    gui_send_event( GUI_MNG_EV_RGB_LED, (uint8_t*)(&rgb_value) );
-//  }
+  // handle the subscribe topics here
+  // note: here it is important to use strncmp function, rather than strcmp function
+  // I am not sure, but it looks like that the null character was creating problem
+  // hence I used strncmp function and check the bytes excluding the last null
+  if( strncmp( topic, traffic_topic, sizeof(traffic_topic)-1) == 0 )
+  {
+    // process data
+    // send the event to GUI manager to update traffic status
+    // gui_send_event( GUI_MNG_EV_UPDATE_TRAFFIC_LED, (uint8_t*)(&led_state) );
+  }
+  // add for any other topic
 }
 
 /**
@@ -291,14 +276,10 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
     case MQTT_EVENT_CONNECTED:
       mqtt_connect_status = true;
       ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-      // publish with led state off
-      // app_publish_switch_led(false);
 
-      // Subscribe to Slider Data and also Led data
-      // msg_id = esp_mqtt_client_subscribe(client, slider_topic, 0);
-      // ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-      // msg_id = esp_mqtt_client_subscribe(client, led_topic, 0);
-      // ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      // Subscribe to Traffic Data Topic
+      msg_id = esp_mqtt_client_subscribe(client, traffic_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
       // send an event to GUI manager that we are connected
       gui_send_event(GUI_MNG_EV_MQTT_CONNECTED, NULL);

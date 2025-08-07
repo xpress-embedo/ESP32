@@ -24,31 +24,22 @@ typedef struct _gui_mng_event_cb_t
 } gui_mng_event_cb_t;
 
 // Private Functions
-static void gui_switch_led_event(lv_event_t * e);
 static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_load_panel_1( uint8_t *data );
-static void gui_update_sensor_data( uint8_t *data );
-static void gui_update_switch_led( uint8_t *data );
-static void gui_update_rgb_led( uint8_t * data );
+static void gui_update_traffic_led( uint8_t * data );
 
 // Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
   { GUI_MNG_EV_WIFI_CONNECTING,     gui_wifi_connecting     },
   { GUI_MNG_EV_MQTT_CONNECTING,     gui_mqtt_connecting     },
-  { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_panel_1      },
-  { GUI_MNG_EV_TEMP_HUMID,          gui_update_sensor_data  },
-  { GUI_MNG_EV_SWITCH_LED,          gui_update_switch_led   },
-  { GUI_MNG_EV_RGB_LED,             gui_update_rgb_led      },
+  { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_panel_1        },
+  { GUI_MNG_EV_UPDATE_TRAFFIC_LED,  gui_update_traffic_led  },
 };
 static lv_obj_t * led_green;
 static lv_obj_t * led_yellow;
 static lv_obj_t * led_red;
-
-static lv_obj_t * switch_led;
-static lv_obj_t * switch_led_ctrl;
-static lv_obj_t * rgb_led;
 
 // Public Function Definitions
 
@@ -158,36 +149,12 @@ static void gui_load_panel_1( uint8_t *data )
   lv_led_on(led_red);
 }
 
-/**
- * @brief Update the Temperature and Humidity data on display
- * @param data pointer to sensor data
- */
-static void gui_update_sensor_data( uint8_t *data )
-{
-}
 
 /**
- * @brief Callback Function configured for Switch Led Control
- * @param e 
+ * @brief Callback function to update the traffic LEDs
+ * @param data pointer to traffic LEDs data
  */
-static void gui_switch_led_event(lv_event_t * e)
-{
-}
-
-/**
- * @brief Update the Switch Led state on display, and also publish event so that
- *        all other applications or devices synchronize with each other
- * @param data pointer to switch led state data
- */
-static void gui_update_switch_led( uint8_t *data )
-{
-}
-
-/**
- * @brief Callback function to update the RGB Color of the LED based on rgb value
- * @param data pointer to rgb value data
- */
-static void gui_update_rgb_led( uint8_t * data )
+static void gui_update_traffic_led( uint8_t * data )
 {
 
 }
