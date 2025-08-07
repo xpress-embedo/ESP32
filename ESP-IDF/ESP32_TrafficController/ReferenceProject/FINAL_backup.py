@@ -2,24 +2,9 @@ import cv2
 import time
 import imutils
 from imutils.video import VideoStream
-import serial
-import serial.tools.list_ports
+import serial  #serial communicatio via port
 #import argparse
-import paho.mqtt.client as mqtt
-
 print(cv2.__version__)
-
-# Callback Function on Connection with MQTT Server
-def on_connect( client, userdata, flags, rc, properties):
-    print ("Connected with Code :" +str(rc))
-    # Subscribe Topic from here
-    # client.subscribe("home/#")
-
-# Callback Function on Receiving the Subscribed Topic/Message
-def on_message( client, userdata, msg):
-    # print the message received from the subscribed topic
-    print ( str(msg.payload) )
-
 
 LINE_POSITION_Y = 75
 LINE_IN_X_1 = 300
@@ -42,40 +27,30 @@ _GREEN_TIME = 10
 _RED_TIME = 10
 _YELLOW_TIME = 3
 
-# get the available serial ports
-ports = serial.tools.list_ports.comports()
-for port, desc, hwid in sorted(ports):     
-    print("{}: {}".format(port, desc))
 
-port ='COM1'
+
+
+
+# print alailable serial ports list of computer
+import serial.tools.list_ports
+ports = serial.tools.list_ports.comports()
+for port, desc, hwid in sorted(ports):
+     
+        print("{}: {}".format(port, desc))
+
+port ='COM3'
 
 # src ="video.mp4"
-src = 1
+src =1
 camera_number = 1
 
-try:   
+try:
+   
     camera_number = int(src)
-    print("Source is camera")
+    print("source is camera")
 except:
     camera_number = src
-    print("Source is video.")
-
-# Configure MQTT Related Stuff Here (Starts)
-client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
-client.on_connect = on_connect
-client.on_message = on_message
-
-mqtt_server = "test.mosquitto.org";
-mqtt_port = 1883;
-
-# in case of username and password, update these fields and un-comment the code
-# user_name = "pyptiouq";
-# mqtt_pswd = "aQp113ENJeO9";
-# client.username_pw_set( user_name, mqtt_pswd );
-
-client.connect( mqtt_server, mqtt_port, 60 );
-client.loop_start()
-# Configure MQTT Related Stuff Here (Ends)
+    print("source is video.")
 
 port = port 
 baud = 115200
@@ -168,7 +143,6 @@ while True:
             current_side = 1
             print("SIDE 1 GREEN ","SIDE 2 REDd")
             serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","GREEN1 RED2 RED3 RED4")
             
                     
         # if current_color ==  _CURRENT_GREEN and current_side == 1 and (last_update + _GREEN_TIME + side1_extra_time) < seconds:
@@ -185,7 +159,6 @@ while True:
             last_update = seconds
             print("SIDE 1 YELLOW","SIDE 2 YELLOW")
             serialPort.write("YELLOW1 YELLOW2 RED3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","YELLOW1 YELLOW2 RED3 RED4")
             
         
         if current_color ==  _CURRENT_RED and current_side == 1 and last_update + _YELLOW_TIME < seconds:
@@ -195,7 +168,6 @@ while True:
             current_side  = 2
             print("SIDE 2 GREEN " , "SIDE 3 RED")
             serialPort.write("RED1 GREEN2 RED3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 GREEN2 RED3 RED4")
             
             
         if current_color ==  _CURRENT_YELLOW and current_side == 2 and last_update + _RED_TIME < seconds:
@@ -205,7 +177,6 @@ while True:
             current_side  = 3
             print("SIDE 2 YELLOW","SIDE 3 YELLOW")
             serialPort.write("RED1 YELLOW2 YELLOW3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 YELLOW2 YELLOW3 RED4")
             
             
         if current_color ==  _CURRENT_GREEN and current_side == 3 and last_update + _YELLOW_TIME < seconds:
@@ -213,8 +184,7 @@ while True:
             current_color = _CURRENT_YELLOW
             last_update = seconds
             print("SIDE 3 GREEN ","SIDE 4 RED   ")
-            serialPort.write("RED1 RED2 GREEN3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 RED2 GREEN3 RED4")
+            serialPort.write("RED1  RED2 GREEN3 RED4\n".encode('ascii'))         
 
         
         if current_color ==  _CURRENT_YELLOW and current_side == 3 and last_update + _GREEN_TIME < seconds:
@@ -223,8 +193,7 @@ while True:
             last_update = seconds
             current_side  = 4
             print("SIDE 3 YELLOW ","SIDE 4 YELLOW   ")
-            serialPort.write("RED1 RED2 YELLOW3 YELLOW4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 RED2 YELLOW3 YELLOW4")
+            serialPort.write("RED1  YELLOW3 YELLOW4 RED2\n".encode('ascii'))     
 
           
         if current_color ==  _CURRENT_RED and current_side == 4 and last_update + _YELLOW_TIME < seconds:
@@ -232,16 +201,14 @@ while True:
             current_color = _CURRENT_YELLOW
             last_update = seconds
             print("SIDE 4 GREEN ","SIDE 1 RED   ")
-            serialPort.write("RED1 RED2 RED3 GREEN4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 RED2 RED3 GREEN4")
+            serialPort.write("RED1  RED2 GREEN4 RED3\n".encode('ascii'))  
         
         if current_color ==  _CURRENT_YELLOW and current_side == 4 and last_update + _GREEN_TIME < seconds:
             #CHANGE TO GREEN
             current_color = _CURRENT_GREEN
             last_update = seconds
             print("SIDE 4 YELLOW1 ","SIDE 1 YELLOW1   ")
-            serialPort.write("RED1 YELLOW1 RED3 YELLOW4\n".encode('ascii'))
-            client.publish("TrafficTopic","RED1 YELLOW1 RED3 YELLOW4")
+            serialPort.write("RED1  YELLOW1 YELLOW4 RED3\n".encode('ascii')) 
 
         if current_color == _CURRENT_GREEN and current_side == 4 and (last_update + _YELLOW_TIME) < seconds:
             #CHANGE TO GREEN
@@ -249,14 +216,9 @@ while True:
             current_side  = 1
             last_update = seconds
             print("SIDE 1 GREEN ","SIDE 2 RED   LAST")
-            serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii'))
-            client.publish("TrafficTopic","GREEN1 RED2 RED3 RED4")
+            serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii')) 
 
     if cv2.waitKey(33) == 27:
         break
     
 cv2.destroyAllWindows()
-# MQTT Closing (Starts)
-client.loop_stop()
-client.disconnect()
-# MQTT Closing (Ends)
