@@ -3,15 +3,12 @@
 // LVGL version: 8.3.6
 // Project name: ESP32_TrafficController
 
-#ifndef _UI_EVENTS_H
-#define _UI_EVENTS_H
+#include "../ui.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void ui_Panel1_screen_init(void)
+{
+    ui_Panel1 = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Panel1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-#ifdef __cplusplus
-} /*extern "C"*/
-#endif
 
-#endif
+}
