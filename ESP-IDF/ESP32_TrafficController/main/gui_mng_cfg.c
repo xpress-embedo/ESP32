@@ -27,15 +27,21 @@ typedef struct _gui_mng_event_cb_t
 static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_load_panel_1( uint8_t *data );
-static void gui_update_traffic_led( uint8_t * data );
+static void gui_update_traffic_led_1( uint8_t *data );
+static void gui_update_traffic_led_2( uint8_t *data );
+static void gui_update_traffic_led_3( uint8_t *data );
+static void gui_update_traffic_led_4( uint8_t *data );
 
 // Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
-  { GUI_MNG_EV_WIFI_CONNECTING,     gui_wifi_connecting     },
-  { GUI_MNG_EV_MQTT_CONNECTING,     gui_mqtt_connecting     },
-  { GUI_MNG_EV_MQTT_CONNECTED,      gui_load_panel_1        },
-  { GUI_MNG_EV_UPDATE_TRAFFIC_LED,  gui_update_traffic_led  },
+  { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting       },
+  { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting       },
+  { GUI_MNG_EV_MQTT_CONNECTED,        gui_load_panel_1          },
+  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_1,  gui_update_traffic_led_1  },
+  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_2,  gui_update_traffic_led_2  },
+  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_3,  gui_update_traffic_led_3  },
+  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_4,  gui_update_traffic_led_4  },
 };
 static lv_obj_t * led_green;
 static lv_obj_t * led_yellow;
@@ -151,10 +157,64 @@ static void gui_load_panel_1( uint8_t *data )
 
 
 /**
- * @brief Callback function to update the traffic LEDs
+ * @brief Callback function to update the traffic LEDs of side-1
  * @param data pointer to traffic LEDs data
  */
-static void gui_update_traffic_led( uint8_t * data )
+static void gui_update_traffic_led_1( uint8_t *data )
+{
+  uint8_t traffic_led_status = *data;
+  switch ( traffic_led_status )
+  {
+    case TRAFFIC_LED_GREEN:
+      printf( "Green \r\n ");
+      lv_led_on(led_green);
+      lv_led_off(led_yellow);
+      lv_led_off(led_red);
+      break;
+    case TRAFFIC_LED_YELLOW:
+      printf( "Yellow \r\n ");
+      lv_led_off(led_green);
+      lv_led_on(led_yellow);
+      lv_led_off(led_red);
+      break;
+    case TRAFFIC_LED_RED:
+      printf( "Red \r\n ");
+      lv_led_off(led_green);
+      lv_led_off(led_yellow);
+      lv_led_on(led_red);
+      break;
+    default:
+      printf( "Invalid: %d \r\n ", traffic_led_status);
+      lv_led_off(led_green);
+      lv_led_off(led_yellow);
+      lv_led_off(led_red);
+      break;
+  };
+}
+
+/**
+ * @brief Callback function to update the traffic LEDs of side-2
+ * @param data pointer to traffic LEDs data
+ */
+static void gui_update_traffic_led_2( uint8_t *data )
+{
+
+}
+
+/**
+ * @brief Callback function to update the traffic LEDs of side-3
+ * @param data pointer to traffic LEDs data
+ */
+static void gui_update_traffic_led_3( uint8_t *data )
+{
+
+}
+
+/**
+ * @brief Callback function to update the traffic LEDs of side-4
+ * @param data pointer to traffic LEDs data
+ */
+static void gui_update_traffic_led_4( uint8_t *data )
 {
 
 }

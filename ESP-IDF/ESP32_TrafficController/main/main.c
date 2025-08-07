@@ -43,6 +43,10 @@ static bool wifi_connect_status = false;
 static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
 static char * traffic_topic = "TrafficTopic";
+uint8_t traffic_led_1 = TRAFFIC_LED_INVALID;
+uint8_t traffic_led_2 = TRAFFIC_LED_INVALID;
+uint8_t traffic_led_3 = TRAFFIC_LED_INVALID;
+uint8_t traffic_led_4 = TRAFFIC_LED_INVALID;
 
 // Private Function Declarations
 static void app_connect_wifi( void );
@@ -188,6 +192,13 @@ static void mqtt_app_start( void )
 /**
  * @brief Function to handle all mqtt subscribtion
  * @param event pointer to event data this is a pointer check typedef
+ * @note Simulate topics manually using the following publish command
+ * mosquitto_pub -h test.mosquitto.org -p 1883 -t TrafficTopic -m "Hello World"
+ * mosquitto_pub -h test.mosquitto.org -p 1883 -t TrafficTopic -m "GREEN1 RED2 RED3 RED4"
+ * mosquitto_pub -h test.mosquitto.org -p 1883 -t TrafficTopic -m "YELLOW1 RED2 RED3 RED4"
+ * mosquitto_pub -h test.mosquitto.org -p 1883 -t TrafficTopic -m "RED1 RED2 RED3 RED4"
+ * And if needed to verification use the following subscribe command
+ * mosquitto_sub -h test.mosquitto.org -p 1883 -t TrafficTopic
  */
 static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
 {
@@ -197,6 +208,7 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
 
   char * topic = event->topic;
   char * data  = event->data;
+  gui_mng_event_t gui_event = GUI_MNG_EV_MAX;
 
   // handle the subscribe topics here
   // note: here it is important to use strncmp function, rather than strcmp function
@@ -204,9 +216,26 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
   // hence I used strncmp function and check the bytes excluding the last null
   if( strncmp( topic, traffic_topic, sizeof(traffic_topic)-1) == 0 )
   {
-    // process data
-    // send the event to GUI manager to update traffic status
-    // gui_send_event( GUI_MNG_EV_UPDATE_TRAFFIC_LED, (uint8_t*)(&led_state) );
+    if( strstr( data, "GREEN1") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      traffic_led_1 = TRAFFIC_LED_GREEN;
+    }
+    else if( strstr( data, "YELLOW1") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      traffic_led_1 = TRAFFIC_LED_YELLOW;
+    }
+    else if( strstr( data, "RED1") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      traffic_led_1 = TRAFFIC_LED_RED;
+    }
+    // send event
+    if( gui_event != GUI_MNG_EV_MAX )
+    {
+      gui_send_event( gui_event, &traffic_led_1 );
+    }
   }
   // add for any other topic
 }

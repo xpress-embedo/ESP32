@@ -145,6 +145,11 @@ static void gui_task(void *pvParameter)
       if( GUI_MNG_EV_NONE != msg.event_id )
       {
         gui_cfg_mng_process(msg.event_id, msg.data);
+        // For Debugging
+        // if( msg.data != NULL )
+        // {
+        //   ESP_LOGI( TAG, "GUI MSG Data: %d", *msg.data );
+        // }
       }   // if event received in limit end
     }     // xQueueReceive end
   }
