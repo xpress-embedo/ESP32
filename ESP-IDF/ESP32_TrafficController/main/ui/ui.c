@@ -104,6 +104,10 @@ void ui_event_Panel4(lv_event_t * e)
         lv_indev_wait_release(lv_indev_get_act());
         _ui_screen_change(&ui_Panel3, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_Panel3_screen_init);
     }
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        _ui_screen_change(&ui_Panel1, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_Panel1_screen_init);
+    }
 }
 
 ///////////////////// SCREENS ////////////////////
