@@ -5352,7 +5352,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_TrafficController\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 211,
+    "backup_cnt": 213,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

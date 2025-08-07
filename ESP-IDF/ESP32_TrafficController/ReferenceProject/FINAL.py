@@ -42,6 +42,9 @@ _GREEN_TIME = 10
 _RED_TIME = 10
 _YELLOW_TIME = 3
 
+side1_total_time = 0
+side1_total_time_last = 0
+
 # get the available serial ports
 ports = serial.tools.list_ports.comports()
 for port, desc, hwid in sorted(ports):     
@@ -160,7 +163,7 @@ while True:
     
     if tick:
         tick = False
-        print("tick: ",seconds)
+        # print("tick: ",seconds)
 
         if current_color is None:
             current_color = _CURRENT_GREEN
@@ -169,6 +172,14 @@ while True:
             print("SIDE 1 GREEN ","SIDE 2 REDd")
             serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","GREEN1 RED2 RED3 RED4")
+
+        # Write now only for side 1 time is updated, to we should send that only
+        if current_color ==  _CURRENT_GREEN and current_side == 1:
+            side1_total_time = _GREEN_TIME + side1_extra_time
+            # print ( "TIME: ", side1_total_time, side1_total_time_last )
+            if side1_total_time != side1_total_time_last:
+                side1_total_time_last = side1_total_time
+                client.publish("TrafficTimeSide1", str(side1_total_time))
             
                     
         # if current_color ==  _CURRENT_GREEN and current_side == 1 and (last_update + _GREEN_TIME + side1_extra_time) < seconds:
@@ -186,6 +197,9 @@ while True:
             print("SIDE 1 YELLOW","SIDE 2 YELLOW")
             serialPort.write("YELLOW1 YELLOW2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","YELLOW1 YELLOW2 RED3 RED4")
+            side1_total_time = 0
+            side1_total_time_last = 0
+            client.publish("TrafficTimeSide1", str(side1_total_time))
             
         
         if current_color ==  _CURRENT_RED and current_side == 1 and last_update + _YELLOW_TIME < seconds:

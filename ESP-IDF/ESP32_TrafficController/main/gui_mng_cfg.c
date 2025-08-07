@@ -32,6 +32,10 @@ static void gui_update_traffic_led_1( uint8_t *data );
 static void gui_update_traffic_led_2( uint8_t *data );
 static void gui_update_traffic_led_3( uint8_t *data );
 static void gui_update_traffic_led_4( uint8_t *data );
+static void gui_update_traffic_time_1( uint8_t *data );
+static void gui_update_traffic_time_2( uint8_t *data );
+static void gui_update_traffic_time_3( uint8_t *data );
+static void gui_update_traffic_time_4( uint8_t *data );
 
 // Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
@@ -39,10 +43,14 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting       },
   { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting       },
   { GUI_MNG_EV_MQTT_CONNECTED,        gui_load_panel_1          },
-  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_1,  gui_update_traffic_led_1  },
-  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_2,  gui_update_traffic_led_2  },
-  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_3,  gui_update_traffic_led_3  },
-  { GUI_MNG_EV_UPDATE_TRAFFIC_LED_4,  gui_update_traffic_led_4  },
+  { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1  },
+  { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2  },
+  { GUI_MNG_EV_TRAFFIC_LED_3,         gui_update_traffic_led_3  },
+  { GUI_MNG_EV_TRAFFIC_LED_4,         gui_update_traffic_led_4  },
+  { GUI_MNG_EV_TRAFFIC_TIME_1,        gui_update_traffic_time_1 },
+  { GUI_MNG_EV_TRAFFIC_TIME_2,        gui_update_traffic_time_2 },
+  { GUI_MNG_EV_TRAFFIC_TIME_3,        gui_update_traffic_time_3 },
+  { GUI_MNG_EV_TRAFFIC_TIME_4,        gui_update_traffic_time_4 },
 };
 static lv_obj_t * led_green[NUM_OF_SIDES];
 static lv_obj_t * led_yellow[NUM_OF_SIDES];
@@ -299,6 +307,42 @@ static void gui_update_traffic_led_4( uint8_t *data )
       lv_led_off(led_red[3]);
       break;
   };
+}
+
+/**
+ * @brief Callback function to update the traffic time of side-1
+ * @param data pointer to traffic time data
+ */
+static void gui_update_traffic_time_1( uint8_t *data )
+{
+  lv_label_set_text_fmt( ui_lblTime1, "%.2d", *data );
+}
+
+/**
+ * @brief Callback function to update the traffic time of side-2
+ * @param data pointer to traffic time data
+ */
+static void gui_update_traffic_time_2( uint8_t *data )
+{
+  lv_label_set_text_fmt( ui_lblTime2, "%.2d", *data );
+}
+
+/**
+ * @brief Callback function to update the traffic time of side-3
+ * @param data pointer to traffic time data
+ */
+static void gui_update_traffic_time_3( uint8_t *data )
+{
+  lv_label_set_text_fmt( ui_lblTime3, "%.2d", *data );
+}
+
+/**
+ * @brief Callback function to update the traffic time of side-4
+ * @param data pointer to traffic time data
+ */
+static void gui_update_traffic_time_4( uint8_t *data )
+{
+  lv_label_set_text_fmt( ui_lblTime4, "%.2d", *data );
 }
 
 

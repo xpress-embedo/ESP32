@@ -21,7 +21,7 @@
 #include "gui_mng.h"
 
 // Private Macros
-#define MAIN_TASK_PERIOD                    (8000)
+#define MAIN_TASK_PERIOD                    (1000)
 // #define APP_WIFI_SSID                       "Enter WIFI SSID"
 // #define APP_WIFI_PSWD                       "Enter WiFI Password"
 #define APP_WIFI_SSID                       "SECOND"
@@ -43,10 +43,20 @@ static bool wifi_connect_status = false;
 static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
 static char * traffic_topic = "TrafficTopic";
-uint8_t traffic_led_1 = TRAFFIC_LED_INVALID;
-uint8_t traffic_led_2 = TRAFFIC_LED_INVALID;
-uint8_t traffic_led_3 = TRAFFIC_LED_INVALID;
-uint8_t traffic_led_4 = TRAFFIC_LED_INVALID;
+static char * traffic_time_1_topic = "TrafficTimeSide1";
+static char * traffic_time_2_topic = "TrafficTimeSide2";
+static char * traffic_time_3_topic = "TrafficTimeSide3";
+static char * traffic_time_4_topic = "TrafficTimeSide4";
+
+static uint8_t traffic_led_1 = TRAFFIC_LED_INVALID;
+static uint8_t traffic_led_2 = TRAFFIC_LED_INVALID;
+static uint8_t traffic_led_3 = TRAFFIC_LED_INVALID;
+static uint8_t traffic_led_4 = TRAFFIC_LED_INVALID;
+
+static uint8_t traffic_time_side1 = 0;
+static uint8_t traffic_time_side2 = 0;
+static uint8_t traffic_time_side3 = 0;
+static uint8_t traffic_time_side4 = 0;
 
 // Private Function Declarations
 static void app_connect_wifi( void );
@@ -91,6 +101,29 @@ void app_main(void)
 
   while (true )
   {
+    if( traffic_time_side1 )
+    {
+      traffic_time_side1--;
+      gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_1, &traffic_time_side1 );
+    }
+
+    if( traffic_time_side2 )
+    {
+      traffic_time_side2--;
+      gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_2, &traffic_time_side2 );
+    }
+
+    if( traffic_time_side3 )
+    {
+      traffic_time_side3--;
+      gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_3, &traffic_time_side3 );
+    }
+
+    if( traffic_time_side4 )
+    {
+      traffic_time_side4--;
+      gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_4, &traffic_time_side4 );
+    }
     // Wait before next
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
@@ -208,28 +241,32 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
 
   char * topic = event->topic;
   char * data  = event->data;
+  // Create a temporary buffer to hold the time string safely
+  char time_str[10]; // Enough for seconds as string
+  int copy_len;
   gui_mng_event_t gui_event = GUI_MNG_EV_MAX;
 
   // handle the subscribe topics here
   // note: here it is important to use strncmp function, rather than strcmp function
   // I am not sure, but it looks like that the null character was creating problem
   // hence I used strncmp function and check the bytes excluding the last null
-  if( strncmp( topic, traffic_topic, sizeof(traffic_topic)-1) == 0 )
+  if (event->topic_len == strlen(traffic_topic) && strncmp(topic, traffic_topic, event->topic_len) == 0)
   {
+    ESP_LOGI(TAG, "I am here at wrong place");
     // Preparing Events for Side-1
     if( strstr( data, "GREEN1") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_1;
       traffic_led_1 = TRAFFIC_LED_GREEN;
     }
     else if( strstr( data, "YELLOW1") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_1;
       traffic_led_1 = TRAFFIC_LED_YELLOW;
     }
     else if( strstr( data, "RED1") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_1;
       traffic_led_1 = TRAFFIC_LED_RED;
     }
     // send event
@@ -242,17 +279,17 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
     gui_event = GUI_MNG_EV_MAX;
     if( strstr( data, "GREEN2") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_2;
       traffic_led_2 = TRAFFIC_LED_GREEN;
     }
     else if( strstr( data, "YELLOW2") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_2;
       traffic_led_2 = TRAFFIC_LED_YELLOW;
     }
     else if( strstr( data, "RED2") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_2;
       traffic_led_2 = TRAFFIC_LED_RED;
     }
     // send event
@@ -265,17 +302,17 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
     gui_event = GUI_MNG_EV_MAX;
     if( strstr( data, "GREEN3") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_3;
       traffic_led_3 = TRAFFIC_LED_GREEN;
     }
     else if( strstr( data, "YELLOW3") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_3;
       traffic_led_3 = TRAFFIC_LED_YELLOW;
     }
     else if( strstr( data, "RED3") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_3;
       traffic_led_3 = TRAFFIC_LED_RED;
     }
     // send event
@@ -288,17 +325,17 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
     gui_event = GUI_MNG_EV_MAX;
     if( strstr( data, "GREEN4") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_4;
       traffic_led_4 = TRAFFIC_LED_GREEN;
     }
     else if( strstr( data, "YELLOW4") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_4;
       traffic_led_4 = TRAFFIC_LED_YELLOW;
     }
     else if( strstr( data, "RED4") != NULL )
     {
-      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      gui_event = GUI_MNG_EV_TRAFFIC_LED_4;
       traffic_led_4 = TRAFFIC_LED_RED;
     }
     // send event
@@ -308,6 +345,49 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
     }
   }
   // add for any other topic
+  else if (event->topic_len == strlen(traffic_time_1_topic) && strncmp(topic, traffic_time_1_topic, event->topic_len) == 0)
+  {
+    memset(time_str, 0, sizeof(time_str));
+    // Copy the data from event->data
+    copy_len = (event->data_len < sizeof(time_str) - 1) ? event->data_len : sizeof(time_str) - 1;
+    memcpy(time_str, event->data, copy_len);
+
+    // Convert string to integer
+    traffic_time_side1 = atoi(time_str);
+    gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_1, &traffic_time_side1 );
+  }
+  else if (event->topic_len == strlen(traffic_time_2_topic) && strncmp(topic, traffic_time_2_topic, event->topic_len) == 0)
+  {
+    memset(time_str, 0, sizeof(time_str));
+    // Copy the data from event->data
+    copy_len = (event->data_len < sizeof(time_str) - 1) ? event->data_len : sizeof(time_str) - 1;
+    memcpy(time_str, event->data, copy_len);
+
+    // Convert string to integer
+    traffic_time_side2 = atoi(time_str);
+    gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_2, &traffic_time_side2 );
+  }
+  else if (event->topic_len == strlen(traffic_time_3_topic) && strncmp(topic, traffic_time_3_topic, event->topic_len) == 0)
+  {
+    memset(time_str, 0, sizeof(time_str));
+    copy_len = (event->data_len < sizeof(time_str) - 1) ? event->data_len : sizeof(time_str) - 1;
+    memcpy(time_str, event->data, copy_len);
+
+    // Convert string to integer
+    traffic_time_side3 = atoi(time_str);
+    gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_3, &traffic_time_side3 );
+  }
+  else if (event->topic_len == strlen(traffic_time_4_topic) && strncmp(topic, traffic_time_4_topic, event->topic_len) == 0)
+  {
+    memset(time_str, 0, sizeof(time_str));
+    // Copy the data from event->data
+    copy_len = (event->data_len < sizeof(time_str) - 1) ? event->data_len : sizeof(time_str) - 1;
+    memcpy(time_str, event->data, copy_len);
+
+    // Convert string to integer
+    traffic_time_side4 = atoi(time_str);
+    gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_4, &traffic_time_side4 );
+  }
 }
 
 /**
@@ -378,6 +458,9 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
 
       // Subscribe to Traffic Data Topic
       msg_id = esp_mqtt_client_subscribe(client, traffic_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      // Subscribe to Traffic Time for Side-1 Topic
+      msg_id = esp_mqtt_client_subscribe(client, traffic_time_1_topic, 0);
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
       // send an event to GUI manager that we are connected
