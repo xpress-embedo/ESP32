@@ -13,6 +13,7 @@ idf_component_register( SRCS
     										ui/screens/ui_Panel3.c
     										ui/screens/ui_Panel4.c
     										ui/images/ui_img_school_logo_png.c
+    										ui/fonts/ui_font_DsDigital72.c
     										ui/ui_helpers.c
 												INCLUDE_DIRS 
 												"."

@@ -216,6 +216,7 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
   // hence I used strncmp function and check the bytes excluding the last null
   if( strncmp( topic, traffic_topic, sizeof(traffic_topic)-1) == 0 )
   {
+    // Preparing Events for Side-1
     if( strstr( data, "GREEN1") != NULL )
     {
       gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_1;
@@ -235,6 +236,75 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
     if( gui_event != GUI_MNG_EV_MAX )
     {
       gui_send_event( gui_event, &traffic_led_1 );
+    }
+
+    // Preparing Events for Side-2
+    gui_event = GUI_MNG_EV_MAX;
+    if( strstr( data, "GREEN2") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      traffic_led_2 = TRAFFIC_LED_GREEN;
+    }
+    else if( strstr( data, "YELLOW2") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      traffic_led_2 = TRAFFIC_LED_YELLOW;
+    }
+    else if( strstr( data, "RED2") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_2;
+      traffic_led_2 = TRAFFIC_LED_RED;
+    }
+    // send event
+    if( gui_event != GUI_MNG_EV_MAX )
+    {
+      gui_send_event( gui_event, &traffic_led_2 );
+    }
+
+    // Preparing Events for Side-3
+    gui_event = GUI_MNG_EV_MAX;
+    if( strstr( data, "GREEN3") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      traffic_led_3 = TRAFFIC_LED_GREEN;
+    }
+    else if( strstr( data, "YELLOW3") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      traffic_led_3 = TRAFFIC_LED_YELLOW;
+    }
+    else if( strstr( data, "RED3") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_3;
+      traffic_led_3 = TRAFFIC_LED_RED;
+    }
+    // send event
+    if( gui_event != GUI_MNG_EV_MAX )
+    {
+      gui_send_event( gui_event, &traffic_led_3 );
+    }
+
+    // Preparing Events for Side-4
+    gui_event = GUI_MNG_EV_MAX;
+    if( strstr( data, "GREEN4") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      traffic_led_4 = TRAFFIC_LED_GREEN;
+    }
+    else if( strstr( data, "YELLOW4") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      traffic_led_4 = TRAFFIC_LED_YELLOW;
+    }
+    else if( strstr( data, "RED4") != NULL )
+    {
+      gui_event = GUI_MNG_EV_UPDATE_TRAFFIC_LED_4;
+      traffic_led_4 = TRAFFIC_LED_RED;
+    }
+    // send event
+    if( gui_event != GUI_MNG_EV_MAX )
+    {
+      gui_send_event( gui_event, &traffic_led_4 );
     }
   }
   // add for any other topic

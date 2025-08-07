@@ -9,8 +9,6 @@ void ui_Panel3_screen_init(void)
 {
     ui_Panel3 = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Panel3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Panel3, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Panel3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblSide3 = lv_label_create(ui_Panel3);
     lv_obj_set_width(ui_lblSide3, LV_SIZE_CONTENT);   /// 1
@@ -22,6 +20,15 @@ void ui_Panel3_screen_init(void)
     lv_obj_set_style_text_color(ui_lblSide3, lv_color_hex(0x5A7131), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblSide3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblSide3, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblTime3 = lv_label_create(ui_Panel3);
+    lv_obj_set_width(ui_lblTime3, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblTime3, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblTime3, 80);
+    lv_obj_set_y(ui_lblTime3, 0);
+    lv_obj_set_align(ui_lblTime3, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblTime3, "00");
+    lv_obj_set_style_text_font(ui_lblTime3, &ui_font_DsDigital72, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Panel3, ui_event_Panel3, LV_EVENT_ALL, NULL);
 

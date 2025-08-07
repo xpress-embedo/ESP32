@@ -27,21 +27,25 @@ void ui_Panel1_screen_init(void);
 void ui_event_Panel1(lv_event_t * e);
 extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui_lblSide1;
+extern lv_obj_t * ui_lblTime1;
 // SCREEN: ui_Panel2
 void ui_Panel2_screen_init(void);
 void ui_event_Panel2(lv_event_t * e);
 extern lv_obj_t * ui_Panel2;
 extern lv_obj_t * ui_lblSide2;
+extern lv_obj_t * ui_lblTime2;
 // SCREEN: ui_Panel3
 void ui_Panel3_screen_init(void);
 void ui_event_Panel3(lv_event_t * e);
 extern lv_obj_t * ui_Panel3;
 extern lv_obj_t * ui_lblSide3;
+extern lv_obj_t * ui_lblTime3;
 // SCREEN: ui_Panel4
 void ui_Panel4_screen_init(void);
 void ui_event_Panel4(lv_event_t * e);
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_lblSide4;
+extern lv_obj_t * ui_lblTime4;
 extern lv_obj_t * ui____initial_actions0;
 
 
@@ -49,6 +53,7 @@ LV_IMG_DECLARE(ui_img_school_logo_png);    // assets/school_logo.png
 
 
 
+LV_FONT_DECLARE(ui_font_DsDigital72);
 
 
 

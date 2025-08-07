@@ -1,0 +1,16 @@
+{
+  "codename": "DsDigital72",
+  "ttf_path": "/assets/DS-DIGIB.TTF",
+  "bin_path": "/assets\\ui_font_DsDigital72.bin",
+  "c_path": "/assets\\ui_font_DsDigital72.c",
+  "cfg_path": "/assets\\ui_font_DsDigital72.fcfg",
+  "size": 72,
+  "bpp": 8,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

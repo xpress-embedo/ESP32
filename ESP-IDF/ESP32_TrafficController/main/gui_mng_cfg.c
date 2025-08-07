@@ -90,17 +90,23 @@ void gui_cfg_init( void )
     lv_obj_set_height(led_red[idx], 50);
 
     // adjusting green led offset from center
-    lv_obj_set_x(led_green[idx], 0);
-    lv_obj_set_y(led_green[idx], -70);
+    lv_obj_set_x(led_green[idx], -80);
+    lv_obj_set_y(led_green[idx], -40);
     // updating green color
     lv_led_set_color(led_green[idx], lv_palette_main(LV_PALETTE_GREEN));
+
+    // adjusting yellow led offset from center
+    lv_obj_set_x(led_yellow[idx], -80);
+    lv_obj_set_y(led_yellow[idx], 20);
     // updating yellow color
     lv_led_set_color(led_yellow[idx], lv_palette_main(LV_PALETTE_YELLOW));
+
     // adjusting red led offset from center
-    lv_obj_set_x(led_red[idx], 0);
-    lv_obj_set_y(led_red[idx], 70);
+    lv_obj_set_x(led_red[idx], -80);
+    lv_obj_set_y(led_red[idx], 80);
     // updating red color
     lv_led_set_color(led_red[idx], lv_palette_main(LV_PALETTE_RED));
+
     // turn off all leds
     lv_led_off(led_green[idx]);
     lv_led_off(led_yellow[idx]);
@@ -144,7 +150,7 @@ void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
  */
 static void gui_wifi_connecting( uint8_t *data )
 {
-  lv_label_set_text(ui_lblConnecting, "Connecting with Router............");
+  lv_label_set_text(ui_lblConnecting, "Connecting....");
 }
 
 /**
@@ -153,7 +159,7 @@ static void gui_wifi_connecting( uint8_t *data )
  */
 static void gui_mqtt_connecting( uint8_t *data )
 {
-  lv_label_set_text(ui_lblConnecting, "Connecting with MQTT Broker........");
+  lv_label_set_text(ui_lblConnecting, "Connecting with MQTT Broker....");
 }
 
 /**
@@ -177,25 +183,21 @@ static void gui_update_traffic_led_1( uint8_t *data )
   switch ( traffic_led_status )
   {
     case TRAFFIC_LED_GREEN:
-      printf( "Green \r\n ");
       lv_led_on(led_green[0]);
       lv_led_off(led_yellow[0]);
       lv_led_off(led_red[0]);
       break;
     case TRAFFIC_LED_YELLOW:
-      printf( "Yellow \r\n ");
       lv_led_off(led_green[0]);
       lv_led_on(led_yellow[0]);
       lv_led_off(led_red[0]);
       break;
     case TRAFFIC_LED_RED:
-      printf( "Red \r\n ");
       lv_led_off(led_green[0]);
       lv_led_off(led_yellow[0]);
       lv_led_on(led_red[0]);
       break;
     default:
-      printf( "Invalid: %d \r\n ", traffic_led_status);
       lv_led_off(led_green[0]);
       lv_led_off(led_yellow[0]);
       lv_led_off(led_red[0]);
@@ -209,7 +211,30 @@ static void gui_update_traffic_led_1( uint8_t *data )
  */
 static void gui_update_traffic_led_2( uint8_t *data )
 {
-
+  uint8_t traffic_led_status = *data;
+  switch ( traffic_led_status )
+  {
+    case TRAFFIC_LED_GREEN:
+      lv_led_on(led_green[1]);
+      lv_led_off(led_yellow[1]);
+      lv_led_off(led_red[1]);
+      break;
+    case TRAFFIC_LED_YELLOW:
+      lv_led_off(led_green[1]);
+      lv_led_on(led_yellow[1]);
+      lv_led_off(led_red[1]);
+      break;
+    case TRAFFIC_LED_RED:
+      lv_led_off(led_green[1]);
+      lv_led_off(led_yellow[1]);
+      lv_led_on(led_red[1]);
+      break;
+    default:
+      lv_led_off(led_green[1]);
+      lv_led_off(led_yellow[1]);
+      lv_led_off(led_red[1]);
+      break;
+  };
 }
 
 /**
@@ -218,7 +243,30 @@ static void gui_update_traffic_led_2( uint8_t *data )
  */
 static void gui_update_traffic_led_3( uint8_t *data )
 {
-
+  uint8_t traffic_led_status = *data;
+  switch ( traffic_led_status )
+  {
+    case TRAFFIC_LED_GREEN:
+      lv_led_on(led_green[2]);
+      lv_led_off(led_yellow[2]);
+      lv_led_off(led_red[2]);
+      break;
+    case TRAFFIC_LED_YELLOW:
+      lv_led_off(led_green[2]);
+      lv_led_on(led_yellow[2]);
+      lv_led_off(led_red[2]);
+      break;
+    case TRAFFIC_LED_RED:
+      lv_led_off(led_green[2]);
+      lv_led_off(led_yellow[2]);
+      lv_led_on(led_red[2]);
+      break;
+    default:
+      lv_led_off(led_green[2]);
+      lv_led_off(led_yellow[2]);
+      lv_led_off(led_red[2]);
+      break;
+  };
 }
 
 /**
@@ -227,5 +275,31 @@ static void gui_update_traffic_led_3( uint8_t *data )
  */
 static void gui_update_traffic_led_4( uint8_t *data )
 {
-
+  uint8_t traffic_led_status = *data;
+  switch ( traffic_led_status )
+  {
+    case TRAFFIC_LED_GREEN:
+      lv_led_on(led_green[3]);
+      lv_led_off(led_yellow[3]);
+      lv_led_off(led_red[3]);
+      break;
+    case TRAFFIC_LED_YELLOW:
+      lv_led_off(led_green[3]);
+      lv_led_on(led_yellow[3]);
+      lv_led_off(led_red[3]);
+      break;
+    case TRAFFIC_LED_RED:
+      lv_led_off(led_green[3]);
+      lv_led_off(led_yellow[3]);
+      lv_led_on(led_red[3]);
+      break;
+    default:
+      lv_led_off(led_green[3]);
+      lv_led_off(led_yellow[3]);
+      lv_led_off(led_red[3]);
+      break;
+  };
 }
+
+
+

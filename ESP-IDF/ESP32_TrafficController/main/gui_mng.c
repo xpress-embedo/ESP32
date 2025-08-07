@@ -19,7 +19,7 @@
 // Macros
 #define GUI_LOCK()                        gui_update_lock()
 #define GUI_UNLOCK()                      gui_update_unlock()
-#define GUI_EVENT_QUEUE_LEN               (5)
+#define GUI_EVENT_QUEUE_LEN               (10)
 
 // Private Variables
 static const char *TAG = "GUI";
