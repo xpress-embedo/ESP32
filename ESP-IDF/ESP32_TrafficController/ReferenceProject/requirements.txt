@@ -1,0 +1,8 @@
+imutil
+opencv-python
+serial
+argparse
+imutils
+numpy
+opencv-python
+pyserial
