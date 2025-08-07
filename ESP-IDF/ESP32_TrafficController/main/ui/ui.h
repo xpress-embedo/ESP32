@@ -24,7 +24,24 @@ extern lv_obj_t * ui_imgLogo;
 extern lv_obj_t * ui_lblTrafficController;
 // SCREEN: ui_Panel1
 void ui_Panel1_screen_init(void);
+void ui_event_Panel1(lv_event_t * e);
 extern lv_obj_t * ui_Panel1;
+extern lv_obj_t * ui_lblSide1;
+// SCREEN: ui_Panel2
+void ui_Panel2_screen_init(void);
+void ui_event_Panel2(lv_event_t * e);
+extern lv_obj_t * ui_Panel2;
+extern lv_obj_t * ui_lblSide2;
+// SCREEN: ui_Panel3
+void ui_Panel3_screen_init(void);
+void ui_event_Panel3(lv_event_t * e);
+extern lv_obj_t * ui_Panel3;
+extern lv_obj_t * ui_lblSide3;
+// SCREEN: ui_Panel4
+void ui_Panel4_screen_init(void);
+void ui_event_Panel4(lv_event_t * e);
+extern lv_obj_t * ui_Panel4;
+extern lv_obj_t * ui_lblSide4;
 extern lv_obj_t * ui____initial_actions0;
 
 

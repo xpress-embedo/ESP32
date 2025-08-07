@@ -19,7 +19,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_lblConnecting, -30);
     lv_obj_set_align(ui_lblConnecting, LV_ALIGN_BOTTOM_RIGHT);
     lv_label_set_long_mode(ui_lblConnecting, LV_LABEL_LONG_SCROLL);
-    lv_label_set_text(ui_lblConnecting, "Connecting with Router............");
+    lv_label_set_text(ui_lblConnecting, "Connecting....");
     lv_obj_set_style_text_color(ui_lblConnecting, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblConnecting, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblConnecting, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -54,7 +54,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_lblTrafficController, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lblTrafficController, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_lblTrafficController, 0);
-    lv_obj_set_y(ui_lblTrafficController, 10);
+    lv_obj_set_y(ui_lblTrafficController, 5);
     lv_obj_set_align(ui_lblTrafficController, LV_ALIGN_TOP_MID);
     lv_label_set_text(ui_lblTrafficController, "Traffic Controller System");
     lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0x5A7131), LV_PART_MAIN | LV_STATE_DEFAULT);

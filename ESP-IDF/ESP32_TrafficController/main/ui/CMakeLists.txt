@@ -1,5 +1,8 @@
 SET(SOURCES screens/ui_MainScreen.c
     screens/ui_Panel1.c
+    screens/ui_Panel2.c
+    screens/ui_Panel3.c
+    screens/ui_Panel4.c
     ui.c
     components/ui_comp_hook.c
     ui_helpers.c

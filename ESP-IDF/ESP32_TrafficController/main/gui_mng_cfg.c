@@ -12,6 +12,7 @@
 
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
+#define NUM_OF_SIDES                    (4u)
 
 
 // function template for callback function
@@ -43,9 +44,10 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_UPDATE_TRAFFIC_LED_3,  gui_update_traffic_led_3  },
   { GUI_MNG_EV_UPDATE_TRAFFIC_LED_4,  gui_update_traffic_led_4  },
 };
-static lv_obj_t * led_green;
-static lv_obj_t * led_yellow;
-static lv_obj_t * led_red;
+static lv_obj_t * led_green[NUM_OF_SIDES];
+static lv_obj_t * led_yellow[NUM_OF_SIDES];
+static lv_obj_t * led_red[NUM_OF_SIDES];
+static lv_obj_t * panel_table[NUM_OF_SIDES];
 
 // Public Function Definitions
 
@@ -57,7 +59,59 @@ static lv_obj_t * led_red;
  */
 void gui_cfg_init( void )
 {
+  uint8_t idx;
   ui_init();
+
+  // updating array pointer with panel information for easy drawing
+  panel_table[0] = ui_Panel1;
+  panel_table[1] = ui_Panel2;
+  panel_table[2] = ui_Panel3;
+  panel_table[3] = ui_Panel4;
+
+  // there are some widgets that are still not available in square line studio
+  // hence creating them manually
+  for( idx=0; idx<NUM_OF_SIDES; idx++ )
+  {
+    led_green[idx]  = lv_led_create( panel_table[idx] );
+    led_yellow[idx] = lv_led_create( panel_table[idx] );
+    led_red[idx]    = lv_led_create( panel_table[idx] );
+
+    lv_obj_align(led_green[idx],  LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align(led_yellow[idx], LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align(led_red[idx],    LV_ALIGN_CENTER, 0, 0);
+
+    lv_obj_set_width(led_green[idx], 50);
+    lv_obj_set_height(led_green[idx], 50);
+
+    lv_obj_set_width(led_yellow[idx], 50);
+    lv_obj_set_height(led_yellow[idx], 50);
+
+    lv_obj_set_width(led_red[idx], 50);
+    lv_obj_set_height(led_red[idx], 50);
+
+    // adjusting green led offset from center
+    lv_obj_set_x(led_green[idx], 0);
+    lv_obj_set_y(led_green[idx], -70);
+    // updating green color
+    lv_led_set_color(led_green[idx], lv_palette_main(LV_PALETTE_GREEN));
+    // updating yellow color
+    lv_led_set_color(led_yellow[idx], lv_palette_main(LV_PALETTE_YELLOW));
+    // adjusting red led offset from center
+    lv_obj_set_x(led_red[idx], 0);
+    lv_obj_set_y(led_red[idx], 70);
+    // updating red color
+    lv_led_set_color(led_red[idx], lv_palette_main(LV_PALETTE_RED));
+    // turn off all leds
+    lv_led_off(led_green[idx]);
+    lv_led_off(led_yellow[idx]);
+    lv_led_off(led_red[idx]);
+    // test code
+    // lv_led_on(led_green[idx]);
+    // lv_led_on(led_yellow[idx]);
+    // lv_led_on(led_red[idx]);
+    // turn on Red Led only
+    lv_led_on(led_red[idx]);
+  }
 }
 
 /**
@@ -110,49 +164,6 @@ static void gui_mqtt_connecting( uint8_t *data )
 static void gui_load_panel_1( uint8_t *data )
 {
   lv_disp_load_scr(ui_Panel1);
-  // there are some widgets that are still not available in square line studio
-  // hence creating them manually
-  led_green   = lv_led_create( ui_Panel1 );
-  led_yellow  = lv_led_create( ui_Panel1 );
-  led_red     = lv_led_create( ui_Panel1 );
-
-  lv_obj_align(led_green,   LV_ALIGN_CENTER, 0, 0);
-  lv_obj_align(led_yellow,  LV_ALIGN_CENTER, 0, 0);
-  lv_obj_align(led_red,     LV_ALIGN_CENTER, 0, 0);
-
-  lv_obj_set_width(led_green, 50);
-  lv_obj_set_height(led_green, 50);
-
-  lv_obj_set_width(led_yellow, 50);
-  lv_obj_set_height(led_yellow, 50);
-
-  lv_obj_set_width(led_red, 50);
-  lv_obj_set_height(led_red, 50);
-
-  // adjusting green led offset from center
-  lv_obj_set_x(led_green, 0);
-  lv_obj_set_y(led_green, -70);
-  // updating green color
-  lv_led_set_color(led_green, lv_palette_main(LV_PALETTE_GREEN));
-
-  // updating yellow color
-  lv_led_set_color(led_yellow, lv_palette_main(LV_PALETTE_YELLOW));
-
-  // adjusting red led offset from center
-  lv_obj_set_x(led_red, 0);
-  lv_obj_set_y(led_red, 70);
-  // updating red color
-  lv_led_set_color(led_red, lv_palette_main(LV_PALETTE_RED));
-
-  // turn off all leds
-  lv_led_off(led_green);
-  lv_led_off(led_yellow);
-  lv_led_off(led_red);
-
-  // test code
-  lv_led_on(led_green);
-  lv_led_on(led_yellow);
-  lv_led_on(led_red);
 }
 
 
@@ -167,27 +178,27 @@ static void gui_update_traffic_led_1( uint8_t *data )
   {
     case TRAFFIC_LED_GREEN:
       printf( "Green \r\n ");
-      lv_led_on(led_green);
-      lv_led_off(led_yellow);
-      lv_led_off(led_red);
+      lv_led_on(led_green[0]);
+      lv_led_off(led_yellow[0]);
+      lv_led_off(led_red[0]);
       break;
     case TRAFFIC_LED_YELLOW:
       printf( "Yellow \r\n ");
-      lv_led_off(led_green);
-      lv_led_on(led_yellow);
-      lv_led_off(led_red);
+      lv_led_off(led_green[0]);
+      lv_led_on(led_yellow[0]);
+      lv_led_off(led_red[0]);
       break;
     case TRAFFIC_LED_RED:
       printf( "Red \r\n ");
-      lv_led_off(led_green);
-      lv_led_off(led_yellow);
-      lv_led_on(led_red);
+      lv_led_off(led_green[0]);
+      lv_led_off(led_yellow[0]);
+      lv_led_on(led_red[0]);
       break;
     default:
       printf( "Invalid: %d \r\n ", traffic_led_status);
-      lv_led_off(led_green);
-      lv_led_off(led_yellow);
-      lv_led_off(led_red);
+      lv_led_off(led_green[0]);
+      lv_led_off(led_yellow[0]);
+      lv_led_off(led_red[0]);
       break;
   };
 }

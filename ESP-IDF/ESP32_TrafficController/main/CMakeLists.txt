@@ -9,7 +9,11 @@ idf_component_register( SRCS
 												ui/ui.c
     										ui/screens/ui_MainScreen.c
     										ui/screens/ui_Panel1.c
+    										ui/screens/ui_Panel2.c
+    										ui/screens/ui_Panel3.c
+    										ui/screens/ui_Panel4.c
     										ui/images/ui_img_school_logo_png.c
+    										ui/ui_helpers.c
 												INCLUDE_DIRS 
 												"."
 												"ui"
