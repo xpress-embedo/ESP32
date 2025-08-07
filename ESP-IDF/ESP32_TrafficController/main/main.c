@@ -252,7 +252,6 @@ static void app_handle_mqtt_data(esp_mqtt_event_handle_t event)
   // hence I used strncmp function and check the bytes excluding the last null
   if (event->topic_len == strlen(traffic_topic) && strncmp(topic, traffic_topic, event->topic_len) == 0)
   {
-    ESP_LOGI(TAG, "I am here at wrong place");
     // Preparing Events for Side-1
     if( strstr( data, "GREEN1") != NULL )
     {
@@ -461,6 +460,15 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
       // Subscribe to Traffic Time for Side-1 Topic
       msg_id = esp_mqtt_client_subscribe(client, traffic_time_1_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      // Subscribe to Traffic Time for Side-2 Topic
+      msg_id = esp_mqtt_client_subscribe(client, traffic_time_2_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      // Subscribe to Traffic Time for Side-3 Topic
+      msg_id = esp_mqtt_client_subscribe(client, traffic_time_3_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+      // Subscribe to Traffic Time for Side-4 Topic
+      msg_id = esp_mqtt_client_subscribe(client, traffic_time_4_topic, 0);
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
       // send an event to GUI manager that we are connected

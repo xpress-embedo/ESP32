@@ -42,8 +42,13 @@ _GREEN_TIME = 10
 _RED_TIME = 10
 _YELLOW_TIME = 3
 
+# timing for green signal of each side to be sent to the ESP32 over MQTT
 side1_total_time = 0
 side1_total_time_last = 0
+
+side2_total_time = 0
+side3_total_time = 0
+side4_total_time = 0
 
 # get the available serial ports
 ports = serial.tools.list_ports.comports()
@@ -169,7 +174,7 @@ while True:
             current_color = _CURRENT_GREEN
             last_update = seconds
             current_side = 1
-            print("SIDE 1 GREEN ","SIDE 2 REDd")
+            print("GREEN1 RED2 RED3 RED4")
             serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","GREEN1 RED2 RED3 RED4")
 
@@ -194,7 +199,7 @@ while True:
             #CHANGE TO YELLOW
             current_color = _CURRENT_RED
             last_update = seconds
-            print("SIDE 1 YELLOW","SIDE 2 YELLOW")
+            print ("YELLOW1 YELLOW2 RED3 RED4")
             serialPort.write("YELLOW1 YELLOW2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","YELLOW1 YELLOW2 RED3 RED4")
             side1_total_time = 0
@@ -207,9 +212,11 @@ while True:
             current_color = _CURRENT_YELLOW
             last_update = seconds
             current_side  = 2
-            print("SIDE 2 GREEN " , "SIDE 3 RED")
+            print ("RED1 GREEN2 RED3 RED4")
             serialPort.write("RED1 GREEN2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 GREEN2 RED3 RED4")
+            side2_total_time = _GREEN_TIME
+            client.publish("TrafficTimeSide2", str(side2_total_time))
             
             
         if current_color ==  _CURRENT_YELLOW and current_side == 2 and last_update + _RED_TIME < seconds:
@@ -220,15 +227,19 @@ while True:
             print("SIDE 2 YELLOW","SIDE 3 YELLOW")
             serialPort.write("RED1 YELLOW2 YELLOW3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 YELLOW2 YELLOW3 RED4")
+            side2_total_time = 0
+            client.publish("TrafficTimeSide2", str(side2_total_time))
             
             
         if current_color ==  _CURRENT_GREEN and current_side == 3 and last_update + _YELLOW_TIME < seconds:
             #CHANGE TO GREEN
             current_color = _CURRENT_YELLOW
             last_update = seconds
-            print("SIDE 3 GREEN ","SIDE 4 RED   ")
+            print ("RED1 RED2 GREEN3 RED4")
             serialPort.write("RED1 RED2 GREEN3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 RED2 GREEN3 RED4")
+            side3_total_time = _GREEN_TIME
+            client.publish("TrafficTimeSide3", str(side3_total_time))
 
         
         if current_color ==  _CURRENT_YELLOW and current_side == 3 and last_update + _GREEN_TIME < seconds:
@@ -239,21 +250,25 @@ while True:
             print("SIDE 3 YELLOW ","SIDE 4 YELLOW   ")
             serialPort.write("RED1 RED2 YELLOW3 YELLOW4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 RED2 YELLOW3 YELLOW4")
+            side3_total_time = 0
+            client.publish("TrafficTimeSide3", str(side3_total_time))
 
           
         if current_color ==  _CURRENT_RED and current_side == 4 and last_update + _YELLOW_TIME < seconds:
             #CHANGE TO GREEN
             current_color = _CURRENT_YELLOW
             last_update = seconds
-            print("SIDE 4 GREEN ","SIDE 1 RED   ")
+            print ("RED1 RED2 RED3 GREEN4")
             serialPort.write("RED1 RED2 RED3 GREEN4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 RED2 RED3 GREEN4")
+            side4_total_time = _GREEN_TIME
+            client.publish("TrafficTimeSide4", str(side4_total_time))
         
         if current_color ==  _CURRENT_YELLOW and current_side == 4 and last_update + _GREEN_TIME < seconds:
             #CHANGE TO GREEN
             current_color = _CURRENT_GREEN
             last_update = seconds
-            print("SIDE 4 YELLOW1 ","SIDE 1 YELLOW1   ")
+            print ("RED1 YELLOW1 RED3 YELLOW4")
             serialPort.write("RED1 YELLOW1 RED3 YELLOW4\n".encode('ascii'))
             client.publish("TrafficTopic","RED1 YELLOW1 RED3 YELLOW4")
 
@@ -262,7 +277,7 @@ while True:
             current_color = _CURRENT_GREEN
             current_side  = 1
             last_update = seconds
-            print("SIDE 1 GREEN ","SIDE 2 RED   LAST")
+            print ("GREEN1 RED2 RED3 RED4")
             serialPort.write("GREEN1 RED2 RED3 RED4\n".encode('ascii'))
             client.publish("TrafficTopic","GREEN1 RED2 RED3 RED4")
 
