@@ -616,7 +616,7 @@ static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req)
 {
   ESP_LOGI(TAG, "wifiDisconnect.json requested");
 
-//  wifi_app_send_msg(WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT);
+  wifi_app_send_msg(WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT);
   return ESP_OK;
 }
 
