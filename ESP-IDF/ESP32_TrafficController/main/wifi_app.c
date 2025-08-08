@@ -29,7 +29,7 @@
 static const char *TAG = "WiFi_APP";
 
 // Queue handle used to manipulate the main queue events
-static QueueHandle_t wifi_app_queue_handle;
+static QueueHandle_t wifi_app_q_handle;
 // netif objects for the station mode and access point modes
 esp_netif_t* esp_netif_sta = NULL;
 esp_netif_t* esp_netif_ap = NULL;
@@ -51,7 +51,7 @@ void wifi_app_start( void )
   esp_log_level_set("wifi", ESP_LOG_NONE);
 
   // create a message queue
-  wifi_app_queue_handle = xQueueCreate( WIFI_APP_QUEUE_SIZE, sizeof(wifi_app_queue_msg_t) );
+  wifi_app_q_handle = xQueueCreate( WIFI_APP_QUEUE_SIZE, sizeof(wifi_app_queue_msg_t) );
 
   // start the WiFi application task
   xTaskCreate(&wifi_app_task, "wifi app task", WIFI_APP_TASK_SIZE, NULL, WIFI_APP_TASK_PRIORITY, NULL);
@@ -61,7 +61,7 @@ BaseType_t wifi_app_send_msg( wifi_app_msg_e msg_id )
 {
   wifi_app_queue_msg_t msg;
   msg.msg_id = msg_id;
-  return xQueueSend( wifi_app_queue_handle, &msg, portMAX_DELAY );
+  return xQueueSend( wifi_app_q_handle, &msg, portMAX_DELAY );
 }
 
 // Private Function Definitions
@@ -86,7 +86,7 @@ static void wifi_app_task(void *pvParameter)
 
   for( ;; )
   {
-    if( xQueueReceive(wifi_app_queue_handle, &msg, portMAX_DELAY) )
+    if( xQueueReceive(wifi_app_q_handle, &msg, portMAX_DELAY) )
     {
       switch( msg.msg_id )
       {

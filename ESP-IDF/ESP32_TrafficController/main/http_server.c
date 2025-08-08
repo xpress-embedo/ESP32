@@ -48,6 +48,7 @@ extern const uint8_t favicon_ico_start[]              asm("_binary_favicon_ico_s
 extern const uint8_t favicon_ico_end[]                asm("_binary_favicon_ico_end");
 
 // Private Function Prototypes
+static void http_server_monitor(void *pvParameter);
 static httpd_handle_t http_server_configure( void );
 static esp_err_t http_server_j_query_handler(httpd_req_t *req);
 static esp_err_t http_server_index_html_handler(httpd_req_t *req);
@@ -76,6 +77,9 @@ void http_server_start(void)
   }
 }
 
+/*
+ * Stops the HTTP Server
+ */
 void http_server_stop(void)
 {
   if( http_server_handle )
@@ -84,9 +88,72 @@ void http_server_stop(void)
     ESP_LOGI(TAG, "http_server_stop: stopping HTTP Server");
     http_server_handle = NULL;
   }
+  if( task_http_server_monitor )
+  {
+    vTaskDelete(task_http_server_monitor);
+    ESP_LOGI(TAG,"http_server_stop: stopping HTTP server monitor");
+    task_http_server_monitor = NULL;
+  }
+}
+
+/*
+ * Sends a message to the Queue
+ * @param msg_id Message ID from the http_server_msg_e enum
+ * @return pdTRUE if an item was successfully sent to the queue, otherwise pdFALSE
+ */
+BaseType_t http_server_monitor_send_msg(http_server_msg_e msg_id)
+{
+  http_server_q_msg_t msg;
+  msg.msg_id = msg_id;
+  return xQueueSend(http_server_monitor_q_handle, &msg, portMAX_DELAY );
 }
 
 // Private Function Definitions
+/*
+ * HTTP Server Monitor Task used to track events of the HTTP Server.
+ * @param pvParameter parameters which can be passed to the task
+ * @return http server instance handle if successful, NULL otherwise
+ */
+static void http_server_monitor(void *pvParameter)
+{
+  http_server_q_msg_t msg;
+  for( ;; )
+  {
+    if( xQueueReceive(http_server_monitor_q_handle, &msg, portMAX_DELAY) )
+    {
+      switch (msg.msg_id)
+      {
+      case HTTP_MSG_WIFI_CONNECT_INIT:
+        ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_INIT");
+        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECTING;
+        break;
+      case HTTP_MSG_WIFI_CONNECT_SUCCESS:
+        ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_SUCCESS");
+        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_SUCCESS;
+        break;
+      case HTTP_MSG_WIFI_CONNECT_FAIL:
+        ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_FAIL");
+        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_FAILED;
+        break;
+      case HTTP_MSG_WIFI_USER_DISCONNECT:
+        ESP_LOGI( TAG, "HTTP_MSG_WIFI_USER_DISCONNECT");
+        // g_wifi_connect_status = HTTP_WIFI_STATUS_DISCONNECTED;
+        break;
+      case HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL:
+        ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_SUCCESSFUL");
+        // fw_update_status = OTA_UPDATE_SUCCESSFUL;
+        // http_server_fw_update_reset_timer();
+        break;
+      case HTTP_MSG_WIFI_OTA_UPDATE_FAILED:
+        ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_FAILED");
+        // fw_update_status = OTA_UPDATE_FAILED;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+}
 /*
  * Sets up the default httpd server configuration
  * @return http server instance handle if successful, NULL otherwise
@@ -97,11 +164,9 @@ static httpd_handle_t http_server_configure(void)
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
   // create HTTP Server Monitor Task
-  /*
   xTaskCreate(&http_server_monitor, "http_server_monitor", \
-              HTTP_SERVER_MONITOR_STACK_SIZE, NULL, \
-              HTTP_SERVER_MONITOR_PRIORITY, &task_http_server_monitor);
-              */
+              HTTP_SERVER_MONITOR_TASK_SIZE, NULL, \
+              HTTP_SERVER_MONITOR_TASK_PRIORITY, &task_http_server_monitor);
 
   // create a message queue
   http_server_monitor_q_handle = xQueueCreate(HTTP_SERVER_MONITOR_QUEUE_SIZE,\
