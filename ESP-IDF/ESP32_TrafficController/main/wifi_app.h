@@ -30,9 +30,9 @@
 #define WIFI_AP_NETMASK                 "255.255.255.0"
 #define WIFI_AP_BANDWIDTH               WIFI_BW_HT20    // AP Bandwidth 20MHz (40MHz is other option)
 #define WIFI_STA_POWER_SAVE             WIFI_PS_NONE    // No Power Save
-#define MAX_SSID_LENGTH                 32
-#define MAX_PASSWORD_LENGTH             64
-#define MAX_CONNECTION_RETRIES          5
+#define WIFI_MAX_SSID_LENGTH            32
+#define WIFI_MAX_PASSWORD_LENGTH        64
+#define WIFI_MAX_CONNECTION_RETRIES     5
 
 /*
  * Message IDs for the WiFi Application Task

@@ -19,6 +19,7 @@
 
 #include "wifi_app.h"
 #include "http_server.h"
+#include "app_nvs.h"
 
 // Private Macros
 #define WIFI_APP_QUEUE_SIZE                           (5)
@@ -35,6 +36,15 @@ static QueueHandle_t wifi_app_q_handle;
 static wifi_config_t * wifi_config = NULL;
 // used to track the number of retries when a connection attempt fails
 static int g_retry_number;
+
+// WiFi application Event group handle and status bits
+static EventGroupHandle_t wifi_app_event_group;
+const int WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT   = BIT0;
+const int WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT    = BIT1;
+const int WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT  = BIT2;
+// This bit is used to keep track whether the STA is connected or not, this will
+// prevent the reset button operation if WiFi is not connected
+const int WIFI_APP_STA_CONNECTED_GOT_IP_BIT           = BIT3;
 
 // netif objects for the station mode and access point modes
 esp_netif_t* esp_netif_sta = NULL;
@@ -63,6 +73,9 @@ void wifi_app_start( void )
   // create a message queue
   wifi_app_q_handle = xQueueCreate( WIFI_APP_QUEUE_SIZE, sizeof(wifi_app_queue_msg_t) );
 
+  // Create wifi application event group
+  wifi_app_event_group = xEventGroupCreate();
+
   // start the WiFi application task
   xTaskCreate(&wifi_app_task, "wifi app task", WIFI_APP_TASK_SIZE, NULL, WIFI_APP_TASK_PRIORITY, NULL);
 }
@@ -86,6 +99,7 @@ wifi_config_t * wifi_app_get_wifi_config( void )
 static void wifi_app_task(void *pvParameter)
 {
   wifi_app_queue_msg_t msg;
+  EventBits_t event_bits;
 
   // initialize the event handler
   wifi_app_event_handler_init();
@@ -100,7 +114,7 @@ static void wifi_app_task(void *pvParameter)
   ESP_ERROR_CHECK( esp_wifi_start() );
 
   // send the first message
-  wifi_app_send_msg( WIFI_APP_MSG_START_HTTP_SERVER );
+  wifi_app_send_msg( WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS );
 
   for( ;; )
   {
@@ -114,6 +128,8 @@ static void wifi_app_task(void *pvParameter)
           break;
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
           ESP_LOGI( TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER" );
+
+          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
 
           // Attempt a Connection
           wifi_app_connect_sta();
@@ -129,17 +145,97 @@ static void wifi_app_task(void *pvParameter)
 
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
+
+          // here we got the IP and hence we need to save the credentials in the flash
+          event_bits = xEventGroupGetBits( wifi_app_event_group );
+
+          // save Station credentials only when saving from the HTTP server
+          // because in another case it is already loaded from nvs and no need to save again
+          if( event_bits & WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT )
+          {
+            // clearing this bit again here, in case we want to disconnect and connect again
+            // in this case we need to save the new credentials again
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+          }
+          else
+          {
+            // save credentials
+            app_nvs_save_sta_creds();
+          }
+
+          if( event_bits & WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT )
+          {
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
+          }
           break;
         case WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT:
           ESP_LOGI(TAG, "WIFI_APP_MSG_USR_REQUESTED_STA_DISCONNECT");
 
-          g_retry_number = MAX_CONNECTION_RETRIES;
-          ESP_ERROR_CHECK( esp_wifi_disconnect() );
+          event_bits = xEventGroupGetBits(wifi_app_event_group);
+          // If connected, then disconnect and clear the credentials
+          // NOTE: Disconnection User Req. is of two types first "Disconnect" button and "Reset/Boot" button on board.
+          if( event_bits & WIFI_APP_STA_CONNECTED_GOT_IP_BIT )
+          {
+            xEventGroupSetBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
+
+            g_retry_number = WIFI_MAX_CONNECTION_RETRIES;
+            ESP_ERROR_CHECK( esp_wifi_disconnect() );
+
+            // since user requested the disconnection, it's better to clear the credentials
+            app_nvs_clear_sta_creds();
+          }
+
           break;
         case WIFI_APP_MSG_STA_DISCONNECTED:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
 
-          http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_FAIL );
+          event_bits = xEventGroupGetBits(wifi_app_event_group);
+
+          if( event_bits & WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Using Saved Credentials");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+            // At startup, the maximum retries is reached and the connection can't be established
+            // hence we will clear the flash
+            app_nvs_clear_sta_creds();
+          }
+          else if( event_bits & WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Using HTTP Server");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT);
+            // send message to http server that esp32 is disconnected as station
+            http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_FAIL );
+          }
+          else if( event_bits & WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT )
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: User Requested Disconnection");
+            xEventGroupClearBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
+            // send message to http server that esp32 is disconnected as station
+            http_server_monitor_send_msg( HTTP_MSG_WIFI_USER_DISCONNECT );
+          }
+          else
+          {
+            ESP_LOGI(TAG, "WIFI_APP_MSG_STA_DISCONNECTED: Attempt Failed check WiFi Access Point availability");
+            // Adjust this case according to our needs (let's say retrying etc)
+          }
+
+          break;
+        case WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS:
+          ESP_LOGI(TAG,"WIFI_APP_MSG_LOAD_SAVED_CREDENTIALS");
+
+          if( app_nvs_load_sta_creds() )
+          {
+            ESP_LOGI(TAG, "Loaded Station Credentials");
+            wifi_app_connect_sta();
+            xEventGroupSetBits(wifi_app_event_group, WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT);
+          }
+          else
+          {
+            ESP_LOGI( TAG, "Unable to Load the Saved Credential" );
+          }
+          // Next step is to start the http web server
+          // earlier this msg was sent first but now, it is triggered after checking the saved credentials
+          wifi_app_send_msg( WIFI_APP_MSG_START_HTTP_SERVER );
           break;
         default:
           break;
@@ -275,7 +371,7 @@ static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int3
         *event = *((wifi_event_sta_disconnected_t*)event_data);
         ESP_LOGI(TAG, "WIFI_EVENT_STA_DISCONNECTED, Reason Code %d", event->reason);
 
-        if( g_retry_number < MAX_CONNECTION_RETRIES )
+        if( g_retry_number < WIFI_MAX_CONNECTION_RETRIES )
         {
           esp_wifi_connect();
           g_retry_number++;
