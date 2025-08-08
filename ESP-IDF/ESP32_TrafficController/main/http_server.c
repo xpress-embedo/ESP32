@@ -567,17 +567,12 @@ static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req)
  */
 static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req)
 {
-  /*
   ESP_LOGI(TAG, "/wifiConnectInfo.json Requested");
 
   char ip_info_JSON[200] = { 0 };
   // to be on safer size let's clear the local array, to make sure it doesn't
   // contain any garbage data
   memset(ip_info_JSON, 0x00, sizeof(ip_info_JSON));
-
-  // todo: this macro is already present in ip4_addr.h file, but somehow I am
-  // not able to include it, I will investigate it later
-  #define IP4ADDR_STRLEN_MAX  16
 
   char ip[IP4ADDR_STRLEN_MAX];
   char netmask[IP4ADDR_STRLEN_MAX];
@@ -607,7 +602,6 @@ static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req)
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_send(req, ip_info_JSON, strlen(ip_info_JSON));
-  */
 
   return ESP_OK;
 }

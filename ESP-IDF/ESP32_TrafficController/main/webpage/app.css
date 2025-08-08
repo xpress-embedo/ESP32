@@ -16,72 +16,87 @@ h1 {
 }
 
 h2 {
-	font-size: 1.4em;
+    font-size: 1.4em;
     color: #1d3557;
 }
 
 h3 {
-	font-size: 1.2em;
+    font-size: 1.2em;
     color: #1d3557;
 }
 
 h4 {
-	font-size: 1em;
+    font-size: 1em;
     color: #1d3557;
 }
 
 .gr {
-	color: green;
+    color: green;
 }
+
 .rd {
-	color: red;
+    color: red;
 }
 
 .buttons {
     padding: 5px;
 }
 
+#connected_ap_label, #connected_ap {
+    display: inline;
+}
+
+#ip_address_label, #netmask_label, #gateway_label {
+    display: inline;
+}
+
+#wifi_connect_ip, #wifi_connect_netmask, #wifi_connect_gateway {
+    display: inline;
+}
+
+#connected_ap, #wifi_connect_ip, #wifi_connect_netmask {
+    color: #1d3557;
+}
+
+/* Default style for all buttons */
 input[type="button"] {
-	font-size: 16px;
-	border: 0;
+    font-size: 16px;
+    border: 0;
     line-height: 2;
     padding: 0 20px;
     text-align: center;
     color: #ffffff;
     text-shadow: 1px 1px 1px #000;
     border-radius: 0px;
-    background-color: #388E3C;
+    background-color: #388E3C; /* Green for Connect */
+    cursor: pointer;
 }
 
-input[type="button"]:hover {
+/* Hover effect for Connect button */
+#connect_wifi:hover {
     background-color: #4CAF50;
-    /* background-color: #A5D6A7; */
 }
 
-input[type="button"]:active {
-    box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
-                inset 2px 2px 3px rgba(0, 0, 0, .6);
+/* Style for Disconnect button */
+#disconnect_wifi {
+    background-color: #D32F2F; /* Red */
+    /* initially hidden, will come when connection is established */
+    display: none;
+}
+
+/* Hover effect for Disconnect button */
+#disconnect_wifi:hover {
+    background-color: #F44336; /* Brighter red */
 }
 
 .show-password-label {
-  font-family: 'Segoe UI', sans-serif; /* Change to any preferred font */
-  font-size: 12px;
-  color: #2E7D32; /* A rich green shade */
-  margin-left: 2px;
-  cursor: pointer;
+    font-family: 'Segoe UI', sans-serif; /* Change to any preferred font */
+    font-size: 12px;
+    color: #2E7D32; /* A rich green shade */
+    margin-left: 2px;
+    cursor: pointer;
 }
 
 .show-password-label input[type="checkbox"] {
-  margin-right: 5px;
+    margin-right: 5px;
 }
-
-
-
-
-
-
-
-
-
-
-

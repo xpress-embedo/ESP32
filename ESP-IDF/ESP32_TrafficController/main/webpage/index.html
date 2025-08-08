@@ -1,37 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<script src='jquery-3.3.1.min.js'></script>
-		<link rel="stylesheet" href="app.css">
-		<script async src="app.js"></script>
-		<title>ESP32 Udemy Course</title>
-	</head>
-	<body>
-	<header>
-		<h1>Traffice Controller System</h1>
-	</header>
-		
-	<div id="WiFiConnect">
-		<h2>WiFi Connect</h2>
-		<hr>
-		<section>
-			<input id="connect_ssid" type="text" maxlength="32" placeholder="TestWiFi" value="">
-		</section>
-		<section>
-			<input id="connect_pass" type="password" maxlength="64" placeholder="12345678" value="">
-			<label for="show_pass" class="show-password-label">
-			<input id="show_pass" type="checkbox" onclick="showPassword()"> Show Password
-  		</label>
-</section>
-		<div class="buttons">
-			<input id="connect_wifi" type="button" value="Connect" />
-		</div>
-		<div id="wifi_connect_credentials_errors"></div>
-		<h4 id="wifi_connect_status"></h4>
-	</div>
-		
-	</body>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script src='jquery-3.3.1.min.js'></script>
+    <link rel="stylesheet" href="app.css">
+    <script async src="app.js"></script>
+    <title>Traffic Controller</title>
+  </head>
+  <body>
+  <header>
+    <h1>Traffic Controller System</h1>
+  </header>
+    
+  <div id="WiFiConnect">
+    <h2>WiFi Connect</h2>
+    <section>
+      <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
+      <input id="connect_pswd" type="password" maxlength="64" placeholder="Password" value="">
+      <input type="checkbox" onclick="showPassword()">Show Password
+    </section>
+
+    <div class="buttons">
+      <input id="connect_wifi" type="button" value="Connect"/>
+      <input id="disconnect_wifi" type="button" value="Disconnect" />
+    </div>
+  <div id="wifi_connect_credentials_errors"></div>
+  <h4 id="wifi_connect_status"></h4>
+  </div>
+
+  <hr>
+
+  <div id="ConnectInfo">
+    <section>
+      <div id="connected_ap_label"></div> <div id="connected_ap"></div>
+    </section>
+    <div id="ip_address_label"></div> <div id="wifi_connect_ip"></div> <br/>
+    <div id="netmask_label"></div> <div id="wifi_connect_netmask"></div> <br/>
+    <div id="gateway_label"></div> <div id="wifi_connect_gateway"></div> <br/>
+  </div>
+  <hr>
+  
+  </body>
 <html>
