@@ -6,6 +6,7 @@ idf_component_register( SRCS
 												tft.c
 												gui_mng.c
 												gui_mng_cfg.c
+												wifi_app.c
 												ui/ui.c
     										ui/screens/ui_MainScreen.c
     										ui/screens/ui_Panel1.c

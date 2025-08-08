@@ -18,6 +18,7 @@
 #include "mqtt_client.h"
 
 #include "main.h"
+#include "wifi_app.h"
 #include "gui_mng.h"
 
 // Private Macros
@@ -78,8 +79,6 @@ void app_main(void)
   ESP_LOGI(TAG, "Free memory: %" PRIu32 " bytes", esp_get_free_heap_size());
   ESP_LOGI(TAG, "IDF version: %s", esp_get_idf_version());
 
-  // Disable default logging messages
-  esp_log_level_set("wifi", ESP_LOG_NONE);
   esp_log_level_set("gpio", ESP_LOG_NONE);
 
   // start the GUI manager
@@ -88,8 +87,10 @@ void app_main(void)
   // send an event to GUI manager
   gui_send_event(GUI_MNG_EV_WIFI_CONNECTING, NULL);
 
+  wifi_app_start();
+
   // connect with WiFi router
-  app_connect_wifi();
+  // app_connect_wifi();
 
   // connect with mqtt server if connection is successful
   if( wifi_connect_status )
