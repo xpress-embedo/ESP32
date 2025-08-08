@@ -23,6 +23,18 @@ typedef enum http_server_msg
 } http_server_msg_e;
 
 /*
+ * Connection Status for WiFi
+ */
+typedef enum _http_server_wifi_connect_status_e
+{
+  HTTP_WIFI_STATUS_CONNECT_NONE = 0,
+  HTTP_WIFI_STATUS_CONNECTING,
+  HTTP_WIFI_STATUS_CONNECT_FAILED,
+  HTTP_WIFI_STATUS_CONNECT_SUCCESS,
+  HTTP_WIFI_STATUS_DISCONNECTED,
+} http_server_wifi_connect_status_e;
+
+/*
  * Structure for Message Queue
  */
 typedef struct http_server_q_msg

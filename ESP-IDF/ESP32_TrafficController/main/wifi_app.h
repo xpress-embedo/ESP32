@@ -61,5 +61,6 @@ extern esp_netif_t* esp_netif_ap;
 // Public Function Declarations
 void wifi_app_start( void );
 BaseType_t wifi_app_send_msg( wifi_app_msg_e msg_id );
+wifi_config_t * wifi_app_get_wifi_config( void );
 
 #endif /* MAIN_WIFI_APP_H_ */

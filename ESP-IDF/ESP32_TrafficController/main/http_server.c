@@ -35,6 +35,9 @@ static TaskHandle_t task_http_server_monitor = NULL;
 // Queue Handle used to manipulate the main queue of events
 static QueueHandle_t http_server_monitor_q_handle;
 
+// WiFi Connect Status
+static http_server_wifi_connect_status_e g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_NONE;
+
 // Embedded Files: JQuery, index.html, app.css, app.js, and favicon.ico files
 extern const uint8_t jquery_3_3_1_min_js_start[]      asm("_binary_jquery_3_3_1_min_js_start");
 extern const uint8_t jquery_3_3_1_min_js_end[]        asm("_binary_jquery_3_3_1_min_js_end");
@@ -125,19 +128,19 @@ static void http_server_monitor(void *pvParameter)
       {
       case HTTP_MSG_WIFI_CONNECT_INIT:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_INIT");
-        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECTING;
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECTING;
         break;
       case HTTP_MSG_WIFI_CONNECT_SUCCESS:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_SUCCESS");
-        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_SUCCESS;
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_SUCCESS;
         break;
       case HTTP_MSG_WIFI_CONNECT_FAIL:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_CONNECT_FAIL");
-        // g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_FAILED;
+        g_wifi_connect_status = HTTP_WIFI_STATUS_CONNECT_FAILED;
         break;
       case HTTP_MSG_WIFI_USER_DISCONNECT:
         ESP_LOGI( TAG, "HTTP_MSG_WIFI_USER_DISCONNECT");
-        // g_wifi_connect_status = HTTP_WIFI_STATUS_DISCONNECTED;
+        g_wifi_connect_status = HTTP_WIFI_STATUS_DISCONNECTED;
         break;
       case HTTP_MSG_WIFI_OTA_UPDATE_SUCCESSFUL:
         ESP_LOGI( TAG, "HTTP_MSG_OTA_UPDATE_SUCCESSFUL");
@@ -495,46 +498,46 @@ static esp_err_t http_server_sensor_value_handler(httpd_req_t *req)
  */
 static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req)
 {
-//  ESP_LOGI(TAG, "/wifiConnect requested -> Connect button is pressed");
-//
-//  size_t len_ssid = 0, len_password = 0;
-//  char *ssid_str = NULL, *password_str = NULL;
-//
-//  // Get the SSID Header
-//  len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid") + 1;
-//  if( len_ssid )
-//  {
-//    // allocate memory, but make to free it when it is no longer needed
-//    ssid_str = malloc(len_ssid);
-//    if( httpd_req_get_hdr_value_str(req, "my-connect-ssid", ssid_str, len_ssid) == ESP_OK )
-//    {
-//      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-ssid: %s", ssid_str );
-//    }
-//  }
-//
-//  // Get the Password Header
-//  len_password = httpd_req_get_hdr_value_len(req, "my-connect-pswd") + 1;
-//  if( len_password )
-//  {
-//    // allocate memory, but make to free it when it is no longer needed
-//    password_str = malloc(len_password);
-//    if( httpd_req_get_hdr_value_str(req, "my-connect-pswd", password_str, len_password) == ESP_OK )
-//    {
-//      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-pswd: %s", password_str );
-//    }
-//  }
-//
-//  // Update the WiFi Network Configuration and let the WiFi Application Know
-//  wifi_config_t * wifi_config = wifi_app_get_wifi_config();
-//  memset( wifi_config, 0x00, sizeof(wifi_config_t));
-//  memcpy( wifi_config->sta.ssid, ssid_str, len_ssid );
-//  memcpy( wifi_config->sta.password, password_str, len_password );
-//
-//  wifi_app_send_msg( WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER );
-//
-//  // free the allocated memory
-//  free(ssid_str);
-//  free(password_str);
+  ESP_LOGI(TAG, "/wifiConnect requested");
+
+  size_t len_ssid = 0, len_password = 0;
+  char *ssid_str = NULL, *password_str = NULL;
+
+  // Get the SSID Header
+  len_ssid = httpd_req_get_hdr_value_len(req, "my-connect-ssid") + 1;
+  if( len_ssid )
+  {
+    // allocate memory, but make to free it when it is no longer needed
+    ssid_str = malloc(len_ssid);
+    if( httpd_req_get_hdr_value_str(req, "my-connect-ssid", ssid_str, len_ssid) == ESP_OK )
+    {
+      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-ssid: %s", ssid_str );
+    }
+  }
+
+  // Get the Password Header
+  len_password = httpd_req_get_hdr_value_len(req, "my-connect-pswd") + 1;
+  if( len_password )
+  {
+    // allocate memory, but make to free it when it is no longer needed
+    password_str = malloc(len_password);
+    if( httpd_req_get_hdr_value_str(req, "my-connect-pswd", password_str, len_password) == ESP_OK )
+    {
+      ESP_LOGI(TAG, "wifi_connect_handler: Found Header => my-connect-pswd: %s", password_str );
+    }
+  }
+
+  // Update the WiFi Network Configuration and let the WiFi Application Know
+  wifi_config_t * wifi_config = wifi_app_get_wifi_config();
+  memset( wifi_config, 0x00, sizeof(wifi_config_t));
+  memcpy( wifi_config->sta.ssid, ssid_str, len_ssid );
+  memcpy( wifi_config->sta.password, password_str, len_password );
+
+  wifi_app_send_msg( WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER );
+
+  // free the allocated memory
+  free(ssid_str);
+  free(password_str);
 
   return ESP_OK;
 }

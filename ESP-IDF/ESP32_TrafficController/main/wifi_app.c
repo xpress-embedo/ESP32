@@ -30,10 +30,15 @@ static const char *TAG = "WiFi_APP";
 
 // Queue handle used to manipulate the main queue events
 static QueueHandle_t wifi_app_q_handle;
+
+// used for returning the WiFi configuration
+static wifi_config_t * wifi_config = NULL;
+// used to track the number of retries when a connection attempt fails
+static int g_retry_number;
+
 // netif objects for the station mode and access point modes
 esp_netif_t* esp_netif_sta = NULL;
 esp_netif_t* esp_netif_ap = NULL;
-
 
 // Private Function Prototypes
 static void wifi_app_task(void *pvParameter);
@@ -50,6 +55,10 @@ void wifi_app_start( void )
   // Disable default logging messages
   esp_log_level_set("wifi", ESP_LOG_NONE);
 
+  // Allocate memory for the WiFi Configuration
+  wifi_config = (wifi_config_t*)malloc( sizeof(wifi_config_t) );
+  memset( wifi_config, 0x00, sizeof(wifi_config_t) );
+
   // create a message queue
   wifi_app_q_handle = xQueueCreate( WIFI_APP_QUEUE_SIZE, sizeof(wifi_app_queue_msg_t) );
 
@@ -62,6 +71,14 @@ BaseType_t wifi_app_send_msg( wifi_app_msg_e msg_id )
   wifi_app_queue_msg_t msg;
   msg.msg_id = msg_id;
   return xQueueSend( wifi_app_q_handle, &msg, portMAX_DELAY );
+}
+
+/*
+ * Get the WiFi Configuration
+ */
+wifi_config_t * wifi_app_get_wifi_config( void )
+{
+  return wifi_config;
 }
 
 // Private Function Definitions
