@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "wifi_app.h"
+#include "http_server.h"
 
 // Private Macros
 #define WIFI_APP_QUEUE_SIZE                           (5)
@@ -91,6 +92,7 @@ static void wifi_app_task(void *pvParameter)
       {
         case WIFI_APP_MSG_START_HTTP_SERVER:
           ESP_LOGI( TAG, "WIFI_APP_MSG_START_HTTP_SERVER" );
+          http_server_start();
           break;
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
           ESP_LOGI( TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER" );

@@ -7,6 +7,7 @@ idf_component_register( SRCS
 												gui_mng.c
 												gui_mng_cfg.c
 												wifi_app.c
+												http_server.c
 												ui/ui.c
     										ui/screens/ui_MainScreen.c
     										ui/screens/ui_Panel1.c
@@ -19,4 +20,10 @@ idf_component_register( SRCS
 												INCLUDE_DIRS 
 												"."
 												"ui"
+												EMBED_FILES
+												webpage/app.css
+												webpage/app.js
+												webpage/favicon.ico
+												webpage/index.html
+												webpage/jquery-3.3.1.min.js
 												)
