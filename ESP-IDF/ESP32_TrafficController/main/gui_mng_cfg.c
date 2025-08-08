@@ -4,11 +4,13 @@
  *  Created on: Feb 24, 2024
  *      Author: xpress_embedo
  */
+
 #include "esp_log.h"
 #include "ui.h"
 #include "main.h"
 #include "gui_mng.h"
 #include "gui_mng_cfg.h"
+#include "mqtt_app.h"
 
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))

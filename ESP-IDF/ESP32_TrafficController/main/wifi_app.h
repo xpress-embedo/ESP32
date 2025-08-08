@@ -9,6 +9,7 @@
 #define MAIN_WIFI_APP_H_
 
 #include "esp_netif.h"
+#include "esp_wifi.h"
 
 // Public Macros
 #define WIFI_AP_SSID                    "ESP32_AP"

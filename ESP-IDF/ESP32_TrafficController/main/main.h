@@ -12,14 +12,6 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-// enumeration for led data of traffic lights
-typedef enum _traffic_led_e
-{
-  TRAFFIC_LED_GREEN = 0,
-  TRAFFIC_LED_YELLOW = 1,
-  TRAFFIC_LED_RED = 2,
-  TRAFFIC_LED_INVALID,
-} traffic_led_e;
 
 // Public Function Declaration
 

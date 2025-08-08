@@ -9,6 +9,7 @@ idf_component_register( SRCS
 												wifi_app.c
 												http_server.c
 												app_nvs.c
+												mqtt_app.c
 												ui/ui.c
     										ui/screens/ui_MainScreen.c
     										ui/screens/ui_Panel1.c
