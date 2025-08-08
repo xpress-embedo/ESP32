@@ -42,8 +42,7 @@ static EventGroupHandle_t wifi_app_event_group;
 const int WIFI_APP_CONNECTING_USING_SAVED_CREDS_BIT   = BIT0;
 const int WIFI_APP_CONNECTING_FROM_HTTP_SERVER_BIT    = BIT1;
 const int WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT  = BIT2;
-// This bit is used to keep track whether the STA is connected or not, this will
-// prevent the reset button operation if WiFi is not connected
+// This bit is used to keep track whether the STA is connected or not
 const int WIFI_APP_STA_CONNECTED_GOT_IP_BIT           = BIT3;
 
 // netif objects for the station mode and access point modes
@@ -143,6 +142,8 @@ static void wifi_app_task(void *pvParameter)
         case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
           ESP_LOGI( TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP" );
 
+          xEventGroupSetBits(wifi_app_event_group, WIFI_APP_STA_CONNECTED_GOT_IP_BIT);
+
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
 
@@ -173,7 +174,7 @@ static void wifi_app_task(void *pvParameter)
 
           event_bits = xEventGroupGetBits(wifi_app_event_group);
           // If connected, then disconnect and clear the credentials
-          // NOTE: Disconnection User Req. is of two types first "Disconnect" button and "Reset/Boot" button on board.
+          // NOTE: Disconnection User Request means pressing "Disconnect" button
           if( event_bits & WIFI_APP_STA_CONNECTED_GOT_IP_BIT )
           {
             xEventGroupSetBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
