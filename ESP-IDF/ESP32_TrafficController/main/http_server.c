@@ -58,15 +58,10 @@ static esp_err_t http_server_index_html_handler(httpd_req_t *req);
 static esp_err_t http_server_app_css_handler(httpd_req_t *req);
 static esp_err_t http_server_app_js_handler(httpd_req_t *req);
 static esp_err_t http_server_favicon_handler(httpd_req_t *req);
-static esp_err_t http_server_ota_update_handler(httpd_req_t *req);
-static esp_err_t http_server_ota_status_handler(httpd_req_t *req);
-static esp_err_t http_server_sensor_value_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req);
 static esp_err_t http_server_get_wifi_connect_info_handler(httpd_req_t *req);
 static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req);
-static esp_err_t http_server_get_local_time_handler(httpd_req_t *req);
-static esp_err_t http_server_get_ap_ssid_handler(httpd_req_t *req);
 
 // Public Function Definitions
 /*
@@ -239,32 +234,6 @@ static httpd_handle_t http_server_configure(void)
       .handler   = http_server_favicon_handler,
       .user_ctx  = NULL
     };
-    // Register OTA Update Handler
-    httpd_uri_t ota_update =
-    {
-      .uri       = "/OTAupdate",
-      .method    = HTTP_POST,
-      .handler   = http_server_ota_update_handler,
-      .user_ctx  = NULL
-    };
-
-    // Register OTA Status Handler
-    httpd_uri_t ota_status =
-    {
-      .uri       = "/OTAstatus",
-      .method    = HTTP_POST,
-      .handler   = http_server_ota_status_handler,
-      .user_ctx  = NULL
-    };
-
-    // Register Sensor.json handler
-    httpd_uri_t sensor_json =
-    {
-      .uri = "/Sensor",
-      .method    = HTTP_GET,
-      .handler   = http_server_sensor_value_handler,
-      .user_ctx  = NULL
-    };
 
     // Register wifiConnect (.json) handler
     httpd_uri_t wifi_connect_json =
@@ -302,39 +271,16 @@ static httpd_handle_t http_server_configure(void)
       .user_ctx  = NULL
     };
 
-    // Register localTime.json handler
-    httpd_uri_t local_time_json =
-    {
-      .uri = "/localTime",
-      .method    = HTTP_GET,
-      .handler   = http_server_get_local_time_handler,
-      .user_ctx  = NULL
-    };
-
-    // Register apSSID.json handler
-    httpd_uri_t ap_ssid_json =
-    {
-      .uri = "/apSSID",
-      .method    = HTTP_GET,
-      .handler   = http_server_get_ap_ssid_handler,
-      .user_ctx  = NULL
-    };
-
     // Register Query Handler
     httpd_register_uri_handler(http_server_handle, &jquery_js);
     httpd_register_uri_handler(http_server_handle, &index_html);
     httpd_register_uri_handler(http_server_handle, &app_css);
     httpd_register_uri_handler(http_server_handle, &app_js);
     httpd_register_uri_handler(http_server_handle, &favicon_ico);
-    httpd_register_uri_handler(http_server_handle, &ota_update);
-    httpd_register_uri_handler(http_server_handle, &ota_status);
-    httpd_register_uri_handler(http_server_handle, &sensor_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_status_json);
     httpd_register_uri_handler(http_server_handle, &wifi_connect_info_json);
     httpd_register_uri_handler(http_server_handle, &wifi_disconnect_json);
-    httpd_register_uri_handler(http_server_handle, &local_time_json);
-    httpd_register_uri_handler(http_server_handle, &ap_ssid_json);
     return http_server_handle;
   }
 
@@ -450,44 +396,6 @@ static esp_err_t http_server_favicon_handler(httpd_req_t *req)
     ESP_LOGI( TAG, "http_server_favicon_handler: Response Sent Successfully" );
   }
   return error;
-}
-
-/**
- * @brief Receives the *.bin file via the web page and handles the firmware update
- * @param req HTTP request for which the uri needs to be handled
- * @return ESP_OK, other ESP_FAIL if timeout occurs and the update canot be started
- */
-static esp_err_t http_server_ota_update_handler(httpd_req_t *req)
-{
-  return ESP_OK;
-}
-
-/*
- * OTA status handler responds with the firmware update status after the OTA
- * update is started and responds with the compile time & date when the page is
- * first requested
- * @param req HTTP request for which the URI needs to be handled
- * @return ESP_OK
- */
-static esp_err_t http_server_ota_status_handler(httpd_req_t *req)
-{
-  return ESP_OK;
-}
-/*
- * Sensor Readings JSON handler responds with the Sensor Data
- * @param req HTTP request for which the URI needs to be handled
- * @return ESP_OK
- */
-static esp_err_t http_server_sensor_value_handler(httpd_req_t *req)
-{
-//  char sensor_JSON[100];
-//  ESP_LOGI(TAG, "Sensor Readings Requested");
-//  sprintf(sensor_JSON, "{\"temp\":%d,\"humidity\":\"%d\"}", get_temperature(), get_humidity() );
-//
-//  httpd_resp_set_type(req, "application/json");
-//  httpd_resp_send(req, sensor_JSON, strlen(sensor_JSON));
-
-  return ESP_OK;
 }
 
 /*
@@ -620,47 +528,3 @@ static esp_err_t http_server_wifi_disconnect_json_handler(httpd_req_t *req)
   return ESP_OK;
 }
 
-/*
- * localTime handler responds by sending the local time
- * @param req HTTP request for which the URI needs to be handled
- * @return ESP_OK
- */
-static esp_err_t http_server_get_local_time_handler(httpd_req_t *req)
-{
-//  ESP_LOGI(TAG, "localTime.json requested");
-//
-//  char local_time_JSON[100] = { 0 };
-//
-//  if( g_is_local_time_set )
-//  {
-//    sprintf(local_time_JSON, "{\"time\":\"%s\"}", sntp_time_sync_get_time());
-//  }
-//
-//  httpd_resp_set_type(req, "application/json");
-//  httpd_resp_send(req, local_time_JSON, strlen(local_time_JSON));
-
-  return ESP_OK;
-}
-
-/*
- * apSSID handler responds by sending the ESP32 Access Point SSID
- * @param req HTTP request for which the URI needs to be handled
- * @return ESP_OK
- */
-static esp_err_t http_server_get_ap_ssid_handler(httpd_req_t *req)
-{
-//  ESP_LOGI(TAG, "apSSID.json requested");
-//
-//  char ap_ssid_JSON[50] = { 0 };
-//
-//  wifi_config_t *wifi_config = wifi_app_get_wifi_config();
-//  esp_wifi_get_config(ESP_IF_WIFI_AP, wifi_config);
-//  char *ssid = (char*)wifi_config->ap.ssid;
-//
-//  sprintf(ap_ssid_JSON, "{\"ssid\":\"%s\"}", ssid);
-//
-//  httpd_resp_set_type(req, "application/json");
-//  httpd_resp_send(req, ap_ssid_JSON, strlen(ap_ssid_JSON));
-
-  return ESP_OK;
-}
