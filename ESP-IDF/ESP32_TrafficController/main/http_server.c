@@ -549,13 +549,13 @@ static esp_err_t http_server_wifi_connect_handler(httpd_req_t *req)
  */
 static esp_err_t http_server_wifi_connect_status_handler(httpd_req_t *req)
 {
-//  ESP_LOGI(TAG, "/wifiConnectStatus.json requested");
-//  char status_JSON[100];
-//
-//  sprintf( status_JSON, "{\"wifi_connect_status\":%d}", g_wifi_connect_status );
-//
-//  httpd_resp_set_type(req, "application/json" );
-//  httpd_resp_send(req, status_JSON, strlen(status_JSON) );
+  ESP_LOGI(TAG, "/wifiConnectStatus requested");
+  char status_JSON[100];
+
+  sprintf( status_JSON, "{\"wifi_connect_status\":%d}", g_wifi_connect_status );
+
+  httpd_resp_set_type(req, "application/json" );
+  httpd_resp_send(req, status_JSON, strlen(status_JSON) );
 
   return ESP_OK;
 }

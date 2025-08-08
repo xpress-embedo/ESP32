@@ -45,6 +45,7 @@ static void wifi_app_task(void *pvParameter);
 static void wifi_app_event_handler_init( void );
 static void wifi_app_default_wifi_init( void );
 static void wifi_app_soft_ap_config( void );
+static void wifi_app_connect_sta(void);
 static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
 
 // Public Function Definitions
@@ -113,9 +114,23 @@ static void wifi_app_task(void *pvParameter)
           break;
         case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
           ESP_LOGI( TAG, "WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER" );
+
+          // Attempt a Connection
+          wifi_app_connect_sta();
+
+          // set the current number of retries to zero
+          g_retry_number = 0;
+
+          // Let the HTTP Server knows about the connection attempt
+          http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_INIT );
           break;
         case WIFI_APP_MSG_STA_CONNECTED_GOT_IP:
           ESP_LOGI( TAG, "WIFI_APP_MSG_STA_CONNECTED_GOT_IP" );
+          break;
+        case WIFI_APP_MSG_STA_DISCONNECTED:
+          ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
+
+          http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
           break;
         default:
           break;
@@ -203,6 +218,17 @@ static void wifi_app_soft_ap_config( void )
   ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_STA_POWER_SAVE));
 }
 
+/*
+ * Connects the ESP32 to an external access point using the updated station
+ * configuration
+ */
+static void wifi_app_connect_sta(void)
+{
+  ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, wifi_app_get_wifi_config()) );
+  ESP_ERROR_CHECK( esp_wifi_connect() );
+}
+
+
 /**
  * @brief WiFi Event Handler Function
  * @param arg data, aside from event data, that is passed to the handler when it is called
@@ -236,8 +262,20 @@ static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int3
         break;
       case WIFI_EVENT_STA_DISCONNECTED:
         ESP_LOGI( TAG, "WIFI_EVENT_STA_DISCONNECTED");
-        break;
+        wifi_event_sta_disconnected_t *event = (wifi_event_sta_disconnected_t*)malloc(sizeof(wifi_event_sta_disconnected_t));
+        *event = *((wifi_event_sta_disconnected_t*)event_data);
+        ESP_LOGI(TAG, "WIFI_EVENT_STA_DISCONNECTED, Reason Code %d", event->reason);
 
+        if( g_retry_number < MAX_CONNECTION_RETRIES )
+        {
+          esp_wifi_connect();
+          g_retry_number++;
+        }
+        else
+        {
+          wifi_app_send_msg( WIFI_APP_MSG_STA_DISCONNECTED );
+        }
+        break;
     }
   } // if( WIFI_EVENT = event_base )
   else if( IP_EVENT == event_base )
@@ -246,6 +284,8 @@ static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int3
     {
       case IP_EVENT_STA_GOT_IP:
         ESP_LOGI( TAG, "IP_EVENT_STA_GOT_IP");
+
+        wifi_app_send_msg( WIFI_APP_MSG_STA_CONNECTED_GOT_IP );
         break;
     }
   }

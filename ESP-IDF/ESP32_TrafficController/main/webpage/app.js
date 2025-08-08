@@ -71,7 +71,7 @@ function connectWifi()
 	pwd = $("#connect_pass").val();
 	
 	$.ajax({
-		url: '/wifiConnect.json',
+		url: '/wifiConnect',
 		dataType: 'json',
 		method: 'POST',
 		cache: false,
