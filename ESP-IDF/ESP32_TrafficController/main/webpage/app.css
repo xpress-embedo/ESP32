@@ -1,102 +1,144 @@
-
-
 body {
-    background-color: #f1f1f1;
-    font-family: HelveticaNeueRegular, HelveticaNeue-Regular, "Helvetica Neue Regular", HelveticaNeue, "Helvetica Neue", Helvetica, Arial;
-    color: #0d8cdb;
+  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: #1d3557;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #0d8cdb;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 h1 {
-    display: block;
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-    font-size: 1.7em;
-    color: #1d3557;
+  margin: 0;
+  font-size: 1.8em;
 }
 
-h2 {
-    font-size: 1.4em;
-    color: #1d3557;
+#WiFiConnect {
+  max-width: 400px;
+  margin: 30px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-h3 {
-    font-size: 1.2em;
-    color: #1d3557;
+#WiFiConnect h2 {
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
 }
 
-h4 {
-    font-size: 1em;
-    color: #1d3557;
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.gr {
-    color: green;
+input[type="text"],
+input[type="password"] {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.rd {
-    color: red;
-}
-
-.buttons {
-    padding: 5px;
-}
-
-#connected_ap_label, #connected_ap {
-    display: inline;
-}
-
-#ip_address_label, #netmask_label, #gateway_label {
-    display: inline;
-}
-
-#wifi_connect_ip, #wifi_connect_netmask, #wifi_connect_gateway {
-    display: inline;
-}
-
-#connected_ap, #wifi_connect_ip, #wifi_connect_netmask {
-    color: #1d3557;
-}
-
-/* Default style for all buttons */
-input[type="button"] {
-    font-size: 16px;
-    border: 0;
-    line-height: 2;
-    padding: 0 20px;
-    text-align: center;
-    color: #ffffff;
-    text-shadow: 1px 1px 1px #000;
-    border-radius: 0px;
-    background-color: #388E3C; /* Green for Connect */
-    cursor: pointer;
-}
-
-/* Hover effect for Connect button */
-#connect_wifi:hover {
-    background-color: #4CAF50;
-}
-
-/* Style for Disconnect button */
-#disconnect_wifi {
-    background-color: #D32F2F; /* Red */
-    /* initially hidden, will come when connection is established */
-    display: none;
-}
-
-/* Hover effect for Disconnect button */
-#disconnect_wifi:hover {
-    background-color: #F44336; /* Brighter red */
+input[type="checkbox"] {
+  margin-right: 6px;
 }
 
 .show-password-label {
-    font-family: 'Segoe UI', sans-serif; /* Change to any preferred font */
-    font-size: 12px;
-    color: #2E7D32; /* A rich green shade */
-    margin-left: 2px;
-    cursor: pointer;
+  font-size: 13px;
+  color: #388E3C;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
 }
 
-.show-password-label input[type="checkbox"] {
-    margin-right: 5px;
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.buttons input[type="button"] {
+  flex: 1;
+  padding: 10px;
+  font-size: 15px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#connect_wifi {
+  background-color: #388E3C;
+  margin-right: 10px;
+}
+
+#connect_wifi:hover {
+  background-color: #4CAF50;
+}
+
+#disconnect_wifi {
+  background-color: #D32F2F;
+}
+
+#disconnect_wifi:hover {
+  background-color: #F44336;
+}
+
+#wifi_connect_credentials_errors {
+  color: red;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+#wifi_connect_status {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #2E7D32;
+}
+
+#ConnectInfo {
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.info-pair {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-pair > div:first-child {
+  width: 120px; /* Adjust as needed */
+  font-weight: 500;
+  color: #333;
+}
+
+.info-pair > div:last-child {
+  color: #0d8cdb;
+}
+
+.info-text {
+  font-size: 12px;
+  margin: 4px 0;
+  color: #f0f0f0;
 }
