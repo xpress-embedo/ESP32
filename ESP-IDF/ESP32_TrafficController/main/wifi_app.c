@@ -19,6 +19,7 @@
 #include "wifi_app.h"
 #include "http_server.h"
 #include "app_nvs.h"
+#include "mqtt_app.h"
 
 // Private Macros
 #define WIFI_APP_QUEUE_SIZE                           (5)
@@ -145,6 +146,8 @@ static void wifi_app_task(void *pvParameter)
 
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
+          // send message to mqtt application that esp32 is connected and u can connect with mqtt server
+          mqtt_app_send_msg( MQTT_APP_MSG_START_CONNECTION );
 
           // here we got the IP and hence we need to save the credentials in the flash
           event_bits = xEventGroupGetBits( wifi_app_event_group );
@@ -188,6 +191,9 @@ static void wifi_app_task(void *pvParameter)
           break;
         case WIFI_APP_MSG_STA_DISCONNECTED:
           ESP_LOGI(TAG,"WIFI_APP_MSG_STA_DISCONNECTED");
+
+          // send message to mqtt application regarding disconnection
+          mqtt_app_send_msg( MQTT_APP_MSG_STOP_CONNECTION );
 
           event_bits = xEventGroupGetBits(wifi_app_event_group);
 

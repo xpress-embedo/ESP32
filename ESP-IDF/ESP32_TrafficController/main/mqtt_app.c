@@ -5,7 +5,6 @@
  *      Author: xpress_embedo
  */
 
-#include <mqtt_app.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
@@ -14,17 +13,22 @@
 
 #include "mqtt_client.h"
 #include "gui_mng.h"
+#include "mqtt_app.h"
 
 // Private Macros
-// todo
+#define MQTT_APP_QUEUE_SIZE                           (5)
+#define MQTT_APP_TASK_SIZE                            (4*1024u)
+#define MQTT_APP_TASK_PRIORITY                        (4u)
 
 // Private Variables
 static const char *TAG = "APP_MQTT";
+// Queue handle used to manipulate the main queue events
+static QueueHandle_t mqtt_app_q_handle;
 
-// todo: this needs to be moved to a separate module
 // mqtt client for global access to publish and subscribe
 static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
+
 static char * traffic_topic = "TrafficTopic";
 static char * traffic_time_1_topic = "TrafficTimeSide1";
 static char * traffic_time_2_topic = "TrafficTimeSide2";
@@ -42,6 +46,8 @@ static uint8_t traffic_time_side3 = 0;
 static uint8_t traffic_time_side4 = 0;
 
 // Private Function Declarations
+static void mqtt_app_task(void *pvParameter);
+static void mqtt_app_mng( void );
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void mqtt_handle_app_data(esp_mqtt_event_handle_t event);
 
@@ -52,20 +58,70 @@ static void mqtt_handle_app_data(esp_mqtt_event_handle_t event);
  */
 void mqtt_app_start( void )
 {
-  // configure MQTT host/broker related stuff here
-  esp_mqtt_client_config_t mqtt_cfg =
-  {
-    .broker.address.uri = "mqtt://test.mosquitto.org:1883",
-  };
+  ESP_LOGI( TAG, "Starting MQTT App." );
 
-  mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
-  // The last argument may be used to pass data to the event handler, in this example mqtt_event_handler
-  esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
-  esp_mqtt_client_start(mqtt_client);
+  // create a message queue
+  mqtt_app_q_handle = xQueueCreate( MQTT_APP_QUEUE_SIZE, sizeof(mqtt_app_q_msg_t) );
+
+  // start the mqtt application task
+  xTaskCreate(&mqtt_app_task, "mqtt app task", MQTT_APP_TASK_SIZE, NULL, MQTT_APP_TASK_PRIORITY, NULL);
 }
 
+BaseType_t mqtt_app_send_msg( mqtt_app_msg_e msg_id )
+{
+  mqtt_app_q_msg_t msg;
+  msg.msg_id = msg_id;
+  return xQueueSend( mqtt_app_q_handle, &msg, portMAX_DELAY );
+}
 
-void mqtt_app_mng( void )
+static void mqtt_app_task( void *pvParameter )
+{
+  mqtt_app_q_msg_t msg;
+
+  for( ;; )
+  {
+    // wait for 1 second and then proceed
+    if( xQueueReceive( mqtt_app_q_handle, &msg, pdMS_TO_TICKS(1000)) )
+    {
+      switch( msg.msg_id )
+      {
+        case MQTT_APP_MSG_START_CONNECTION:
+          ESP_LOGI( TAG, "MQTT_APP_MSG_START_CONNECTION" );
+
+          // configure MQTT host/broker related stuff here
+          esp_mqtt_client_config_t mqtt_cfg =
+          {
+            .broker.address.uri = "mqtt://test.mosquitto.org:1883",
+          };
+
+          mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
+          // The last argument may be used to pass data to the event handler, in this example mqtt_event_handler
+          esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
+          esp_mqtt_client_start(mqtt_client);
+
+          break;
+        case MQTT_APP_MSG_STOP_CONNECTION:
+          ESP_LOGI( TAG, "MQTT_APP_MSG_STOP_CONNECTION" );
+          if( mqtt_client )
+          {
+            esp_mqtt_client_stop(mqtt_client);     // Stop the client and disconnect from the broker
+            esp_mqtt_client_destroy(mqtt_client);  // Free resources associated with the client
+            mqtt_client = NULL;
+          }
+          break;
+        case MQTT_APP_MSG_PUBLISH_XYZ:
+          ESP_LOGI( TAG, "MQTT_APP_MSG_PUBLISH_XYZ" );
+          break;
+      }
+    }
+
+    // this function should be called every 1 second, in future to be removed
+    mqtt_app_mng();
+  }
+}
+
+// Private Function Definitions
+static void mqtt_app_mng( void )
 {
   // this is a patch work and needs improvement in future
   // not doing this for now, as the plan is to change the implementation
@@ -94,7 +150,6 @@ void mqtt_app_mng( void )
   }
 }
 
-// Private Function Definitions
 /**
  * @brief Function to handle all mqtt subscribtion
  * @param event pointer to event data this is a pointer check typedef

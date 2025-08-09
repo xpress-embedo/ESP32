@@ -12,36 +12,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_bg_color(ui_MainScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_MainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblConnecting = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblConnecting, 80);
-    lv_obj_set_height(ui_lblConnecting, 20);
-    lv_obj_set_x(ui_lblConnecting, 0);
-    lv_obj_set_y(ui_lblConnecting, -30);
-    lv_obj_set_align(ui_lblConnecting, LV_ALIGN_BOTTOM_RIGHT);
-    lv_label_set_long_mode(ui_lblConnecting, LV_LABEL_LONG_SCROLL);
-    lv_label_set_text(ui_lblConnecting, "Connecting....");
-    lv_obj_set_style_text_color(ui_lblConnecting, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_lblConnecting, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblConnecting, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_spinnerBusy = lv_spinner_create(ui_MainScreen, 1000, 90);
-    lv_obj_set_width(ui_spinnerBusy, 30);
-    lv_obj_set_height(ui_spinnerBusy, 30);
-    lv_obj_set_x(ui_spinnerBusy, -25);
-    lv_obj_set_y(ui_spinnerBusy, 0);
-    lv_obj_set_align(ui_spinnerBusy, LV_ALIGN_BOTTOM_RIGHT);
-    lv_obj_clear_flag(ui_spinnerBusy, LV_OBJ_FLAG_CLICKABLE);      /// Flags
-    lv_obj_set_style_arc_width(ui_spinnerBusy, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_set_style_arc_color(ui_spinnerBusy, lv_color_hex(0x527131), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_opa(ui_spinnerBusy, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_width(ui_spinnerBusy, 5, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
     ui_imgLogo = lv_obj_create(ui_MainScreen);
     lv_obj_set_width(ui_imgLogo, 240);
     lv_obj_set_height(ui_imgLogo, 240);
-    lv_obj_set_x(ui_imgLogo, -40);
-    lv_obj_set_y(ui_imgLogo, 0);
     lv_obj_set_align(ui_imgLogo, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_imgLogo, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -60,5 +33,14 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0x5A7131), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblTrafficController, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblTrafficController, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_imgConnectStatus = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgConnectStatus, &ui_img_1402433841);
+    lv_obj_set_width(ui_imgConnectStatus, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgConnectStatus, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_imgConnectStatus, LV_ALIGN_BOTTOM_RIGHT);
+    lv_obj_add_flag(ui_imgConnectStatus, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgConnectStatus, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_img_src(ui_imgConnectStatus, &ui_img_1402433841, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

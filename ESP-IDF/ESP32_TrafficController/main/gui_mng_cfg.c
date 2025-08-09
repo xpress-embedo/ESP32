@@ -160,7 +160,7 @@ void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
  */
 static void gui_wifi_connecting( uint8_t *data )
 {
-  lv_label_set_text(ui_lblConnecting, "Connecting....");
+  // lv_label_set_text(ui_lblConnecting, "Connecting....");
 }
 
 /**
@@ -169,7 +169,7 @@ static void gui_wifi_connecting( uint8_t *data )
  */
 static void gui_mqtt_connecting( uint8_t *data )
 {
-  lv_label_set_text(ui_lblConnecting, "Connecting with MQTT Broker....");
+  // lv_label_set_text(ui_lblConnecting, "Connecting with MQTT Broker....");
 }
 
 /**

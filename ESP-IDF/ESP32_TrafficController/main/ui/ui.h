@@ -18,10 +18,9 @@ extern "C" {
 // SCREEN: ui_MainScreen
 void ui_MainScreen_screen_init(void);
 extern lv_obj_t * ui_MainScreen;
-extern lv_obj_t * ui_lblConnecting;
-extern lv_obj_t * ui_spinnerBusy;
 extern lv_obj_t * ui_imgLogo;
 extern lv_obj_t * ui_lblTrafficController;
+extern lv_obj_t * ui_imgConnectStatus;
 // SCREEN: ui_Panel1
 void ui_Panel1_screen_init(void);
 void ui_event_Panel1(lv_event_t * e);
@@ -50,6 +49,7 @@ extern lv_obj_t * ui____initial_actions0;
 
 
 LV_IMG_DECLARE(ui_img_school_logo_png);    // assets/school_logo.png
+LV_IMG_DECLARE(ui_img_1402433841);    // assets/wifi-disconnect.png
 
 
 

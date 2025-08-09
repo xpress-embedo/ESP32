@@ -12,10 +12,9 @@
 // SCREEN: ui_MainScreen
 void ui_MainScreen_screen_init(void);
 lv_obj_t * ui_MainScreen;
-lv_obj_t * ui_lblConnecting;
-lv_obj_t * ui_spinnerBusy;
 lv_obj_t * ui_imgLogo;
 lv_obj_t * ui_lblTrafficController;
+lv_obj_t * ui_imgConnectStatus;
 
 
 // SCREEN: ui_Panel1
