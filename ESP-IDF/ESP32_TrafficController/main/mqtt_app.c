@@ -151,7 +151,7 @@ static void mqtt_app_mng( void )
 }
 
 /**
- * @brief Function to handle all mqtt subscribtion
+ * @brief Function to handle all mqtt subscription
  * @param event pointer to event data this is a pointer check typedef
  * @note Simulate topics manually using the following publish command
  * mosquitto_pub -h test.mosquitto.org -p 1883 -t TrafficTopic -m "Hello World"

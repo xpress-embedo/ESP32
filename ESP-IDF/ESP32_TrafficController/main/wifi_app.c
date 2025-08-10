@@ -57,6 +57,32 @@ static void wifi_app_soft_ap_config( void );
 static void wifi_app_connect_sta(void);
 static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int32_t event_id, void * event_data );
 
+#if 0
+// Test Code to Log DNS Info
+void log_dns_info()
+{
+  esp_netif_dns_info_t dns_info;
+  esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");  // Default Wi-Fi interface
+
+  if (netif == NULL)
+  {
+    ESP_LOGW(TAG, "Failed to get netif handle");
+    return;
+  }
+
+  esp_err_t err = esp_netif_get_dns_info(netif, ESP_NETIF_DNS_MAIN, &dns_info);
+  if (err == ESP_OK)
+  {
+    ESP_LOGI(TAG, "DNS IP: " IPSTR, IP2STR(&dns_info.ip.u_addr.ip4));
+  }
+  else
+  {
+    ESP_LOGW(TAG, "Failed to get DNS info: %s", esp_err_to_name(err));
+  }
+}
+#endif
+
+
 // Public Function Definitions
 void wifi_app_start( void )
 {
@@ -146,6 +172,7 @@ static void wifi_app_task(void *pvParameter)
 
           // send message to http server that esp32 is connected as station
           http_server_monitor_send_msg( HTTP_MSG_WIFI_CONNECT_SUCCESS );
+
           // send message to mqtt application that esp32 is connected and u can connect with mqtt server
           mqtt_app_send_msg( MQTT_APP_MSG_START_CONNECTION );
 
@@ -395,9 +422,27 @@ static void wifi_app_event_handler( void *arg, esp_event_base_t event_base, int3
     {
       case IP_EVENT_STA_GOT_IP:
         ESP_LOGI( TAG, "IP_EVENT_STA_GOT_IP");
+        /*
+         * Need to change DNS because MQTT was not working, i.e. not able to connect
+         * Some points/reasons:
+         * - Router DNS works for some devices, not all
+         * - ESP32's DNS Query Format or Timing wasn't compatible
+         * - No Fallback DNS behavior
+         */
+        // log_dns_info();
+        esp_netif_dns_info_t new_dns =
+        {
+            .ip.u_addr.ip4.addr = ipaddr_addr("8.8.8.8"),
+            .ip.type = IPADDR_TYPE_V4,
+        };
+
+        esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+        esp_netif_set_dns_info(netif, ESP_NETIF_DNS_MAIN, &new_dns);
+        ESP_LOGI(TAG, "DNS manually set to 8.8.8.8");
 
         wifi_app_send_msg( WIFI_APP_MSG_STA_CONNECTED_GOT_IP );
         break;
     }
   }
 }
+
