@@ -65,6 +65,9 @@ static lv_obj_t * led_red[NUM_OF_SIDES];
 static lv_obj_t * green_time[NUM_OF_SIDES];
 static lv_obj_t * yellow_time[NUM_OF_SIDES];
 static lv_obj_t * red_time[NUM_OF_SIDES];
+static lv_obj_t * container_green_time[NUM_OF_SIDES];
+static lv_obj_t * container_yellow_time[NUM_OF_SIDES];
+static lv_obj_t * container_red_time[NUM_OF_SIDES];
 static lv_obj_t * panel_table[NUM_OF_SIDES];
 
 static uint32_t load_panel_timer = 0;
@@ -102,6 +105,19 @@ void gui_cfg_init( void )
   red_time[1]    = ui_lblRedTime2;
   red_time[2]    = ui_lblRedTime3;
   red_time[3]    = ui_lblRedTime4;
+
+  container_green_time[0]  = ui_lblContainerGreenTime1;
+  container_green_time[1]  = ui_lblContainerGreenTime2;
+  container_green_time[2]  = ui_lblContainerGreenTime3;
+  container_green_time[3]  = ui_lblContainerGreenTime4;
+  container_yellow_time[0] = ui_lblContainerYellowTime1;
+  container_yellow_time[1] = ui_lblContainerYellowTime2;
+  container_yellow_time[2] = ui_lblContainerYellowTime3;
+  container_yellow_time[3] = ui_lblContainerYellowTime4;
+  container_red_time[0]    = ui_lblContainerRedTime1;
+  container_red_time[1]    = ui_lblContainerRedTime2;
+  container_red_time[2]    = ui_lblContainerRedTime3;
+  container_red_time[3]    = ui_lblContainerRedTime4;
 
   // there are some widgets that are still not available in square line studio
   // hence creating them manually
@@ -206,6 +222,7 @@ static void gui_wifi_connecting( uint8_t *data )
   lv_img_set_src( ui_imgConnectStatus2, &ui_img_1402433841 );
   lv_img_set_src( ui_imgConnectStatus3, &ui_img_1402433841 );
   lv_img_set_src( ui_imgConnectStatus4, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatusAllTraffic, &ui_img_1402433841 );
 }
 
 /**
@@ -220,6 +237,7 @@ static void gui_mqtt_connecting( uint8_t *data )
   lv_img_set_src( ui_imgConnectStatus2, &ui_img_1688301267 );
   lv_img_set_src( ui_imgConnectStatus3, &ui_img_1688301267 );
   lv_img_set_src( ui_imgConnectStatus4, &ui_img_1688301267 );
+  lv_img_set_src( ui_imgConnectStatusAllTraffic, &ui_img_1688301267 );
 }
 
 /**
@@ -234,6 +252,7 @@ static void gui_mqtt_connected( uint8_t *data )
   lv_img_set_src( ui_imgConnectStatus2, &ui_img_338993590 );
   lv_img_set_src( ui_imgConnectStatus3, &ui_img_338993590 );
   lv_img_set_src( ui_imgConnectStatus4, &ui_img_338993590 );
+  lv_img_set_src( ui_imgConnectStatusAllTraffic, &ui_img_338993590 );
 
   // this will be used to post another event to load panel-1
   load_panel_timer = LOAD_PANEL_TIME_COUNTER;
@@ -432,27 +451,42 @@ static void gui_update_traffic_lights_v2( uint8_t *data )
       lv_led_on( led_green[idx] );
       lv_led_off(led_yellow[idx] );
       lv_led_off( led_red[idx] );
+      // Panel Traffic Lights
       lv_label_set_text_fmt( green_time[idx],   "%.2d", traffic_light_data[idx].green_time );
       lv_label_set_text_fmt( yellow_time[idx],  "00" );
       lv_label_set_text_fmt( red_time[idx],     "00" );
+      // Container Traffic Lights (here we update all LEDs)
+      lv_label_set_text_fmt( container_green_time[idx],   "%.2d", traffic_light_data[idx].green_time );
+      lv_label_set_text_fmt( container_yellow_time[idx],  "00" );
+      lv_label_set_text_fmt( container_red_time[idx],     "00" );
     }
     else if( traffic_light_data[idx].yellow_time )
     {
       lv_led_off( led_green[idx] );
       lv_led_on(led_yellow[idx] );
       lv_led_off( led_red[idx] );
+      // Panel Traffic Lights
       lv_label_set_text_fmt( yellow_time[idx],  "%.2d", traffic_light_data[idx].yellow_time );
       lv_label_set_text_fmt( green_time[idx],   "00" );
       lv_label_set_text_fmt( red_time[idx],     "00" );
+      // Container Traffic Lights (here we update all LEDs)
+      lv_label_set_text_fmt( container_yellow_time[idx],   "%.2d", traffic_light_data[idx].yellow_time );
+      lv_label_set_text_fmt( container_green_time[idx],  "00" );
+      lv_label_set_text_fmt( container_red_time[idx],     "00" );
     }
     else if( traffic_light_data[idx].red_time )
     {
       lv_led_off( led_green[idx] );
       lv_led_off(led_yellow[idx] );
       lv_led_on( led_red[idx] );
+      // Panel Traffic Lights
       lv_label_set_text_fmt( red_time[idx],   "%.2d", traffic_light_data[idx].red_time );
       lv_label_set_text_fmt( green_time[idx], "00" );
       lv_label_set_text_fmt( yellow_time[idx],"00" );
+      // Container Traffic Lights (here we update all LEDs)
+      lv_label_set_text_fmt( container_red_time[idx],   "%.2d", traffic_light_data[idx].red_time );
+      lv_label_set_text_fmt( container_green_time[idx], "00" );
+      lv_label_set_text_fmt( container_yellow_time[idx],"00" );
     }
     else
     {

@@ -17,6 +17,7 @@ extern void ui_event_Panel4(lv_event_t * e);
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_lblSide4;
 extern lv_obj_t * ui_imgConnectStatus4;
+extern lv_obj_t * ui_imgHousing5;
 extern lv_obj_t * ui_lblYellowTime4;
 extern lv_obj_t * ui_lblGreenTime4;
 extern lv_obj_t * ui_lblRedTime4;

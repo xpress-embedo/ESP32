@@ -8,6 +8,7 @@
 lv_obj_t * ui_Panel1 = NULL;
 lv_obj_t * ui_lblSide1 = NULL;
 lv_obj_t * ui_imgConnectStatus1 = NULL;
+lv_obj_t * ui_imgHousing1 = NULL;
 lv_obj_t * ui_lblGreenTime1 = NULL;
 lv_obj_t * ui_lblYellowTime1 = NULL;
 lv_obj_t * ui_lblRedTime1 = NULL;
@@ -19,6 +20,10 @@ void ui_event_Panel1(lv_event_t * e)
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());
         _ui_screen_change(&ui_Panel2, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_Panel2_screen_init);
+    }
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        _ui_screen_change(&ui_PanelAllTraffic, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_PanelAllTraffic_screen_init);
     }
 }
 
@@ -46,6 +51,16 @@ void ui_Panel1_screen_init(void)
     lv_obj_set_align(ui_imgConnectStatus1, LV_ALIGN_BOTTOM_RIGHT);
     lv_obj_add_flag(ui_imgConnectStatus1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgConnectStatus1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_imgHousing1 = lv_img_create(ui_Panel1);
+    lv_img_set_src(ui_imgHousing1, &ui_img_traffic_light_housing_png);
+    lv_obj_set_width(ui_imgHousing1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgHousing1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgHousing1, -60);
+    lv_obj_set_y(ui_imgHousing1, 20);
+    lv_obj_set_align(ui_imgHousing1, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgHousing1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgHousing1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_lblGreenTime1 = lv_label_create(ui_Panel1);
     lv_obj_set_width(ui_lblGreenTime1, LV_SIZE_CONTENT);   /// 1
@@ -86,6 +101,7 @@ void ui_Panel1_screen_destroy(void)
     ui_Panel1 = NULL;
     ui_lblSide1 = NULL;
     ui_imgConnectStatus1 = NULL;
+    ui_imgHousing1 = NULL;
     ui_lblGreenTime1 = NULL;
     ui_lblYellowTime1 = NULL;
     ui_lblRedTime1 = NULL;

@@ -8,6 +8,7 @@
 lv_obj_t * ui_Panel3 = NULL;
 lv_obj_t * ui_lblSide3 = NULL;
 lv_obj_t * ui_imgConnectStatus3 = NULL;
+lv_obj_t * ui_imgHousing4 = NULL;
 lv_obj_t * ui_lblYellowTime3 = NULL;
 lv_obj_t * ui_lblGreenTime3 = NULL;
 lv_obj_t * ui_lblRedTime3 = NULL;
@@ -51,6 +52,16 @@ void ui_Panel3_screen_init(void)
     lv_obj_add_flag(ui_imgConnectStatus3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgConnectStatus3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
+    ui_imgHousing4 = lv_img_create(ui_Panel3);
+    lv_img_set_src(ui_imgHousing4, &ui_img_traffic_light_housing_png);
+    lv_obj_set_width(ui_imgHousing4, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgHousing4, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgHousing4, -60);
+    lv_obj_set_y(ui_imgHousing4, 20);
+    lv_obj_set_align(ui_imgHousing4, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgHousing4, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgHousing4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
     ui_lblYellowTime3 = lv_label_create(ui_Panel3);
     lv_obj_set_width(ui_lblYellowTime3, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lblYellowTime3, LV_SIZE_CONTENT);    /// 1
@@ -90,6 +101,7 @@ void ui_Panel3_screen_destroy(void)
     ui_Panel3 = NULL;
     ui_lblSide3 = NULL;
     ui_imgConnectStatus3 = NULL;
+    ui_imgHousing4 = NULL;
     ui_lblYellowTime3 = NULL;
     ui_lblGreenTime3 = NULL;
     ui_lblRedTime3 = NULL;

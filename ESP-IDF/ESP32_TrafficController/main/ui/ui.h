@@ -36,8 +36,9 @@ extern lv_obj_t * ui____initial_actions0;
 LV_IMG_DECLARE(ui_img_school_logo_png);    // assets/school_logo.png
 LV_IMG_DECLARE(ui_img_338993590);    // assets/wifi-connected.png
 LV_IMG_DECLARE(ui_img_traffic_light_png);    // assets/traffic_light.png
-LV_IMG_DECLARE(ui_img_road_png);    // assets/road.png
 LV_IMG_DECLARE(ui_img_1402433841);    // assets/wifi-disconnect.png
+LV_IMG_DECLARE(ui_img_road_png);    // assets/road.png
+LV_IMG_DECLARE(ui_img_traffic_light_housing_png);    // assets/traffic_light_housing.png
 LV_IMG_DECLARE(ui_img_1688301267);    // assets/wifi-without-internet.png
 
 // FONTS

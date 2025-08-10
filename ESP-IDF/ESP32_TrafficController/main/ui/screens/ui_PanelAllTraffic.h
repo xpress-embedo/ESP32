@@ -13,6 +13,7 @@ extern "C" {
 // SCREEN: ui_PanelAllTraffic
 extern void ui_PanelAllTraffic_screen_init(void);
 extern void ui_PanelAllTraffic_screen_destroy(void);
+extern void ui_event_PanelAllTraffic(lv_event_t * e);
 extern lv_obj_t * ui_PanelAllTraffic;
 extern lv_obj_t * ui_imgTrafficIntersection;
 extern void ui_event_Container1(lv_event_t * e);
@@ -39,6 +40,7 @@ extern lv_obj_t * ui_lblContainerSide4;
 extern lv_obj_t * ui_lblContainerGreenTime4;
 extern lv_obj_t * ui_lblContainerYellowTime4;
 extern lv_obj_t * ui_lblContainerRedTime4;
+extern lv_obj_t * ui_imgConnectStatusAllTraffic;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
