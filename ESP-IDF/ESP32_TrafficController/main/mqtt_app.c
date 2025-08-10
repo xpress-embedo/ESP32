@@ -30,6 +30,7 @@ static esp_mqtt_client_handle_t mqtt_client;
 static bool mqtt_connect_status = false;
 
 static char * traffic_topic = "TrafficTopic";
+static char * traffic_topic_v2 = "TrafficTopic2";
 static char * traffic_time_1_topic = "TrafficTimeSide1";
 static char * traffic_time_2_topic = "TrafficTimeSide2";
 static char * traffic_time_3_topic = "TrafficTimeSide3";
@@ -45,11 +46,14 @@ static uint8_t traffic_time_side2 = 0;
 static uint8_t traffic_time_side3 = 0;
 static uint8_t traffic_time_side4 = 0;
 
+static traffic_light_t traffic_light_time[TRAFFIC_LIGHT_SIDES] = { 0 };
+
 // Private Function Declarations
 static void mqtt_app_task(void *pvParameter);
 static void mqtt_app_mng( void );
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void mqtt_handle_app_data(esp_mqtt_event_handle_t event);
+static void parse_traffic_payload(const char *payload, traffic_light_t *lights);
 
 // Public Function Definitions
 /**
@@ -163,9 +167,11 @@ static void mqtt_app_mng( void )
  */
 static void mqtt_handle_app_data(esp_mqtt_event_handle_t event)
 {
+  /*
   printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
   printf("DATA=%.*s\r\n", event->data_len, event->data);
   printf("DATA Length= %d\r\n", event->data_len);
+  */
 
   char * topic = event->topic;
   char * data  = event->data;
@@ -315,6 +321,15 @@ static void mqtt_handle_app_data(esp_mqtt_event_handle_t event)
     traffic_time_side4 = atoi(time_str);
     gui_send_event( GUI_MNG_EV_TRAFFIC_TIME_4, &traffic_time_side4 );
   }
+  else if (event->topic_len == strlen(traffic_topic_v2) && strncmp(topic, traffic_topic_v2, event->topic_len) == 0)
+  {
+    ESP_LOGI( TAG, "Traffic Topic-2 Received");
+    // This is the new version of traffic topic, which contains all the traffic light times in one message
+    memset(traffic_light_time, 0, sizeof(traffic_light_time));
+    parse_traffic_payload( (const char *)event->data, traffic_light_time );
+
+    gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2, (uint8_t*)(&traffic_light_time) );
+  }
 }
 
 
@@ -352,6 +367,10 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
       // Subscribe to Traffic Time for Side-4 Topic
       msg_id = esp_mqtt_client_subscribe(client, traffic_time_4_topic, 0);
+      ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+      // Subscribe to new Traffic Topic version 2, this will make everything above obsolete
+      msg_id = esp_mqtt_client_subscribe(client, traffic_topic_v2, 0);
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
       // send an event to GUI manager that we are connected
@@ -392,3 +411,42 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       break;
   }
 }
+
+
+static void parse_traffic_payload(const char *payload, traffic_light_t *lights)
+{
+  // This is packet format
+  // <0:G10,1:R13,2:R26,3:R39>
+  #define SEGMENT_LEN         (6u)
+  const char *p = payload + 1;  // Skip initial '<'
+  uint8_t i;
+
+  for ( i = 0; i < TRAFFIC_LIGHT_SIDES; i++ )
+  {
+    int index;
+    char color;
+    int duration;
+    sscanf(p + i * SEGMENT_LEN, "%d:%c%2d", &index, &color, &duration);
+    // printf("Index = %d, Color = %c, Duration = %d\r\n", index, color, duration );
+    lights[index].color = color;
+    // should be already zero due to memset function, but done again to be safer
+    lights[index].green_time = 0;
+    lights[index].yellow_time = 0;
+    lights[index].red_time = 0;
+    switch ( color )
+    {
+      case 'G':
+        lights[index].green_time = duration;
+        break;
+      case 'Y':
+        lights[index].yellow_time = duration;
+        break;
+      case 'R':
+        lights[index].red_time = duration;
+        break;
+      default:
+        break;
+    }
+  }
+}
+

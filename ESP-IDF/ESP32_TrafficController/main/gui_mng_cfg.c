@@ -40,26 +40,31 @@ static void gui_update_traffic_time_1( uint8_t *data );
 static void gui_update_traffic_time_2( uint8_t *data );
 static void gui_update_traffic_time_3( uint8_t *data );
 static void gui_update_traffic_time_4( uint8_t *data );
+static void gui_update_traffic_lights_v2( uint8_t *data );
 
 // Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
-  { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting       },
-  { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting       },
-  { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected        },
-  { GUI_MNG_EV_LOAD_PANEL_1,          gui_load_panel_1          },
-  { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1  },
-  { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2  },
-  { GUI_MNG_EV_TRAFFIC_LED_3,         gui_update_traffic_led_3  },
-  { GUI_MNG_EV_TRAFFIC_LED_4,         gui_update_traffic_led_4  },
-  { GUI_MNG_EV_TRAFFIC_TIME_1,        gui_update_traffic_time_1 },
-  { GUI_MNG_EV_TRAFFIC_TIME_2,        gui_update_traffic_time_2 },
-  { GUI_MNG_EV_TRAFFIC_TIME_3,        gui_update_traffic_time_3 },
-  { GUI_MNG_EV_TRAFFIC_TIME_4,        gui_update_traffic_time_4 },
+  { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting           },
+  { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting           },
+  { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected            },
+  { GUI_MNG_EV_LOAD_PANEL_1,          gui_load_panel_1              },
+  { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1      },
+  { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2      },
+  { GUI_MNG_EV_TRAFFIC_LED_3,         gui_update_traffic_led_3      },
+  { GUI_MNG_EV_TRAFFIC_LED_4,         gui_update_traffic_led_4      },
+  { GUI_MNG_EV_TRAFFIC_TIME_1,        gui_update_traffic_time_1     },
+  { GUI_MNG_EV_TRAFFIC_TIME_2,        gui_update_traffic_time_2     },
+  { GUI_MNG_EV_TRAFFIC_TIME_3,        gui_update_traffic_time_3     },
+  { GUI_MNG_EV_TRAFFIC_TIME_4,        gui_update_traffic_time_4     },
+  { GUI_MNG_EV_TRAFFIC_CTRL_V2,       gui_update_traffic_lights_v2  },
 };
 static lv_obj_t * led_green[NUM_OF_SIDES];
 static lv_obj_t * led_yellow[NUM_OF_SIDES];
 static lv_obj_t * led_red[NUM_OF_SIDES];
+static lv_obj_t * green_time[NUM_OF_SIDES];
+static lv_obj_t * yellow_time[NUM_OF_SIDES];
+static lv_obj_t * red_time[NUM_OF_SIDES];
 static lv_obj_t * panel_table[NUM_OF_SIDES];
 
 static uint32_t load_panel_timer = 0;
@@ -83,6 +88,21 @@ void gui_cfg_init( void )
   panel_table[2] = ui_Panel3;
   panel_table[3] = ui_Panel4;
 
+  green_time[0]  = ui_lblGreenTime1;
+  green_time[1]  = ui_lblGreenTime2;
+  green_time[2]  = ui_lblGreenTime3;
+  green_time[3]  = ui_lblGreenTime4;
+  
+  yellow_time[0] = ui_lblYellowTime1;
+  yellow_time[1] = ui_lblYellowTime2;
+  yellow_time[2] = ui_lblYellowTime3;
+  yellow_time[3] = ui_lblYellowTime4;
+
+  red_time[0]    = ui_lblRedTime1;
+  red_time[1]    = ui_lblRedTime2;
+  red_time[2]    = ui_lblRedTime3;
+  red_time[3]    = ui_lblRedTime4;
+
   // there are some widgets that are still not available in square line studio
   // hence creating them manually
   for( idx=0; idx<NUM_OF_SIDES; idx++ )
@@ -105,19 +125,19 @@ void gui_cfg_init( void )
     lv_obj_set_height(led_red[idx], 50);
 
     // adjusting green led offset from center
-    lv_obj_set_x(led_green[idx], -80);
+    lv_obj_set_x(led_green[idx], -60);
     lv_obj_set_y(led_green[idx], -40);
     // updating green color
     lv_led_set_color(led_green[idx], lv_palette_main(LV_PALETTE_GREEN));
 
     // adjusting yellow led offset from center
-    lv_obj_set_x(led_yellow[idx], -80);
+    lv_obj_set_x(led_yellow[idx], -60);
     lv_obj_set_y(led_yellow[idx], 20);
     // updating yellow color
     lv_led_set_color(led_yellow[idx], lv_palette_main(LV_PALETTE_YELLOW));
 
     // adjusting red led offset from center
-    lv_obj_set_x(led_red[idx], -80);
+    lv_obj_set_x(led_red[idx], -60);
     lv_obj_set_y(led_red[idx], 80);
     // updating red color
     lv_led_set_color(led_red[idx], lv_palette_main(LV_PALETTE_RED));
@@ -362,7 +382,7 @@ static void gui_update_traffic_led_4( uint8_t *data )
  */
 static void gui_update_traffic_time_1( uint8_t *data )
 {
-  lv_label_set_text_fmt( ui_lblTime1, "%.2d", *data );
+  lv_label_set_text_fmt( ui_lblGreenTime1, "%.2d", *data );
 }
 
 /**
@@ -371,7 +391,7 @@ static void gui_update_traffic_time_1( uint8_t *data )
  */
 static void gui_update_traffic_time_2( uint8_t *data )
 {
-  lv_label_set_text_fmt( ui_lblTime2, "%.2d", *data );
+  lv_label_set_text_fmt( ui_lblGreenTime2, "%.2d", *data );
 }
 
 /**
@@ -380,7 +400,7 @@ static void gui_update_traffic_time_2( uint8_t *data )
  */
 static void gui_update_traffic_time_3( uint8_t *data )
 {
-  lv_label_set_text_fmt( ui_lblTime3, "%.2d", *data );
+  lv_label_set_text_fmt( ui_lblGreenTime3, "%.2d", *data );
 }
 
 /**
@@ -389,8 +409,54 @@ static void gui_update_traffic_time_3( uint8_t *data )
  */
 static void gui_update_traffic_time_4( uint8_t *data )
 {
-  lv_label_set_text_fmt( ui_lblTime4, "%.2d", *data );
+  lv_label_set_text_fmt( ui_lblGreenTime4, "%.2d", *data );
 }
 
+/**
+ * @brief Callback function to update the whole traffic lights status as per v2
+ * @param data pointer to traffic status version 2
+ */
+static void gui_update_traffic_lights_v2( uint8_t *data )
+{
+  uint8_t idx;
+  traffic_light_t *traffic_light_data;
+  traffic_light_data = (traffic_light_t*)data;
+
+  for( idx=0; idx < TRAFFIC_LIGHT_SIDES; idx++ )
+  {
+    if( traffic_light_data[idx].green_time )
+    {
+      lv_led_on( led_green[idx] );
+      lv_led_off(led_yellow[idx] );
+      lv_led_off( led_red[idx] );
+      lv_label_set_text_fmt( green_time[idx],   "%.2d", traffic_light_data[idx].green_time );
+      lv_label_set_text_fmt( yellow_time[idx],  "00" );
+      lv_label_set_text_fmt( red_time[idx],     "00" );
+    }
+    else if( traffic_light_data[idx].yellow_time )
+    {
+      lv_led_off( led_green[idx] );
+      lv_led_on(led_yellow[idx] );
+      lv_led_off( led_red[idx] );
+      lv_label_set_text_fmt( yellow_time[idx],  "%.2d", traffic_light_data[idx].yellow_time );
+      lv_label_set_text_fmt( green_time[idx],   "00" );
+      lv_label_set_text_fmt( red_time[idx],     "00" );
+    }
+    else if( traffic_light_data[idx].red_time )
+    {
+      lv_led_off( led_green[idx] );
+      lv_led_off(led_yellow[idx] );
+      lv_led_on( led_red[idx] );
+      lv_label_set_text_fmt( red_time[idx],   "%.2d", traffic_light_data[idx].red_time );
+      lv_label_set_text_fmt( green_time[idx], "00" );
+      lv_label_set_text_fmt( yellow_time[idx],"00" );
+    }
+    else
+    {
+      // some invalid case
+    }
+  }
+
+}
 
 

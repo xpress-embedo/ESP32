@@ -12,6 +12,9 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+// Public Macros
+
+// Structure Declaration
 
 // Public Function Declaration
 

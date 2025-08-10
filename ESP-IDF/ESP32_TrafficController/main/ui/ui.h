@@ -26,29 +26,37 @@ void ui_Panel1_screen_init(void);
 void ui_event_Panel1(lv_event_t * e);
 extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui_lblSide1;
-extern lv_obj_t * ui_lblTime1;
 extern lv_obj_t * ui_imgConnectStatus1;
+extern lv_obj_t * ui_lblGreenTime1;
+extern lv_obj_t * ui_lblYellowTime1;
+extern lv_obj_t * ui_lblRedTime1;
 // SCREEN: ui_Panel2
 void ui_Panel2_screen_init(void);
 void ui_event_Panel2(lv_event_t * e);
 extern lv_obj_t * ui_Panel2;
 extern lv_obj_t * ui_lblSide2;
-extern lv_obj_t * ui_lblTime2;
 extern lv_obj_t * ui_imgConnectStatus2;
+extern lv_obj_t * ui_lblYellowTime2;
+extern lv_obj_t * ui_lblGreenTime2;
+extern lv_obj_t * ui_lblRedTime2;
 // SCREEN: ui_Panel3
 void ui_Panel3_screen_init(void);
 void ui_event_Panel3(lv_event_t * e);
 extern lv_obj_t * ui_Panel3;
 extern lv_obj_t * ui_lblSide3;
-extern lv_obj_t * ui_lblTime3;
 extern lv_obj_t * ui_imgConnectStatus3;
+extern lv_obj_t * ui_lblYellowTime3;
+extern lv_obj_t * ui_lblGreenTime3;
+extern lv_obj_t * ui_lblRedTime3;
 // SCREEN: ui_Panel4
 void ui_Panel4_screen_init(void);
 void ui_event_Panel4(lv_event_t * e);
 extern lv_obj_t * ui_Panel4;
 extern lv_obj_t * ui_lblSide4;
-extern lv_obj_t * ui_lblTime4;
 extern lv_obj_t * ui_imgConnectStatus4;
+extern lv_obj_t * ui_lblYellowTime4;
+extern lv_obj_t * ui_lblGreenTime4;
+extern lv_obj_t * ui_lblRedTime4;
 extern lv_obj_t * ui____initial_actions0;
 
 
@@ -60,6 +68,7 @@ LV_IMG_DECLARE(ui_img_1688301267);    // assets/wifi-without-internet.png
 
 
 LV_FONT_DECLARE(ui_font_DsDigital72);
+LV_FONT_DECLARE(ui_font_SevenSegment48);
 
 
 

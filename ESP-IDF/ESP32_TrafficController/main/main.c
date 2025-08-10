@@ -55,14 +55,6 @@ void app_main(void)
   // wifi connection is established
   mqtt_app_start();
 
-  // connect with mqtt server if connection is successful
-  if( 0 )
-  {
-    // send an event to GUI manager
-    gui_send_event(GUI_MNG_EV_MQTT_CONNECTING, NULL);
-
-  }
-
   while (true )
   {
     // Wait before next

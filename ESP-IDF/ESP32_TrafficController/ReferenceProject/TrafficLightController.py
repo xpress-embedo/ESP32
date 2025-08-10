@@ -7,6 +7,7 @@ import serial.tools.list_ports
 import paho.mqtt.client as mqtt
 
 # global variables of the project
+mqtt_client = None
 GREEN_TIME = 10
 YELLOW_TIME = 3
 # extra time added per car detected
@@ -30,18 +31,23 @@ def get_green_time(side_index):
     return GREEN_TIME
 
 def generate_message():
+  global mqqt_client
   message = "<"
   for i in range(4):
     message += f"{i}:"
     if green[i] :
-      message += f"G{green[i]:02}"
+      message += f"G{green[i]:02},"
     elif yellow[i] :
-      message += f"Y{yellow[i]:02}"
+      message += f"Y{yellow[i]:02},"
     elif red[i]:
       message += f"R{red[i]:02}"
-      message += ""
-    message += ">"
+      # don't add comma for last range
+      if i < 3:
+        message += ","
+  message += ">"
   print (message)
+  mqtt_client.publish("TrafficTopic2", message)
+
 
 # Callback Function on Connection with MQTT Server
 def on_connect( client, userdata, flags, rc, properties):
@@ -81,9 +87,9 @@ if not serial_port.is_open:
 
 
 # Configure MQTT Client (Starts)
-client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
-client.on_connect = on_connect
-client.on_message = on_message
+mqtt_client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
 
 mqtt_server = "test.mosquitto.org"
 mqtt_port = 1883
@@ -93,8 +99,8 @@ mqtt_port = 1883
 # mqtt_pswd = "aQp113ENJeO9";
 # client.username_pw_set( user_name, mqtt_pswd );
 
-client.connect( mqtt_server, mqtt_port, 60 );
-client.loop_start()
+mqtt_client.connect( mqtt_server, mqtt_port, 60 );
+mqtt_client.loop_start()
 # Configure MQTT Client (Ends)
 
 # Opening the Camera
