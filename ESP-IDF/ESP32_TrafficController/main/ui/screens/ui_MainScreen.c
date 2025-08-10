@@ -12,16 +12,13 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_bg_color(ui_MainScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_MainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_imgLogo = lv_obj_create(ui_MainScreen);
-    lv_obj_set_width(ui_imgLogo, 240);
-    lv_obj_set_height(ui_imgLogo, 240);
+    ui_imgLogo = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgLogo, &ui_img_school_logo_png);
+    lv_obj_set_width(ui_imgLogo, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgLogo, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_imgLogo, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_imgLogo, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_imgLogo, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_imgLogo, &ui_img_school_logo_png, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui_imgLogo, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_imgLogo, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblTrafficController = lv_label_create(ui_MainScreen);
     lv_obj_set_width(ui_lblTrafficController, LV_SIZE_CONTENT);   /// 1
@@ -35,7 +32,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_style_text_font(ui_lblTrafficController, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgConnectStatus = lv_img_create(ui_MainScreen);
-    lv_img_set_src(ui_imgConnectStatus, &ui_img_1402433841);
+    lv_img_set_src(ui_imgConnectStatus, &ui_img_338993590);
     lv_obj_set_width(ui_imgConnectStatus, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_imgConnectStatus, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_imgConnectStatus, LV_ALIGN_BOTTOM_RIGHT);

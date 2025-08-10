@@ -15,6 +15,7 @@
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
 #define NUM_OF_SIDES                    (4u)
+#define LOAD_PANEL_TIME_COUNTER         ( 1000/ GUI_MNG_REFRESH_TIME )
 
 
 // function template for callback function
@@ -46,6 +47,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting       },
   { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting       },
   { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected        },
+  { GUI_MNG_EV_LOAD_PANEL_1,          gui_load_panel_1          },
   { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1  },
   { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2  },
   { GUI_MNG_EV_TRAFFIC_LED_3,         gui_update_traffic_led_3  },
@@ -59,6 +61,8 @@ static lv_obj_t * led_green[NUM_OF_SIDES];
 static lv_obj_t * led_yellow[NUM_OF_SIDES];
 static lv_obj_t * led_red[NUM_OF_SIDES];
 static lv_obj_t * panel_table[NUM_OF_SIDES];
+
+static uint32_t load_panel_timer = 0;
 
 // Public Function Definitions
 
@@ -161,7 +165,10 @@ void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
  */
 void gui_cfg_refresh( void )
 {
-
+  if( (load_panel_timer > 0) && (--load_panel_timer == 0) )
+  {
+    gui_send_event( GUI_MNG_EV_LOAD_PANEL_1, NULL );
+  }
 }
 
 /**
@@ -171,11 +178,11 @@ void gui_cfg_refresh( void )
 static void gui_wifi_connecting( uint8_t *data )
 {
   // update the connect icon status to disconnected
-  lv_img_set_src( ui_imgConnectStatus,  &ui_img_338993590 );
-  lv_img_set_src( ui_img1ConnectStatus, &ui_img_338993590 );
-  // but let's hide the image and in connecting function we will restore this
-  lv_obj_add_flag(ui_imgConnectStatus,  LV_OBJ_FLAG_HIDDEN);
-  lv_obj_add_flag(ui_img1ConnectStatus, LV_OBJ_FLAG_HIDDEN);
+  lv_img_set_src( ui_imgConnectStatus,  &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus1, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus2, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus3, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus4, &ui_img_1402433841 );
 }
 
 /**
@@ -184,11 +191,12 @@ static void gui_wifi_connecting( uint8_t *data )
  */
 static void gui_mqtt_connecting( uint8_t *data )
 {
-  // update the connect icon status to disconnected
-
-  // let's clear the flag to display the disconnect option, the above lines are not really needed
-  lv_obj_clear_flag(ui_imgConnectStatus,  LV_OBJ_FLAG_HIDDEN);
-  lv_obj_clear_flag(ui_img1ConnectStatus, LV_OBJ_FLAG_HIDDEN);
+  // update the connect icon status to wifi connected with no internet
+  lv_img_set_src( ui_imgConnectStatus,  &ui_img_1688301267 );
+  lv_img_set_src( ui_imgConnectStatus1, &ui_img_1688301267 );
+  lv_img_set_src( ui_imgConnectStatus2, &ui_img_1688301267 );
+  lv_img_set_src( ui_imgConnectStatus3, &ui_img_1688301267 );
+  lv_img_set_src( ui_imgConnectStatus4, &ui_img_1688301267 );
 }
 
 /**
@@ -197,10 +205,15 @@ static void gui_mqtt_connecting( uint8_t *data )
  */
 static void gui_mqtt_connected( uint8_t *data )
 {
-  printf( "gui_mqtt_connected\r\n");
   // update the connect icon status to connected
-  lv_img_set_src( ui_imgConnectStatus,  &ui_img_1402433841 );
-  lv_img_set_src( ui_img1ConnectStatus, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus,  &ui_img_338993590 );
+  lv_img_set_src( ui_imgConnectStatus1, &ui_img_338993590 );
+  lv_img_set_src( ui_imgConnectStatus2, &ui_img_338993590 );
+  lv_img_set_src( ui_imgConnectStatus3, &ui_img_338993590 );
+  lv_img_set_src( ui_imgConnectStatus4, &ui_img_338993590 );
+
+  // this will be used to post another event to load panel-1
+  load_panel_timer = LOAD_PANEL_TIME_COUNTER;
 }
 
 
@@ -211,7 +224,7 @@ static void gui_mqtt_connected( uint8_t *data )
  */
 static void gui_load_panel_1( uint8_t *data )
 {
-  // lv_disp_load_scr(ui_Panel1);
+  lv_disp_load_scr(ui_Panel1);
 }
 
 

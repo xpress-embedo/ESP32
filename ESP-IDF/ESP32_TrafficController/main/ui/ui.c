@@ -23,7 +23,7 @@ void ui_event_Panel1(lv_event_t * e);
 lv_obj_t * ui_Panel1;
 lv_obj_t * ui_lblSide1;
 lv_obj_t * ui_lblTime1;
-lv_obj_t * ui_img1ConnectStatus;
+lv_obj_t * ui_imgConnectStatus1;
 
 
 // SCREEN: ui_Panel2
@@ -32,6 +32,7 @@ void ui_event_Panel2(lv_event_t * e);
 lv_obj_t * ui_Panel2;
 lv_obj_t * ui_lblSide2;
 lv_obj_t * ui_lblTime2;
+lv_obj_t * ui_imgConnectStatus2;
 
 
 // SCREEN: ui_Panel3
@@ -40,6 +41,7 @@ void ui_event_Panel3(lv_event_t * e);
 lv_obj_t * ui_Panel3;
 lv_obj_t * ui_lblSide3;
 lv_obj_t * ui_lblTime3;
+lv_obj_t * ui_imgConnectStatus3;
 
 
 // SCREEN: ui_Panel4
@@ -48,6 +50,7 @@ void ui_event_Panel4(lv_event_t * e);
 lv_obj_t * ui_Panel4;
 lv_obj_t * ui_lblSide4;
 lv_obj_t * ui_lblTime4;
+lv_obj_t * ui_imgConnectStatus4;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////

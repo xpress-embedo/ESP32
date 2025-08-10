@@ -30,6 +30,14 @@ void ui_Panel3_screen_init(void)
     lv_label_set_text(ui_lblTime3, "00");
     lv_obj_set_style_text_font(ui_lblTime3, &ui_font_DsDigital72, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_imgConnectStatus3 = lv_img_create(ui_Panel3);
+    lv_img_set_src(ui_imgConnectStatus3, &ui_img_1688301267);
+    lv_obj_set_width(ui_imgConnectStatus3, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgConnectStatus3, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_imgConnectStatus3, LV_ALIGN_BOTTOM_RIGHT);
+    lv_obj_add_flag(ui_imgConnectStatus3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgConnectStatus3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
     lv_obj_add_event_cb(ui_Panel3, ui_event_Panel3, LV_EVENT_ALL, NULL);
 
 }
