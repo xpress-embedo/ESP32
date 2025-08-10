@@ -13,9 +13,6 @@ YELLOW_TIME = 3
 # extra time added per car detected
 _EXTRA_PER_CAR = 1
 
-# this variable holds the value of the number of cars detected on the side-1
-num_of_cars_detected = 0
-
 LINE_POSITION_Y = 75
 LINE_IN_X_1 = 300
 LINE_IN_X_2 = 600
@@ -23,12 +20,6 @@ LINE_IN_X_2 = 600
 LINE_OUT_X_1 = 50
 LINE_OUT_X_2 = 350
 OFFSET = 10
-
-def get_green_time(side_index):
-  if side_index == 0: # NORTH side
-    return GREEN_TIME + num_of_cars_detected
-  else:
-    return GREEN_TIME
 
 def generate_message():
   global mqqt_client
@@ -122,13 +113,31 @@ car_cascade = cv2.CascadeClassifier('cars.xml')
 while True:
 
   # Read a frame from the camera
-  # todo
+  ret, img = cap.read()
+  if not ret:
+      print("Error: Could not read frame.")
+      break
+  
+  gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  cars =  car_cascade.detectMultiScale(gray, 1.1, 1)
 
+  car_no = 0
+  for (x,y,w,h) in cars:
+    if w > 50 and h > 50 and  w < 300 and h < 300:
+      car_no += 1
+      #print(x,y,w,h)
+      # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)      
+    
   # Generate Message for Serial Port and MQTT
   generate_message()
 
+  side1_extra_time = car_no * _EXTRA_PER_CAR  # side one extra time for show 
+
   # increment time logic
   for idx in range(4):
+    if idx == 0:
+      green[idx] = GREEN_TIME + side1_extra_time
+
     # only one time is positive at a time
     if green[idx] and yellow[idx] == 0 and red[idx] == 0:
       green[idx] = green[idx] - 1
