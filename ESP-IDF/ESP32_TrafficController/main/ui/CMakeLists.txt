@@ -9,9 +9,13 @@ SET(SOURCES screens/ui_MainScreen.c
     ui_helpers.c
     images/ui_img_school_logo_png.c
     images/ui_img_338993590.c
+    images/ui_img_traffic_light_png.c
+    images/ui_img_road_png.c
     images/ui_img_1402433841.c
     images/ui_img_1688301267.c
     fonts/ui_font_DsDigital72.c
-    fonts/ui_font_SevenSegment48.c)
+    fonts/ui_font_SevenSegment48.c
+    fonts/ui_font_SevenSegment14.c
+    fonts/ui_font_SevenSegment18.c)
 
 add_library(ui ${SOURCES})

@@ -31,7 +31,7 @@ typedef struct _gui_mng_event_cb_t
 static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_mqtt_connected( uint8_t *data );
-static void gui_load_panel_1( uint8_t *data );
+static void gui_load_traffic_panel( uint8_t *data );
 static void gui_update_traffic_led_1( uint8_t *data );
 static void gui_update_traffic_led_2( uint8_t *data );
 static void gui_update_traffic_led_3( uint8_t *data );
@@ -48,7 +48,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting           },
   { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting           },
   { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected            },
-  { GUI_MNG_EV_LOAD_PANEL_1,          gui_load_panel_1              },
+  { GUI_MNG_EV_LOAD_TRAFFIC_PANEL,    gui_load_traffic_panel        },
   { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1      },
   { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2      },
   { GUI_MNG_EV_TRAFFIC_LED_3,         gui_update_traffic_led_3      },
@@ -190,7 +190,7 @@ void gui_cfg_refresh( void )
 {
   if( (load_panel_timer > 0) && (--load_panel_timer == 0) )
   {
-    gui_send_event( GUI_MNG_EV_LOAD_PANEL_1, NULL );
+    gui_send_event( GUI_MNG_EV_LOAD_TRAFFIC_PANEL, NULL );
   }
 }
 
@@ -245,9 +245,9 @@ static void gui_mqtt_connected( uint8_t *data )
  *        visualization of Traffic Light
  * @param data 
  */
-static void gui_load_panel_1( uint8_t *data )
+static void gui_load_traffic_panel( uint8_t *data )
 {
-  lv_disp_load_scr(ui_Panel1);
+  lv_disp_load_scr(ui_PanelAllTraffic);
 }
 
 

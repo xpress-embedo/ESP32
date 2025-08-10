@@ -1,0 +1,16 @@
+{
+  "codename": "SevenSegment18",
+  "ttf_path": "/assets/Seven Segment.ttf",
+  "bin_path": "/assets\\ui_font_SevenSegment18.bin",
+  "c_path": "/assets\\ui_font_SevenSegment18.c",
+  "cfg_path": "/assets\\ui_font_SevenSegment18.fcfg",
+  "size": 18,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x30-0x39"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

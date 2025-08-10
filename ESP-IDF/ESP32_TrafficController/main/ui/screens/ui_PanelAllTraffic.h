@@ -14,6 +14,31 @@ extern "C" {
 extern void ui_PanelAllTraffic_screen_init(void);
 extern void ui_PanelAllTraffic_screen_destroy(void);
 extern lv_obj_t * ui_PanelAllTraffic;
+extern lv_obj_t * ui_imgTrafficIntersection;
+extern void ui_event_Container1(lv_event_t * e);
+extern lv_obj_t * ui_Container1;
+extern lv_obj_t * ui_lblContainerSide1;
+extern lv_obj_t * ui_lblContainerGreenTime1;
+extern lv_obj_t * ui_lblContainerYellowTime1;
+extern lv_obj_t * ui_lblContainerRedTime1;
+extern void ui_event_Container2(lv_event_t * e);
+extern lv_obj_t * ui_Container2;
+extern lv_obj_t * ui_lblContainerSide2;
+extern lv_obj_t * ui_lblContainerGreenTime2;
+extern lv_obj_t * ui_lblContainerYellowTime2;
+extern lv_obj_t * ui_lblContainerRedTime2;
+extern void ui_event_Container3(lv_event_t * e);
+extern lv_obj_t * ui_Container3;
+extern lv_obj_t * ui_lblContainerSide3;
+extern lv_obj_t * ui_lblContainerGreenTime3;
+extern lv_obj_t * ui_lblContainerYellowTime3;
+extern lv_obj_t * ui_lblContainerRedTime3;
+extern void ui_event_Container4(lv_event_t * e);
+extern lv_obj_t * ui_Container4;
+extern lv_obj_t * ui_lblContainerSide4;
+extern lv_obj_t * ui_lblContainerGreenTime4;
+extern lv_obj_t * ui_lblContainerYellowTime4;
+extern lv_obj_t * ui_lblContainerRedTime4;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
