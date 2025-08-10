@@ -62,6 +62,9 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
 static lv_obj_t * led_green[NUM_OF_SIDES];
 static lv_obj_t * led_yellow[NUM_OF_SIDES];
 static lv_obj_t * led_red[NUM_OF_SIDES];
+static lv_obj_t * container_led_green[NUM_OF_SIDES];
+static lv_obj_t * container_led_yellow[NUM_OF_SIDES];
+static lv_obj_t * container_led_red[NUM_OF_SIDES];
 static lv_obj_t * green_time[NUM_OF_SIDES];
 static lv_obj_t * yellow_time[NUM_OF_SIDES];
 static lv_obj_t * red_time[NUM_OF_SIDES];
@@ -105,6 +108,19 @@ void gui_cfg_init( void )
   red_time[1]    = ui_lblRedTime2;
   red_time[2]    = ui_lblRedTime3;
   red_time[3]    = ui_lblRedTime4;
+
+  container_led_green[0]  = ui_containerGreen1;
+  container_led_green[1]  = ui_containerGreen2;
+  container_led_green[2]  = ui_containerGreen3;
+  container_led_green[3]  = ui_containerGreen4;
+  container_led_yellow[0] = ui_containerYellow1;
+  container_led_yellow[1] = ui_containerYellow2;
+  container_led_yellow[2] = ui_containerYellow3;
+  container_led_yellow[3] = ui_containerYellow4;
+  container_led_red[0]    = ui_containerRed1;
+  container_led_red[1]    = ui_containerRed2;
+  container_led_red[2]    = ui_containerRed3;
+  container_led_red[3]    = ui_containerRed4;
 
   container_green_time[0]  = ui_lblContainerGreenTime1;
   container_green_time[1]  = ui_lblContainerGreenTime2;
@@ -448,10 +464,16 @@ static void gui_update_traffic_lights_v2( uint8_t *data )
   {
     if( traffic_light_data[idx].green_time )
     {
+      // Panel Traffic Lights
       lv_led_on( led_green[idx] );
       lv_led_off(led_yellow[idx] );
       lv_led_off( led_red[idx] );
-      // Panel Traffic Lights
+      // Container Traffic Lights
+      lv_obj_set_style_bg_color( container_led_green[idx], lv_color_hex(0x008000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_yellow[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_red[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+
+      // Panel Traffic Lights Time
       lv_label_set_text_fmt( green_time[idx],   "%.2d", traffic_light_data[idx].green_time );
       lv_label_set_text_fmt( yellow_time[idx],  "00" );
       lv_label_set_text_fmt( red_time[idx],     "00" );
@@ -462,23 +484,35 @@ static void gui_update_traffic_lights_v2( uint8_t *data )
     }
     else if( traffic_light_data[idx].yellow_time )
     {
+      // Panel Traffic Lights
       lv_led_off( led_green[idx] );
       lv_led_on(led_yellow[idx] );
       lv_led_off( led_red[idx] );
-      // Panel Traffic Lights
+      // Container Traffic Lights
+      lv_obj_set_style_bg_color( container_led_green[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_yellow[idx], lv_color_hex(0x808000), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_red[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+
+      // Panel Traffic Lights Time
       lv_label_set_text_fmt( yellow_time[idx],  "%.2d", traffic_light_data[idx].yellow_time );
       lv_label_set_text_fmt( green_time[idx],   "00" );
       lv_label_set_text_fmt( red_time[idx],     "00" );
       // Container Traffic Lights (here we update all LEDs)
-      lv_label_set_text_fmt( container_yellow_time[idx],   "%.2d", traffic_light_data[idx].yellow_time );
-      lv_label_set_text_fmt( container_green_time[idx],  "00" );
+      lv_label_set_text_fmt( container_yellow_time[idx],  "%.2d", traffic_light_data[idx].yellow_time );
+      lv_label_set_text_fmt( container_green_time[idx],   "00" );
       lv_label_set_text_fmt( container_red_time[idx],     "00" );
     }
     else if( traffic_light_data[idx].red_time )
     {
+      // Panel Traffic Lights
       lv_led_off( led_green[idx] );
       lv_led_off(led_yellow[idx] );
       lv_led_on( led_red[idx] );
+      // Container Traffic Lights
+      lv_obj_set_style_bg_color( container_led_green[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_yellow[idx], lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color( container_led_red[idx], lv_color_hex(0x800000), LV_PART_MAIN | LV_STATE_DEFAULT);
+
       // Panel Traffic Lights
       lv_label_set_text_fmt( red_time[idx],   "%.2d", traffic_light_data[idx].red_time );
       lv_label_set_text_fmt( green_time[idx], "00" );
