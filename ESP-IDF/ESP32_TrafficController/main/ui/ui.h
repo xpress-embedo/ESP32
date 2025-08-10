@@ -27,6 +27,7 @@ void ui_event_Panel1(lv_event_t * e);
 extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui_lblSide1;
 extern lv_obj_t * ui_lblTime1;
+extern lv_obj_t * ui_img1ConnectStatus;
 // SCREEN: ui_Panel2
 void ui_Panel2_screen_init(void);
 void ui_event_Panel2(lv_event_t * e);

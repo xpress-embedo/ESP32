@@ -41,6 +41,5 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_imgConnectStatus, LV_ALIGN_BOTTOM_RIGHT);
     lv_obj_add_flag(ui_imgConnectStatus, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgConnectStatus, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_img_src(ui_imgConnectStatus, &ui_img_1402433841, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }

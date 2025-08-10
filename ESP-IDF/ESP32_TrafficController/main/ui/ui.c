@@ -23,6 +23,7 @@ void ui_event_Panel1(lv_event_t * e);
 lv_obj_t * ui_Panel1;
 lv_obj_t * ui_lblSide1;
 lv_obj_t * ui_lblTime1;
+lv_obj_t * ui_img1ConnectStatus;
 
 
 // SCREEN: ui_Panel2
