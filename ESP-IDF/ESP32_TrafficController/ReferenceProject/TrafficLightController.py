@@ -120,6 +120,9 @@ while True:
   if not ret:
       print("Error: Could not read frame.")
       break
+  if img is None:
+      print("Error: Frame is None.")
+      break
   
   gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   cars =  car_cascade.detectMultiScale(gray, 1.1, 1)
@@ -198,6 +201,9 @@ while True:
       else:
         print ("Invalid Case Shouldn't Happen")
 
+  if cv2.waitKey(33) == 27:  # Press 'ESC' to exit
+    print("Exiting...")
+    break
 
 cv2.destroyAllWindows()
 mqtt_client.loop_stop()
