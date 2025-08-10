@@ -8,6 +8,9 @@ import paho.mqtt.client as mqtt
 
 # global variables of the project
 mqtt_client = None
+previous_time = 0
+run_algorithm = False
+
 GREEN_TIME = 10
 YELLOW_TIME = 3
 # extra time added per car detected
@@ -126,34 +129,76 @@ while True:
     if w > 50 and h > 50 and  w < 300 and h < 300:
       car_no += 1
       #print(x,y,w,h)
-      # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)      
-    
-  # Generate Message for Serial Port and MQTT
-  generate_message()
+      cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
 
-  side1_extra_time = car_no * _EXTRA_PER_CAR  # side one extra time for show 
-
-  # increment time logic
-  for idx in range(4):
-    if idx == 0:
-      green[idx] = GREEN_TIME + side1_extra_time
-
-    # only one time is positive at a time
-    if green[idx] and yellow[idx] == 0 and red[idx] == 0:
-      green[idx] = green[idx] - 1
-      # if green time reaches zero, then we need to reload the yellow time instantly
-      if green[idx] == 0:
-        yellow[idx] = YELLOW_TIME
-    elif yellow[idx] and green[idx] == 0 and red[idx] == 0:
-      yellow[idx] = yellow[idx] -1
-      # if yellow reaches zero, it means time to switch to the yellow time instantly
-      if yellow[idx] == 0:
-        red[idx] = (GREEN_TIME + YELLOW_TIME ) * 3
-    elif red[idx] and yellow[idx] == 0 and green[idx] == 0:
-      red[idx] = red[idx] - 1
-      if red[idx] == 0:
-        green[idx] = GREEN_TIME
-    else:
-      print ("Invalid Case Shouldn't Happen")
+  side1_extra_time = car_no * _EXTRA_PER_CAR  # side one extra time for show   
   
-  time.sleep(1)  # Wait for 1 second before the next iteration
+  # font 
+  font = cv2.FONT_HERSHEY_SIMPLEX 
+  # org 
+  org = (50, 50) 
+  # fontScale 
+  fontScale = 1
+  # Blue color in BGR 
+  color = (255, 0, 0) 
+  # Line thickness of 2 px 
+  thickness = 2
+
+  img = cv2.putText(img, "Cars Detected: "+str(car_no), org, font, fontScale, color, thickness, cv2.LINE_AA)
+
+  ############################## Draw lane in line & offset##########################################
+  cv2.line(img, (LINE_IN_X_1, LINE_POSITION_Y),
+          (LINE_IN_X_2, LINE_POSITION_Y), (0, 0, 255), 2)
+  cv2.line(img, (LINE_IN_X_1, LINE_POSITION_Y+OFFSET),
+          (LINE_IN_X_2, LINE_POSITION_Y+OFFSET), (255, 255, 255), 1)
+  cv2.line(img, (LINE_IN_X_1, LINE_POSITION_Y-OFFSET),
+          (LINE_IN_X_2, LINE_POSITION_Y-OFFSET), (255, 255, 255), 1)
+
+  # Draw lane out line & offset
+  cv2.line(img, (LINE_OUT_X_1, LINE_POSITION_Y),
+          (LINE_OUT_X_2, LINE_POSITION_Y), (0, 255, 0), 2)
+  cv2.line(img, (LINE_OUT_X_1, LINE_POSITION_Y+OFFSET),
+          (LINE_OUT_X_2, LINE_POSITION_Y+OFFSET), (255, 255, 255), 1)
+  cv2.line(img, (LINE_OUT_X_1, LINE_POSITION_Y-OFFSET),
+          (LINE_OUT_X_2, LINE_POSITION_Y-OFFSET), (255, 255, 255), 1)
+
+  cv2.imshow('Stream', img)
+
+  current_time = int( time.perf_counter() )
+
+  if current_time != previous_time:
+    previous_time = current_time
+    run_algorithm = True
+
+  if run_algorithm == True:
+    run_algorithm = False
+    # Generate Message for Serial Port and MQTT
+    generate_message()
+
+    # increment time logic
+    for idx in range(4):
+      if idx == 0:
+        green[idx] = GREEN_TIME + side1_extra_time
+
+      # only one time is positive at a time
+      if green[idx] and yellow[idx] == 0 and red[idx] == 0:
+        green[idx] = green[idx] - 1
+        # if green time reaches zero, then we need to reload the yellow time instantly
+        if green[idx] == 0:
+          yellow[idx] = YELLOW_TIME
+      elif yellow[idx] and green[idx] == 0 and red[idx] == 0:
+        yellow[idx] = yellow[idx] -1
+        # if yellow reaches zero, it means time to switch to the yellow time instantly
+        if yellow[idx] == 0:
+          red[idx] = (GREEN_TIME + YELLOW_TIME ) * 3
+      elif red[idx] and yellow[idx] == 0 and green[idx] == 0:
+        red[idx] = red[idx] - 1
+        if red[idx] == 0:
+          green[idx] = GREEN_TIME
+      else:
+        print ("Invalid Case Shouldn't Happen")
+
+
+cv2.destroyAllWindows()
+mqtt_client.loop_stop()
+mqtt_client.disconnect()
