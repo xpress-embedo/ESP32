@@ -129,18 +129,21 @@ void gui_cfg_init( void )
     lv_obj_set_y(led_green[idx], -40);
     // updating green color
     lv_led_set_color(led_green[idx], lv_palette_main(LV_PALETTE_GREEN));
+    // lv_led_set_color(led_green[idx], lv_color_hex(0x008000));
 
     // adjusting yellow led offset from center
     lv_obj_set_x(led_yellow[idx], -60);
     lv_obj_set_y(led_yellow[idx], 20);
     // updating yellow color
     lv_led_set_color(led_yellow[idx], lv_palette_main(LV_PALETTE_YELLOW));
+    // lv_led_set_color(led_green[idx], lv_color_hex(0xC8C800));
 
     // adjusting red led offset from center
     lv_obj_set_x(led_red[idx], -60);
     lv_obj_set_y(led_red[idx], 80);
     // updating red color
     lv_led_set_color(led_red[idx], lv_palette_main(LV_PALETTE_RED));
+    // lv_led_set_color(led_green[idx], lv_color_hex(0x800000));
 
     // turn off all leds
     lv_led_off(led_green[idx]);

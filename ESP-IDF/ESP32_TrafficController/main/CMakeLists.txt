@@ -12,6 +12,7 @@ idf_component_register( SRCS
 												mqtt_app.c
 												ui/ui.c
     										ui/screens/ui_MainScreen.c
+    										ui/screens/ui_PanelAllTraffic.c
     										ui/screens/ui_Panel1.c
     										ui/screens/ui_Panel2.c
     										ui/screens/ui_Panel3.c
