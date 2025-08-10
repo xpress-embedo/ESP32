@@ -31,6 +31,7 @@ void ui_Panel1_screen_init(void)
     lv_obj_set_style_text_font(ui_lblTime1, &ui_font_DsDigital72, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_img1ConnectStatus = lv_img_create(ui_Panel1);
+    lv_img_set_src(ui_img1ConnectStatus, &ui_img_338993590);
     lv_obj_set_width(ui_img1ConnectStatus, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_img1ConnectStatus, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_img1ConnectStatus, LV_ALIGN_BOTTOM_RIGHT);

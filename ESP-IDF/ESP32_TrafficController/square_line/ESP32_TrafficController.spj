@@ -2075,7 +2075,7 @@
               {
                 "nid": -500809640,
                 "strtype": "IMAGE/Asset",
-                "strval": "",
+                "strval": "assets/wifi-connected.png",
                 "InheritedType": 5
               },
               {
@@ -5454,7 +5454,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_TrafficController\\main\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 270,
+    "backup_cnt": 274,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

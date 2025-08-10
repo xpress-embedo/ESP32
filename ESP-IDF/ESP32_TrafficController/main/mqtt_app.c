@@ -355,7 +355,7 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
       ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
       // send an event to GUI manager that we are connected
-      gui_send_event(GUI_MNG_EV_MQTT_CONNECTED, NULL);
+      gui_send_event( GUI_MNG_EV_MQTT_CONNECTED, NULL );
       break;
     case MQTT_EVENT_DISCONNECTED:
       ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");

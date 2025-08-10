@@ -133,12 +133,15 @@ static void gui_task(void *pvParameter)
 
   while(1)
   {
-    vTaskDelay(pdMS_TO_TICKS(20));
+    vTaskDelay(pdMS_TO_TICKS(GUI_MNG_REFRESH_TIME));
 
     // refresh the display
     gui_refresh();
 
-    // wait only 5 ms and then proceed
+    // custom configurable function
+    gui_cfg_refresh();
+
+    // wait only 10 ms and then proceed
     if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(10)) )
     {
       // the below is the code to handle the state machine

@@ -51,6 +51,7 @@ extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_school_logo_png);    // assets/school_logo.png
 LV_IMG_DECLARE(ui_img_1402433841);    // assets/wifi-disconnect.png
+LV_IMG_DECLARE(ui_img_338993590);    // assets/wifi-connected.png
 
 
 
