@@ -163,8 +163,8 @@ red = list(red_ref)
 # print ("Yellow: ", yellow)
 # print ("Red: ", red)
 
-cv2.namedWindow('Stream', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Stream', 1920, 1080)
+# cv2.namedWindow('Stream', cv2.WINDOW_NORMAL)
+# cv2.resizeWindow('Stream', 1920, 1080)
 
 while True:
   # Read a frame from the camera

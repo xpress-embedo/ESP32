@@ -43,6 +43,7 @@ static void gui_update_traffic_time_2( uint8_t *data );
 static void gui_update_traffic_time_3( uint8_t *data );
 static void gui_update_traffic_time_4( uint8_t *data );
 static void gui_update_traffic_lights_v2( uint8_t *data );
+static void gui_debugging( uint8_t *data );
 
 // Private Variables
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
@@ -62,6 +63,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_TRAFFIC_TIME_3,        gui_update_traffic_time_3     },
   { GUI_MNG_EV_TRAFFIC_TIME_4,        gui_update_traffic_time_4     },
   { GUI_MNG_EV_TRAFFIC_CTRL_V2,       gui_update_traffic_lights_v2  },
+  { GUI_MNG_EV_DEBUG,                 gui_debugging                 },
 };
 static lv_obj_t * led_green[NUM_OF_SIDES];
 static lv_obj_t * led_yellow[NUM_OF_SIDES];
@@ -555,7 +557,18 @@ static void gui_update_traffic_lights_v2( uint8_t *data )
       // some invalid case
     }
   }
+}
 
+/**
+ * @brief Callback function to some debugging information on display
+ * @param data pointer
+ */
+static void gui_debugging( uint8_t *data )
+{
+  uint8_t *rx_buff;
+
+  rx_buff = data;
+  lv_label_set_text_fmt( ui_lblDebug, "%s", rx_buff );
 }
 
 

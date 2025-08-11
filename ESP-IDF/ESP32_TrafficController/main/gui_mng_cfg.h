@@ -28,6 +28,7 @@ typedef enum {
   GUI_MNG_EV_TRAFFIC_TIME_3,        // Events for updating the traffic LEDs time of side-3
   GUI_MNG_EV_TRAFFIC_TIME_4,        // Events for updating the traffic LEDs time of side-4
   GUI_MNG_EV_TRAFFIC_CTRL_V2,       // Events for updating the traffic signals and time as per version 2 (which makes all of the above events obsolete)
+  GUI_MNG_EV_DEBUG,                 // Events for debugging on display
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
