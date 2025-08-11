@@ -48,5 +48,6 @@ typedef struct _mqtt_app_q_msg
 // Public Function Declaration
 void mqtt_app_start( void );
 BaseType_t mqtt_app_send_msg( mqtt_app_msg_e msg_id );
+bool mqtt_get_connection_status( void );
 
 #endif /* MAIN_MQTT_APP_H_ */

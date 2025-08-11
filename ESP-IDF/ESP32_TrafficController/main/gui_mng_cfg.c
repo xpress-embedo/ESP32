@@ -31,6 +31,8 @@ typedef struct _gui_mng_event_cb_t
 static void gui_wifi_connecting( uint8_t *data );
 static void gui_mqtt_connecting( uint8_t *data );
 static void gui_mqtt_connected( uint8_t *data );
+static void gui_serial_connected( uint8_t *data );
+static void gui_wifi_mqtt_disconnected( uint8_t *data );
 static void gui_load_traffic_panel( uint8_t *data );
 static void gui_update_traffic_led_1( uint8_t *data );
 static void gui_update_traffic_led_2( uint8_t *data );
@@ -48,6 +50,8 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting           },
   { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting           },
   { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected            },
+  { GUI_MNG_EV_WIFI_DISCONNECTED,     gui_wifi_mqtt_disconnected    },
+  { GUI_MNG_EV_SERIAL_CONNECTED,      gui_serial_connected          },
   { GUI_MNG_EV_LOAD_TRAFFIC_PANEL,    gui_load_traffic_panel        },
   { GUI_MNG_EV_TRAFFIC_LED_1,         gui_update_traffic_led_1      },
   { GUI_MNG_EV_TRAFFIC_LED_2,         gui_update_traffic_led_2      },
@@ -274,6 +278,30 @@ static void gui_mqtt_connected( uint8_t *data )
   load_panel_timer = LOAD_PANEL_TIME_COUNTER;
 }
 
+/**
+ * @brief Callback function when WiFi is disconnected (Disconnect from Router & MQTT Server)
+ * @param data
+ */
+static void gui_wifi_mqtt_disconnected( uint8_t *data )
+{
+  // update the connect icon status to disconnected
+  lv_img_set_src( ui_imgConnectStatus,  &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus1, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus2, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus3, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatus4, &ui_img_1402433841 );
+  lv_img_set_src( ui_imgConnectStatusAllTraffic, &ui_img_1402433841 );
+}
+
+/**
+ * @brief Callback function when ESP32 is using Serial Communication
+ * @param data
+ */
+static void gui_serial_connected( uint8_t *data )
+{
+  // this will be used to post another event to load panel-1
+  load_panel_timer = LOAD_PANEL_TIME_COUNTER;
+}
 
 /**
  * @brief Load the Panel-1 screen where all elements/widgets are available for

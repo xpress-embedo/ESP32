@@ -13,7 +13,7 @@
 
 // Public Macros
 #define WIFI_AP_SSID                    "ESP32_AP"
-#define WIFI_AP_PASSWORD                "12345678"
+#define WIFI_AP_PASSWORD                "1122334455"
 #define WIFI_AP_CHANNEL                 1
 #define WIFI_AP_SSID_HIDDEN             0               // Access Point Visibility
 #define WIFI_AP_MAX_CONNECTIONS         5               // Access Point Max. Connection

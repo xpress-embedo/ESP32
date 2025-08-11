@@ -78,6 +78,11 @@ BaseType_t mqtt_app_send_msg( mqtt_app_msg_e msg_id )
   return xQueueSend( mqtt_app_q_handle, &msg, portMAX_DELAY );
 }
 
+bool mqtt_get_connection_status( void )
+{
+  return mqtt_connect_status;
+}
+
 static void mqtt_app_task( void *pvParameter )
 {
   mqtt_app_q_msg_t msg;

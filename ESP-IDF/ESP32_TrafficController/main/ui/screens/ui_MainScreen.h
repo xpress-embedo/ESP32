@@ -17,6 +17,7 @@ extern lv_obj_t * ui_MainScreen;
 extern lv_obj_t * ui_imgLogo;
 extern lv_obj_t * ui_lblTrafficController;
 extern lv_obj_t * ui_imgConnectStatus;
+extern lv_obj_t * ui_lblDebug;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

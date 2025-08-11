@@ -251,6 +251,8 @@ static void wifi_app_task(void *pvParameter)
             xEventGroupClearBits(wifi_app_event_group, WIFI_APP_USER_REQUESTED_STA_DISCONNECT_BIT);
             // send message to http server that esp32 is disconnected as station
             http_server_monitor_send_msg( HTTP_MSG_WIFI_USER_DISCONNECT );
+            // send message to gui manager to update the icons
+            gui_send_event( GUI_MNG_EV_WIFI_DISCONNECTED, NULL );
           }
           else
           {

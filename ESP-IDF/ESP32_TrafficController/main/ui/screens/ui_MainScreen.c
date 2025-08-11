@@ -9,6 +9,7 @@ lv_obj_t * ui_MainScreen = NULL;
 lv_obj_t * ui_imgLogo = NULL;
 lv_obj_t * ui_lblTrafficController = NULL;
 lv_obj_t * ui_imgConnectStatus = NULL;
+lv_obj_t * ui_lblDebug = NULL;
 // event funtions
 
 // build funtions
@@ -27,7 +28,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_imgLogo, 0);
     lv_obj_set_y(ui_imgLogo, 20);
     lv_obj_set_align(ui_imgLogo, LV_ALIGN_BOTTOM_MID);
-    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_imgLogo, 200);
 
@@ -38,7 +39,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_lblTrafficController, 5);
     lv_obj_set_align(ui_lblTrafficController, LV_ALIGN_TOP_MID);
     lv_label_set_text(ui_lblTrafficController, "MLBTLS: Machine Learning\nBased Traffic Light System");
-    lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0xE10000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0xF44336), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblTrafficController, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblTrafficController, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -49,6 +50,15 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_align(ui_imgConnectStatus, LV_ALIGN_BOTTOM_RIGHT);
     lv_obj_add_flag(ui_imgConnectStatus, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgConnectStatus, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_lblDebug = lv_label_create(ui_MainScreen);
+    lv_obj_set_width(ui_lblDebug, 320);
+    lv_obj_set_height(ui_lblDebug, 180);
+    lv_obj_set_align(ui_lblDebug, LV_ALIGN_BOTTOM_MID);
+    lv_label_set_text(ui_lblDebug, "Hello World");
+    lv_obj_set_style_text_color(ui_lblDebug, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblDebug, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblDebug, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }
 
@@ -61,5 +71,6 @@ void ui_MainScreen_screen_destroy(void)
     ui_imgLogo = NULL;
     ui_lblTrafficController = NULL;
     ui_imgConnectStatus = NULL;
+    ui_lblDebug = NULL;
 
 }
