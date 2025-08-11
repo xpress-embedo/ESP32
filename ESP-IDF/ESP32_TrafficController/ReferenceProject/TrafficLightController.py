@@ -8,10 +8,12 @@ import paho.mqtt.client as mqtt
 
 # global variables of the project
 mqtt_client = None
+serial_port = None
 previous_time = 0
 run_algorithm = False
 
 GREEN_TIME = 10
+MAX_GREEN_EXTENSION = 10
 YELLOW_TIME = 3
 # extra time added per car detected
 _EXTRA_PER_CAR = 1
@@ -40,7 +42,13 @@ def generate_message():
         message += ","
   message += ">"
   print (message)
-  mqtt_client.publish("TrafficTopic2", message)
+  if mqtt_client is not None:
+    mqtt_client.publish("TrafficTopic2", message)
+  if serial_port is not None and serial_port.is_open:
+    try:
+      serial_port.write(message.encode('ascii'))
+    except Exception as e:
+      print(f"Error sending message to serial port: {e}")
 
 
 # Callback Function on Connection with MQTT Server
@@ -57,9 +65,13 @@ def on_message( client, userdata, msg):
 # main program starts from here
 # if __name__ == "__main__":  
 # start point of the project
-green = [ GREEN_TIME, 0, 0, 0]
-yellow = [0, 0, 0, 0]
-red = [ 0, (GREEN_TIME + YELLOW_TIME), (GREEN_TIME + YELLOW_TIME)*2, (GREEN_TIME + YELLOW_TIME)*3 ]
+green_ref   = [ GREEN_TIME, 0, 0, 0]
+yellow_ref  = [0, 0, 0, 0]
+red_ref     = [ 0, (GREEN_TIME + YELLOW_TIME), (GREEN_TIME + YELLOW_TIME)*2, (GREEN_TIME + YELLOW_TIME)*3 ]
+
+green = []
+yellow = []
+red = []
 
 print ("Traffic Light Controller Started")
 print ("Open CV Cersion: ", cv2.__version__)
@@ -70,7 +82,7 @@ for port, desc, hwid in sorted(ports):
     print(f"{port}: {desc} [{hwid}]")
 
 # Select the first available serial port
-port = 'COM1'  # Change this to your actual port
+port = 'COM4'  # Change this to your actual port
 baud = 115200
 # Configure the serial port
 serial_port = serial.Serial(port, baud, timeout=1)
@@ -113,8 +125,48 @@ time.sleep(2.0)  # Allow the camera to warm up
 # Using OpenCV Cascade Classifier to detect cars
 car_cascade = cv2.CascadeClassifier('cars.xml')
 
-while True:
+# I didn't liked this approach, but need to fill data for first run (starts)
+ret, img = cap.read()
+if not ret:
+  print("Error: Could not read frame.")
+if img is None:
+  print("Error: Frame is None.")
+  
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+cars =  car_cascade.detectMultiScale(gray, 1.1, 1)
+# I didn't liked this approach, but need to fill data for first run (ends)
 
+cars_detected = 0
+for (x,y,w,h) in cars:
+  if w > 50 and h > 50 and  w < 300 and h < 300:
+    cars_detected += 1
+    #print(x,y,w,h)
+    cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
+
+print ("Cars Detected: ", cars_detected)
+# update timings based on the detected cars
+extension = min( cars_detected, MAX_GREEN_EXTENSION )
+green_ref[0] += extension
+red_ref[1] += extension
+red_ref[2] += extension
+red_ref[3] += extension
+
+green = list(green_ref)
+yellow = list(yellow_ref)
+red = list(red_ref)
+
+# print ("Green Ref: ", green_ref)
+# print ("Yellow Ref: ", yellow_ref)
+# print ("Red Ref: ", red_ref)
+
+# print ("Green: ", green)
+# print ("Yellow: ", yellow)
+# print ("Red: ", red)
+
+cv2.namedWindow('Stream', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Stream', 1920, 1080)
+
+while True:
   # Read a frame from the camera
   ret, img = cap.read()
   if not ret:
@@ -127,14 +179,12 @@ while True:
   gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   cars =  car_cascade.detectMultiScale(gray, 1.1, 1)
 
-  car_no = 0
+  cars_detected = 0
   for (x,y,w,h) in cars:
     if w > 50 and h > 50 and  w < 300 and h < 300:
-      car_no += 1
+      cars_detected += 1
       #print(x,y,w,h)
       cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
-
-  side1_extra_time = car_no * _EXTRA_PER_CAR  # side one extra time for show   
   
   # font 
   font = cv2.FONT_HERSHEY_SIMPLEX 
@@ -147,7 +197,7 @@ while True:
   # Line thickness of 2 px 
   thickness = 2
 
-  img = cv2.putText(img, "Cars Detected: "+str(car_no), org, font, fontScale, color, thickness, cv2.LINE_AA)
+  img = cv2.putText(img, "Cars Detected: "+str(cars_detected), org, font, fontScale, color, thickness, cv2.LINE_AA)
 
   ############################## Draw lane in line & offset##########################################
   cv2.line(img, (LINE_IN_X_1, LINE_POSITION_Y),
@@ -180,9 +230,7 @@ while True:
 
     # increment time logic
     for idx in range(4):
-      if idx == 0:
-        green[idx] = GREEN_TIME + side1_extra_time
-
+      
       # only one time is positive at a time
       if green[idx] and yellow[idx] == 0 and red[idx] == 0:
         green[idx] = green[idx] - 1
@@ -190,16 +238,39 @@ while True:
         if green[idx] == 0:
           yellow[idx] = YELLOW_TIME
       elif yellow[idx] and green[idx] == 0 and red[idx] == 0:
-        yellow[idx] = yellow[idx] -1
+        yellow[idx] = yellow[idx] - 1
         # if yellow reaches zero, it means time to switch to the yellow time instantly
         if yellow[idx] == 0:
-          red[idx] = (GREEN_TIME + YELLOW_TIME ) * 3
+          # check for last index, as we need to update according to new detected cars
+          if idx == 3:
+            print ("Cars Detected: ", cars_detected)
+            green_ref   = [ GREEN_TIME, 0, 0, 0]
+            yellow_ref  = [0, 0, 0, 0]
+            red_ref     = [ 0, (GREEN_TIME + YELLOW_TIME), (GREEN_TIME + YELLOW_TIME)*2, (GREEN_TIME + YELLOW_TIME)*3 ]
+            # update timings based on the detected cars
+            extension = min( cars_detected, MAX_GREEN_EXTENSION )
+            green_ref[0] += extension
+            red_ref[1] += extension
+            red_ref[2] += extension
+            red_ref[3] += extension
+
+            green = list(green_ref)
+            yellow = list(yellow_ref)
+            red = list(red_ref)
+          else:
+            red[idx] = (GREEN_TIME + YELLOW_TIME) * 3
       elif red[idx] and yellow[idx] == 0 and green[idx] == 0:
         red[idx] = red[idx] - 1
         if red[idx] == 0:
           green[idx] = GREEN_TIME
       else:
-        print ("Invalid Case Shouldn't Happen")
+        # print ("Green Ref: ", green_ref)
+        # print ("Yellow Ref: ", yellow_ref)
+        # print ("Red Ref: ", red_ref)
+        # print ("Green: ", green)
+        # print ("Yellow: ", yellow)
+        # print ("Red: ", red)
+        print ("Invalid Case: index: ", idx, " green: ", green[idx], " yellow: ", yellow[idx], " red: ", red[idx])
 
   if cv2.waitKey(33) == 27:  # Press 'ESC' to exit
     print("Exiting...")

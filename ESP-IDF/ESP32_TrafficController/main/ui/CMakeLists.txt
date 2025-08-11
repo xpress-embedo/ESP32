@@ -15,8 +15,8 @@ SET(SOURCES screens/ui_MainScreen.c
     images/ui_img_road_png.c
     images/ui_img_1688301267.c
     fonts/ui_font_DsDigital72.c
-    fonts/ui_font_SevenSegment48.c
     fonts/ui_font_SevenSegment14.c
-    fonts/ui_font_SevenSegment18.c)
+    fonts/ui_font_SevenSegment18.c
+    fonts/ui_font_SevenSegment48.c)
 
 add_library(ui ${SOURCES})

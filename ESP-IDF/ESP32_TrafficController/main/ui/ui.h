@@ -43,9 +43,9 @@ LV_IMG_DECLARE(ui_img_1688301267);    // assets/wifi-without-internet.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_DsDigital72);
-LV_FONT_DECLARE(ui_font_SevenSegment48);
 LV_FONT_DECLARE(ui_font_SevenSegment14);
 LV_FONT_DECLARE(ui_font_SevenSegment18);
+LV_FONT_DECLARE(ui_font_SevenSegment48);
 
 // UI INIT
 void ui_init(void);

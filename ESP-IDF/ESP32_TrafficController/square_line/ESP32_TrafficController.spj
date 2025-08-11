@@ -48,7 +48,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  0
+                  20
                 ],
                 "InheritedType": 7
               },
@@ -65,7 +65,7 @@
               {
                 "nid": 500885674,
                 "strtype": "OBJECT/Align",
-                "strval": "CENTER",
+                "strval": "BOTTOM_MID",
                 "InheritedType": 3
               },
               {
@@ -155,7 +155,7 @@
               {
                 "nid": 476532489,
                 "strtype": "IMAGE/Scale",
-                "integer": 256,
+                "integer": 200,
                 "InheritedType": 6
               },
               {
@@ -292,7 +292,7 @@
               {
                 "nid": -1532464993,
                 "strtype": "LABEL/Text",
-                "strval": "Traffic Controller System",
+                "strval": "MLBTLS: Machine Learning\\nBased Traffic Light System",
                 "InheritedType": 10
               },
               {
@@ -307,9 +307,9 @@
                         "nid": 1506149058,
                         "strtype": "_style/Text_Color",
                         "intarray": [
-                          90,
-                          113,
-                          49,
+                          225,
+                          0,
+                          0,
                           255
                         ],
                         "InheritedType": 7
@@ -12078,7 +12078,7 @@
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_TrafficController\\main\\ui",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 421,
+    "backup_cnt": 427,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.6",
