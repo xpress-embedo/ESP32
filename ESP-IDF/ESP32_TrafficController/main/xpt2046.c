@@ -13,7 +13,7 @@
 #define CMD_Y_READ                  0b11010000  // NOTE: XPT2046 data sheet says this is actually X 0xD0
 #define CMD_Z1_READ                 0b10110000  // 0xB0
 #define CMD_Z2_READ                 0b11000000  // 0xC0
-#define XPT2046_TOUCH_THRESHOLD     400 // Threshold for touch detection
+#define XPT2046_TOUCH_THRESHOLD     200 // Threshold for touch detection
 #define XPT2046_AVG                 4
 
 // These are the values at lowest coordinates and maximum coordinates

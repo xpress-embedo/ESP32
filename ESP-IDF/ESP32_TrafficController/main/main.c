@@ -155,7 +155,7 @@ static void serial_rx_task( void *pvParameter )
       else if (byte == PACKET_END && receiving)
       {
         rx_buff[rx_idx] = '\0';
-        ESP_LOGI("UART_RX", "Received: %s", rx_buff);
+        // ESP_LOGI("UART_RX", "Received: %s", rx_buff);
 
         // Parse and update traffic lights
         serial_parse_traffic_payload(rx_buff, traffic_light_time);
@@ -175,12 +175,13 @@ static void serial_rx_task( void *pvParameter )
           // NOTE: when I send the event GUI_MNG_EV_TRAFFIC_CTRL_V2 directly
           // after the GUI_MNG_EV_SERIAL_CONNECTED, my ESP32 gets re-started
           // that's why I moved this to else part, but should work, this is the
-          // purpose of queue
+          // purpose of queue: later I tested and seems to be working fine
           else
           {
             // send event to update screens
-            gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2,  (uint8_t*)(&traffic_light_time) );
+            // gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2,  (uint8_t*)(&traffic_light_time) );
           }
+          gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2,  (uint8_t*)(&traffic_light_time) );
         }
         else
         {
