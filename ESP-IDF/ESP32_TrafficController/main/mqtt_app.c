@@ -53,7 +53,7 @@ static void mqtt_app_task(void *pvParameter);
 static void mqtt_app_mng( void );
 static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void mqtt_handle_app_data(esp_mqtt_event_handle_t event);
-static void parse_traffic_payload(const char *payload, traffic_light_t *lights);
+static void mqtt_parse_traffic_payload(const char *payload, traffic_light_t *lights);
 
 // Public Function Definitions
 /**
@@ -331,7 +331,7 @@ static void mqtt_handle_app_data(esp_mqtt_event_handle_t event)
     ESP_LOGI( TAG, "Traffic Topic-2 Received");
     // This is the new version of traffic topic, which contains all the traffic light times in one message
     memset(traffic_light_time, 0, sizeof(traffic_light_time));
-    parse_traffic_payload( (const char *)event->data, traffic_light_time );
+    mqtt_parse_traffic_payload( (const char *)event->data, traffic_light_time );
 
     gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2, (uint8_t*)(&traffic_light_time) );
   }
@@ -418,7 +418,7 @@ static void mqtt_event_handler(void *args, esp_event_base_t event_base, int32_t 
 }
 
 
-static void parse_traffic_payload(const char *payload, traffic_light_t *lights)
+static void mqtt_parse_traffic_payload(const char *payload, traffic_light_t *lights)
 {
   // This is packet format
   // <0:G10,1:R13,2:R26,3:R39>

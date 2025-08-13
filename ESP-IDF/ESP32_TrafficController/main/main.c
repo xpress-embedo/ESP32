@@ -55,13 +55,13 @@ typedef enum _rx_data_state_e
 
 // Private Variables
 static const char *TAG = "APP";
-static uint8_t rx_buff[RX_BUFF_SIZE] = { 0 };
-static uint8_t rx_buff_idx = 0;
+static traffic_light_t traffic_light_time[TRAFFIC_LIGHT_SIDES] = { 0 };
 
 // Private Function Declarations
 static void uart_init( void );
 static void uart_start( void );
 static void uart_rx_task(void *pvParameter);
+static void uart_parse_traffic_payload(const char *payload, traffic_light_t *lights);
 
 void app_main(void)
 {
@@ -130,54 +130,79 @@ static void uart_start( void )
 
 static void uart_rx_task( void *pvParameter )
 {
-  uint8_t rx_byte;
-  static rx_data_state_e rx_state = RX_DATA_STATE_START;
+  uint8_t byte;
+  static char rx_buff[RX_BUFF_SIZE];
+  static uint8_t rx_idx = 0;
+  static bool receiving = false;
 
-  // esp_task_wdt_add(NULL);  // Register this task with watchdog
+  esp_task_wdt_add(NULL);
 
-  while (1)
+  while (true)
   {
-    // Optional: Reset watchdog manually if enabled
-    // esp_task_wdt_reset();
-    int len = uart_read_bytes(UART_NUM, &rx_byte, 1, pdMS_TO_TICKS(100));
+    esp_task_wdt_reset();
+
+    int len = uart_read_bytes(UART_NUM, &byte, 1, pdMS_TO_TICKS(100));
     if (len > 0)
     {
-      ESP_LOGI( TAG, "Data Received");
-      switch ( rx_state )
+      if ( byte == PACKET_START )
       {
-        case RX_DATA_STATE_START:
-          if (rx_byte == PACKET_START )
-          {
-            rx_state = RX_DATA_STATE_COPY_DATA;
-            rx_buff_idx = 0;
-          }
-          break;
-        case RX_DATA_STATE_COPY_DATA:
-          if( rx_byte == PACKET_END )
-          {
-            rx_state = RX_DATA_STATE_END;
-          }
-          else
-          {
-            // copy data
-            if ( rx_buff_idx < RX_BUFF_SIZE - 1 )
-            {
-              rx_buff[rx_buff_idx++] = rx_byte;
-            }
-          }
-          break;
-        case RX_DATA_STATE_END:
-          rx_buff[rx_buff_idx] = '\0';
-          ESP_LOGI( TAG, "%s", rx_buff );
-          rx_state = RX_DATA_STATE_START;
-          break;
+        receiving = true;
+        rx_idx = 0;
+      }
+      else if (byte == PACKET_END && receiving)
+      {
+        rx_buff[rx_idx] = '\0';
+        ESP_LOGI("UART_RX", "Received: %s", rx_buff);
+
+        // Parse and update traffic lights
+        uart_parse_traffic_payload(rx_buff, traffic_light_time);
+        receiving = false;
+      }
+      else if (receiving && rx_idx < RX_BUFF_SIZE - 1)
+      {
+        rx_buff[rx_idx++] = byte;
       }
     }
-    else
+  }
+}
+
+static void uart_parse_traffic_payload(const char *payload, traffic_light_t *lights)
+{
+  // NOTE: there is really a small difference between this function and mqtt_parse_traffic_payload
+  // and both can be merged, but for now, let's keep them like this only
+  // This is packet format
+  // 0:G10,1:R13,2:R26,3:R39
+  #define SEGMENT_LEN         (6u)
+  const char *p = payload;        // here the packet is already with '<' and '>' in comparison to mqtt_parse_traffic_payload function
+  uint8_t i;
+
+  for ( i = 0; i < TRAFFIC_LIGHT_SIDES; i++ )
+  {
+    int index;
+    char color;
+    int duration;
+    sscanf(p + i * SEGMENT_LEN, "%d:%c%2d", &index, &color, &duration);
+    // printf("Index = %d, Color = %c, Duration = %d\r\n", index, color, duration );
+    lights[index].color = color;
+    // should be already zero due to memset function, but done again to be safer
+    lights[index].green_time = 0;
+    lights[index].yellow_time = 0;
+    lights[index].red_time = 0;
+    switch ( color )
     {
-      // No data received, yield to other tasks
-      vTaskDelay(pdMS_TO_TICKS(500));
-      ESP_LOGI( TAG, "Data Not Received");
+      case 'G':
+        lights[index].green_time = duration;
+        break;
+      case 'Y':
+        lights[index].yellow_time = duration;
+        break;
+      case 'R':
+        lights[index].red_time = duration;
+        break;
+      default:
+        break;
     }
+    // for debugging
+    ESP_LOGI( TAG, "idx=%d, G=%d, Y=%d, R=%d", i, lights[i].green_time, lights[i].yellow_time, lights[i].red_time );
   }
 }
