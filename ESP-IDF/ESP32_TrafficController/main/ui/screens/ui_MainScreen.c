@@ -28,7 +28,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_x(ui_imgLogo, 0);
     lv_obj_set_y(ui_imgLogo, 20);
     lv_obj_set_align(ui_imgLogo, LV_ALIGN_BOTTOM_MID);
-    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_imgLogo, 200);
 
@@ -56,6 +56,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_height(ui_lblDebug, 180);
     lv_obj_set_align(ui_lblDebug, LV_ALIGN_BOTTOM_MID);
     lv_label_set_text(ui_lblDebug, "Hello World");
+    lv_obj_add_flag(ui_lblDebug, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_set_style_text_color(ui_lblDebug, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblDebug, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblDebug, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);

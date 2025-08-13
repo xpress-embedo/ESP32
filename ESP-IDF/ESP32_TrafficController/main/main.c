@@ -56,12 +56,15 @@ typedef enum _rx_data_state_e
 // Private Variables
 static const char *TAG = "APP";
 static traffic_light_t traffic_light_time[TRAFFIC_LIGHT_SIDES] = { 0 };
+static bool serial_connect_state = false;
 
 // Private Function Declarations
-static void uart_init( void );
-static void uart_start( void );
-static void uart_rx_task(void *pvParameter);
-static void uart_parse_traffic_payload(const char *payload, traffic_light_t *lights);
+static void serial_init( void );
+static void serial_start( void );
+static void serial_rx_task(void *pvParameter);
+static void serial_parse_traffic_payload(const char *payload, traffic_light_t *lights);
+static void serial_set_connect_state( bool state );
+static bool serial_is_connected( void );
 
 void app_main(void)
 {
@@ -92,7 +95,7 @@ void app_main(void)
   mqtt_app_start();
 
   // start uart for serial reception of data
-  uart_start();
+  serial_start();
 
   const char *data = "Traffic Controller Starting\r\n";
   uart_write_bytes(UART_NUM, data, strlen(data));
@@ -105,7 +108,7 @@ void app_main(void)
 }
 
 // Private Function Definitions
-static void uart_init( void )
+static void serial_init( void )
 {
   const uart_config_t uart_config =
   {
@@ -121,14 +124,14 @@ static void uart_init( void )
   uart_set_pin(UART_NUM, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
-static void uart_start( void )
+static void serial_start( void )
 {
-  uart_init();
-  xTaskCreate(&uart_rx_task, "uart rx task", 4*1024, NULL, 2, NULL);
+  serial_init();
+  xTaskCreate(&serial_rx_task, "uart rx task", 4*1024, NULL, 2, NULL);
 }
 
 
-static void uart_rx_task( void *pvParameter )
+static void serial_rx_task( void *pvParameter )
 {
   uint8_t byte;
   static char rx_buff[RX_BUFF_SIZE];
@@ -155,8 +158,38 @@ static void uart_rx_task( void *pvParameter )
         ESP_LOGI("UART_RX", "Received: %s", rx_buff);
 
         // Parse and update traffic lights
-        uart_parse_traffic_payload(rx_buff, traffic_light_time);
+        serial_parse_traffic_payload(rx_buff, traffic_light_time);
         receiving = false;
+        // MQTT is not connected, means we have to switch to Serial Mode
+        if( mqtt_get_connection_status() == false )
+        {
+          // check if system knows about serial connection
+          if( serial_is_connected() == false )
+          {
+            // set the state to true, indicating that we are using serial data instead of MQTT data
+            serial_set_connect_state(true);
+            ESP_LOGI( TAG, "Serial Connection is Selected");
+            // also send an event to gui manager
+            gui_send_event( GUI_MNG_EV_SERIAL_CONNECTED , NULL );
+          }
+          // NOTE: when I send the event GUI_MNG_EV_TRAFFIC_CTRL_V2 directly
+          // after the GUI_MNG_EV_SERIAL_CONNECTED, my ESP32 gets re-started
+          // that's why I moved this to else part, but should work, this is the
+          // purpose of queue
+          else
+          {
+            // send event to update screens
+            gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2,  (uint8_t*)(&traffic_light_time) );
+          }
+        }
+        else
+        {
+          if( serial_is_connected() == true )
+          {
+            serial_set_connect_state(false);
+            ESP_LOGI( TAG, "Serial Connection De-selected, MQTT has taken over");
+          }
+        }
       }
       else if (receiving && rx_idx < RX_BUFF_SIZE - 1)
       {
@@ -166,7 +199,7 @@ static void uart_rx_task( void *pvParameter )
   }
 }
 
-static void uart_parse_traffic_payload(const char *payload, traffic_light_t *lights)
+static void serial_parse_traffic_payload(const char *payload, traffic_light_t *lights)
 {
   // NOTE: there is really a small difference between this function and mqtt_parse_traffic_payload
   // and both can be merged, but for now, let's keep them like this only
@@ -203,6 +236,16 @@ static void uart_parse_traffic_payload(const char *payload, traffic_light_t *lig
         break;
     }
     // for debugging
-    ESP_LOGI( TAG, "idx=%d, G=%d, Y=%d, R=%d", i, lights[i].green_time, lights[i].yellow_time, lights[i].red_time );
+    // ESP_LOGI( TAG, "idx=%d, G=%d, Y=%d, R=%d", i, lights[i].green_time, lights[i].yellow_time, lights[i].red_time );
   }
+}
+
+static void serial_set_connect_state( bool state )
+{
+  serial_connect_state = state;
+}
+
+static bool serial_is_connected( void )
+{
+  return serial_connect_state;
 }
