@@ -82,7 +82,7 @@ for port, desc, hwid in sorted(ports):
     print(f"{port}: {desc} [{hwid}]")
 
 # Select the first available serial port
-port = 'COM4'  # Change this to your actual port
+port = 'COM5'  # Change this to your actual port
 baud = 115200
 # Configure the serial port
 serial_port = serial.Serial(port, baud, timeout=1)

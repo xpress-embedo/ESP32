@@ -14,6 +14,8 @@
 #include "nvs_flash.h"
 #include "string.h"
 #include "driver/uart.h"
+#include "driver/gpio.h"
+#include "esp_task_wdt.h"
 
 #include "main.h"
 #include "wifi_app.h"
@@ -22,17 +24,44 @@
 
 // Private Macros
 #define MAIN_TASK_PERIOD                    (1000)
-#define UART_PORT_NUM                       UART_NUM_0
-#define UART_RX_BUF_SIZE                    128
-#define TRAFFIC_PAYLOAD_LEN                 24  // "0:G10,1:R13,2:R26,3:R39"
+// GPIO Connections for LEDs
+#define TRAFFIC_LED_01                      GPIO_NUM_14
+#define TRAFFIC_LED_02                      GPIO_NUM_27
+#define TRAFFIC_LED_03                      GPIO_NUM_26
+#define TRAFFIC_LED_04                      GPIO_NUM_25
+#define TRAFFIC_LED_05                      GPIO_NUM_33
+#define TRAFFIC_LED_06                      GPIO_NUM_32
+#define TRAFFIC_LED_07                      GPIO_NUM_13
+#define TRAFFIC_LED_08                      GPIO_NUM_15
+#define TRAFFIC_LED_09                      GPIO_NUM_4
+#define TRAFFIC_LED_10                      GPIO_NUM_16
+#define TRAFFIC_LED_11                      GPIO_NUM_17
+#define TRAFFIC_LED_12                      GPIO_NUM_12   // there could be some issue with this pin
+
+// GPIO22 is TXD and GPIO21 as RXD
+#define UART_NUM                            UART_NUM_1
+#define TXD_PIN                             GPIO_NUM_21
+#define RXD_PIN                             GPIO_NUM_22
+#define RX_BUFF_SIZE                        (100u)
+#define PACKET_START                        '<'
+#define PACKET_END                          '>'
+
+typedef enum _rx_data_state_e
+{
+  RX_DATA_STATE_START,
+  RX_DATA_STATE_COPY_DATA,
+  RX_DATA_STATE_END,
+} rx_data_state_e;
 
 // Private Variables
 static const char *TAG = "APP";
+static uint8_t rx_buff[RX_BUFF_SIZE] = { 0 };
+static uint8_t rx_buff_idx = 0;
 
 // Private Function Declarations
+static void uart_init( void );
 static void uart_start( void );
-static void uart_task(void *pvParameter);
-static void parse_traffic_payload(const char *payload, traffic_light_t *lights);
+static void uart_rx_task(void *pvParameter);
 
 void app_main(void)
 {
@@ -65,6 +94,9 @@ void app_main(void)
   // start uart for serial reception of data
   uart_start();
 
+  const char *data = "Traffic Controller Starting\r\n";
+  uart_write_bytes(UART_NUM, data, strlen(data));
+
   while (true )
   {
     // Wait before next
@@ -73,7 +105,7 @@ void app_main(void)
 }
 
 // Private Function Definitions
-static void uart_start( void )
+static void uart_init( void )
 {
   const uart_config_t uart_config =
   {
@@ -83,88 +115,69 @@ static void uart_start( void )
       .stop_bits = UART_STOP_BITS_1,
       .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
   };
-  uart_driver_install( UART_PORT_NUM, UART_RX_BUF_SIZE * 2, 0, 0, NULL, 0 );
-  uart_param_config( UART_PORT_NUM, &uart_config );
-  uart_set_pin( UART_PORT_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE );
 
-  xTaskCreate(&uart_task, "uart task", 1024, NULL, 5, NULL);
+  uart_driver_install(UART_NUM, RX_BUFF_SIZE * 2, 0, 0, NULL, 0);
+  uart_param_config(UART_NUM, &uart_config);
+  uart_set_pin(UART_NUM, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
-#define FRAME_START         '<'
-#define FRAME_END           '>'
-#define FRAME_MAX_LEN       64
-
-static void uart_task(void *pvParameter)
+static void uart_start( void )
 {
-  uint8_t rx_buf[TRAFFIC_PAYLOAD_LEN + 1];  // +1 for null terminator
-  traffic_light_t lights[TRAFFIC_LIGHT_SIDES];
+  uart_init();
+  xTaskCreate(&uart_rx_task, "uart rx task", 4*1024, NULL, 2, NULL);
+}
 
-  memset(lights, 0, sizeof(lights));
+
+static void uart_rx_task( void *pvParameter )
+{
+  uint8_t rx_byte;
+  static rx_data_state_e rx_state = RX_DATA_STATE_START;
+
+  // esp_task_wdt_add(NULL);  // Register this task with watchdog
+
   while (1)
   {
-    int len = uart_read_bytes(UART_PORT_NUM, rx_buf, TRAFFIC_PAYLOAD_LEN, pdMS_TO_TICKS(1000));
-
-    if (len == TRAFFIC_PAYLOAD_LEN)
+    // Optional: Reset watchdog manually if enabled
+    // esp_task_wdt_reset();
+    int len = uart_read_bytes(UART_NUM, &rx_byte, 1, pdMS_TO_TICKS(100));
+    if (len > 0)
     {
-      rx_buf[len] = '\0';  // Null-terminate
-
-      // Validate framing
-      if (rx_buf[0] == '<' && rx_buf[len - 1] == '>')
+      ESP_LOGI( TAG, "Data Received");
+      switch ( rx_state )
       {
-        parse_traffic_payload((char *)rx_buf, lights);
-
-        // Optional: print parsed values
-        /*
-        for (int i = 0; i < TRAFFIC_LIGHT_SIDES; i++)
-        {
-          printf("Side %d: %c G=%d Y=%d R=%d\n", i, lights[i].color,
-                  lights[i].green_time, lights[i].yellow_time, lights[i].red_time);
-        }
-        */
-        // if mqtt is not working then only serial data should be considered
-        if ( mqtt_get_connection_status() == false )
-        {
-          gui_send_event( GUI_MNG_EV_TRAFFIC_CTRL_V2, (uint8_t*)(&lights) );
-        }
+        case RX_DATA_STATE_START:
+          if (rx_byte == PACKET_START )
+          {
+            rx_state = RX_DATA_STATE_COPY_DATA;
+            rx_buff_idx = 0;
+          }
+          break;
+        case RX_DATA_STATE_COPY_DATA:
+          if( rx_byte == PACKET_END )
+          {
+            rx_state = RX_DATA_STATE_END;
+          }
+          else
+          {
+            // copy data
+            if ( rx_buff_idx < RX_BUFF_SIZE - 1 )
+            {
+              rx_buff[rx_buff_idx++] = rx_byte;
+            }
+          }
+          break;
+        case RX_DATA_STATE_END:
+          rx_buff[rx_buff_idx] = '\0';
+          ESP_LOGI( TAG, "%s", rx_buff );
+          rx_state = RX_DATA_STATE_START;
+          break;
       }
     }
-  }
-}
-
-static void parse_traffic_payload(const char *payload, traffic_light_t *lights)
-{
-  // This is packet format
-  // <0:G10,1:R13,2:R26,3:R39>
-  #define SEGMENT_LEN         (6u)
-  const char *p = payload + 1;  // Skip initial '<'
-  uint8_t i;
-
-  for ( i = 0; i < TRAFFIC_LIGHT_SIDES; i++ )
-  {
-    int index;
-    char color;
-    int duration;
-    sscanf(p + i * SEGMENT_LEN, "%d:%c%2d", &index, &color, &duration);
-
-    lights[index].color = color;
-    lights[index].green_time = 0;
-    lights[index].yellow_time = 0;
-    lights[index].red_time = 0;
-
-    switch ( color )
+    else
     {
-      case 'G':
-        lights[index].green_time = duration;
-        break;
-      case 'Y':
-        lights[index].yellow_time = duration;
-        break;
-      case 'R':
-        lights[index].red_time = duration;
-        break;
-      default:
-        break;
+      // No data received, yield to other tasks
+      vTaskDelay(pdMS_TO_TICKS(500));
+      ESP_LOGI( TAG, "Data Not Received");
     }
   }
 }
-
