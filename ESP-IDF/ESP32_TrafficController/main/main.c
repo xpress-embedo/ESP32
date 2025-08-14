@@ -26,18 +26,18 @@
 // Private Macros
 #define MAIN_TASK_PERIOD                    (1000)
 // GPIO Connections for LEDs
-#define TRAFFIC_LED_1_RED                   GPIO_NUM_16
+#define TRAFFIC_LED_1_GREEN                 GPIO_NUM_16
 #define TRAFFIC_LED_1_YELLOW                GPIO_NUM_17
-#define TRAFFIC_LED_1_GREEN                 GPIO_NUM_12   // there could be some issue with this pin
+#define TRAFFIC_LED_1_RED                   GPIO_NUM_12   // there could be some issue with this pin
 #define TRAFFIC_LED_2_GREEN                 GPIO_NUM_13
 #define TRAFFIC_LED_2_YELLOW                GPIO_NUM_15
 #define TRAFFIC_LED_2_RED                   GPIO_NUM_4
 #define TRAFFIC_LED_3_GREEN                 GPIO_NUM_25
 #define TRAFFIC_LED_3_YELLOW                GPIO_NUM_33
 #define TRAFFIC_LED_3_RED                   GPIO_NUM_32
-#define TRAFFIC_LED_4_RED                   GPIO_NUM_14
+#define TRAFFIC_LED_4_GREEN                 GPIO_NUM_14
 #define TRAFFIC_LED_4_YELLOW                GPIO_NUM_27
-#define TRAFFIC_LED_4_GREEN                 GPIO_NUM_26
+#define TRAFFIC_LED_4_RED                   GPIO_NUM_26
 
 // Comment this macro for using UART-1 for Serial Communication
 #define USE_UART_0_FOR_SERIAL
@@ -110,7 +110,7 @@ void app_main(void)
   ESP_LOGI(TAG, "Free memory: %" PRIu32 " bytes", esp_get_free_heap_size());
   ESP_LOGI(TAG, "IDF version: %s", esp_get_idf_version());
 
-  esp_log_level_set("gpio", ESP_LOG_NONE);
+  // esp_log_level_set("gpio", ESP_LOG_NONE);
 
   // start the GUI manager
   gui_start();
@@ -128,8 +128,8 @@ void app_main(void)
   // start uart for serial reception of data
   #ifdef USE_UART_0_FOR_SERIAL
   // Although optional but is a good step
-  esp_log_set_vprintf(NULL);  // Disables all ESP_LOGx output
-  esp_vfs_dev_uart_use_driver(UART_NUM_0);  // Detach console from UART0
+  // esp_log_set_vprintf(NULL);  // Disables all ESP_LOGx output
+  // esp_vfs_dev_uart_use_driver(UART_NUM_0);  // Detach console from UART0
   #endif
   serial_start();
 
@@ -138,6 +138,24 @@ void app_main(void)
 
   const char *data = "Traffic Controller Starting\r\n";
   uart_write_bytes(UART_NUM, data, strlen(data));
+
+  // Test Code for LEDs starts
+  /*
+  for( uint8_t idx = 0; idx < TRAFFIC_LIGHT_SIDES; idx++ )
+  {
+    ESP_LOGI( TAG, "Side: %d", idx);
+    traffic_lights_on( TAB_GREEN_LIGHT[idx] );
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    traffic_lights_on( TAB_YELLOW_LIGHT[idx] );
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    traffic_lights_on( TAB_RED_LIGHT[idx] );
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    traffic_lights_off( TAB_GREEN_LIGHT[idx] );
+    traffic_lights_off( TAB_YELLOW_LIGHT[idx] );
+    traffic_lights_off( TAB_RED_LIGHT[idx] );
+  }
+  */
+  // Test Code for LEDs ends
 
   while (true )
   {
