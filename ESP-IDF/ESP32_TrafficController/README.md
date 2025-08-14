@@ -86,6 +86,8 @@ The following are the parallel tasks running on ESP32 to handle various things.
   ![Side-2](docs/gui_side_2.png)
 
   To go back to all traffic screen, one can swipe left or swipe right, untill the all traffic screen is visible.  
+3. **Serial Communication Task**: This task receives the data from the Serial/UART Port of the ESP32 (in this case `UART_NUM_0`) and parse the data as mentioned above and displays this data on the TFT screen using `Graphical Management Task`.
+4. **MQTT Communication Task**: Once WiFi is connected ESP32 tries to connect with the free MQTT server `test.mosquitto.org` and if the connection is successful all the communication of data will be wireless over the internet, and if communication is not successful we have serial communication as backup. This task also receives the MQTT data sent by Python Application and parse this data as mentioned above and displays this data on TFT screen using `Graphical Management Task`.
 
 ## Pin Out
 The Greem Yellow and Red LEDs for each side is also driven by ESP32 using the GPIO pins, this information is present in `main.c` file of the project and is as shown below.  
