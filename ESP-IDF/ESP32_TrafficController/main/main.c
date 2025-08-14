@@ -12,8 +12,10 @@
 #include "esp_log.h"
 
 #include "nvs_flash.h"
+
 #include "string.h"
 #include "driver/uart.h"
+#include "esp_vfs_dev.h"
 #include "esp_task_wdt.h"
 
 #include "main.h"
@@ -37,10 +39,20 @@
 #define TRAFFIC_LED_4_YELLOW                GPIO_NUM_27
 #define TRAFFIC_LED_4_GREEN                 GPIO_NUM_26
 
+// Comment this macro for using UART-1 for Serial Communication
+#define USE_UART_0_FOR_SERIAL
+// GPIO1 is TXD and GPIO3 as RXD
+#define UART_NUM                            UART_NUM_0
+#define TXD_PIN                             GPIO_NUM_1
+#define RXD_PIN                             GPIO_NUM_3
+#ifdef USE_UART_0_FOR_SERIAL
+#else
 // GPIO22 is TXD and GPIO21 as RXD
 #define UART_NUM                            UART_NUM_1
 #define TXD_PIN                             GPIO_NUM_21
 #define RXD_PIN                             GPIO_NUM_22
+#endif
+
 #define RX_BUFF_SIZE                        (100u)
 // Header and Footer for Serial Packet
 #define PACKET_START                        '<'
@@ -114,6 +126,11 @@ void app_main(void)
   mqtt_app_start();
 
   // start uart for serial reception of data
+  #ifdef USE_UART_0_FOR_SERIAL
+  // Although optional but is a good step
+  esp_log_set_vprintf(NULL);  // Disables all ESP_LOGx output
+  esp_vfs_dev_uart_use_driver(UART_NUM_0);  // Detach console from UART0
+  #endif
   serial_start();
 
   // initialize all traffic leds

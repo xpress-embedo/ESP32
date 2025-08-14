@@ -183,7 +183,7 @@ static void gui_refresh( void )
     if( time_taken > max_flushing_time )
     {
       max_flushing_time = time_taken;
-      printf("Flushing Time: %d ms\n", max_flushing_time );
+      ESP_LOGI( TAG, "Flushing Time: %d ms\n", max_flushing_time );
     }
     GUI_UNLOCK();
   }
