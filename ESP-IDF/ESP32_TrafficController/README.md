@@ -69,6 +69,7 @@ The following are the parallel tasks running on ESP32 to handle various things.
   ![Web Server](docs/webpage.png)
 
   This page can be accessed by connecting with the Access Point `ESP_AP` with Password `1122334455` and once the connection is successful, by opening the IP Address `192.168.0.1`.
+
   From this page one can connect to the Router by entering the `SSID` and `Password` information, and once this is successful and validated, the Python Application and ESP32 works using MQTT Server and no need to connect both of them on same laptop, this can work from distant location all over the world.
 
 2. **Graphical Management Task**: This task takes care of all the stuff regarding displaying data on the TFT screen. When ESP32 is powered-up the following page is displayed.
@@ -79,3 +80,26 @@ The following are the parallel tasks running on ESP32 to handle various things.
   Once MQTT connection is established or Serial Connection is established, the following screen is displayed.
 
   ![All Traffic](docs/gui_all_traffic.png)
+
+  This screen will display the Traffic Light status for all sides, in a single screen, but in case someone wants to visit individual screens, they can either swipe left to Side-1 or press on the sides to open that side in a separate screen, for example if Side-2 is pressed the Side-2 panel will be displayed on screen, as shown below.
+
+  ![Side-2](docs/gui_side_2.png)
+
+  To go back to all traffic screen, one can swipe left or swipe right, untill the all traffic screen is visible.  
+
+## Pin Out
+The Greem Yellow and Red LEDs for each side is also driven by ESP32 using the GPIO pins, this information is present in `main.c` file of the project and is as shown below.  
+```c
+#define TRAFFIC_LED_1_GREEN                 GPIO_NUM_16
+#define TRAFFIC_LED_1_YELLOW                GPIO_NUM_17
+#define TRAFFIC_LED_1_RED                   GPIO_NUM_12
+#define TRAFFIC_LED_2_GREEN                 GPIO_NUM_13
+#define TRAFFIC_LED_2_YELLOW                GPIO_NUM_15
+#define TRAFFIC_LED_2_RED                   GPIO_NUM_4
+#define TRAFFIC_LED_3_GREEN                 GPIO_NUM_25
+#define TRAFFIC_LED_3_YELLOW                GPIO_NUM_33
+#define TRAFFIC_LED_3_RED                   GPIO_NUM_32
+#define TRAFFIC_LED_4_GREEN                 GPIO_NUM_14
+#define TRAFFIC_LED_4_YELLOW                GPIO_NUM_27
+#define TRAFFIC_LED_4_RED                   GPIO_NUM_26
+```
