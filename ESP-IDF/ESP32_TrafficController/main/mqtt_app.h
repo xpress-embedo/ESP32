@@ -9,16 +9,6 @@
 #define MAIN_MQTT_APP_H_
 
 // Public Macros
-#define TRAFFIC_LIGHT_SIDES                   (4u)
-
-// structure for traffic light time as per version 2
-typedef struct _traffic_light
-{
-  char color;
-  uint8_t green_time;
-  uint8_t yellow_time;
-  uint8_t red_time;
-} traffic_light_t;
 
 // enumeration for led data of traffic lights
 typedef enum _traffic_led_e

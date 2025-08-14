@@ -11,6 +11,7 @@
 
 #include "esp_log.h"
 
+#include "main.h"
 #include "mqtt_client.h"
 #include "gui_mng.h"
 #include "mqtt_app.h"
@@ -438,6 +439,11 @@ static void mqtt_parse_traffic_payload(const char *payload, traffic_light_t *lig
     lights[index].green_time = 0;
     lights[index].yellow_time = 0;
     lights[index].red_time = 0;
+
+    // turn off the leds and then turn them on individually
+    traffic_lights_off( TAB_GREEN_LIGHT[index] );
+    traffic_lights_off( TAB_YELLOW_LIGHT[index] );
+    traffic_lights_off( TAB_RED_LIGHT[index] );
     switch ( color )
     {
       case 'G':

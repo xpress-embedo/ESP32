@@ -14,7 +14,6 @@
 #include "nvs_flash.h"
 #include "string.h"
 #include "driver/uart.h"
-#include "driver/gpio.h"
 #include "esp_task_wdt.h"
 
 #include "main.h"
@@ -25,38 +24,57 @@
 // Private Macros
 #define MAIN_TASK_PERIOD                    (1000)
 // GPIO Connections for LEDs
-#define TRAFFIC_LED_01                      GPIO_NUM_14
-#define TRAFFIC_LED_02                      GPIO_NUM_27
-#define TRAFFIC_LED_03                      GPIO_NUM_26
-#define TRAFFIC_LED_04                      GPIO_NUM_25
-#define TRAFFIC_LED_05                      GPIO_NUM_33
-#define TRAFFIC_LED_06                      GPIO_NUM_32
-#define TRAFFIC_LED_07                      GPIO_NUM_13
-#define TRAFFIC_LED_08                      GPIO_NUM_15
-#define TRAFFIC_LED_09                      GPIO_NUM_4
-#define TRAFFIC_LED_10                      GPIO_NUM_16
-#define TRAFFIC_LED_11                      GPIO_NUM_17
-#define TRAFFIC_LED_12                      GPIO_NUM_12   // there could be some issue with this pin
+#define TRAFFIC_LED_1_RED                   GPIO_NUM_16
+#define TRAFFIC_LED_1_YELLOW                GPIO_NUM_17
+#define TRAFFIC_LED_1_GREEN                 GPIO_NUM_12   // there could be some issue with this pin
+#define TRAFFIC_LED_2_GREEN                 GPIO_NUM_13
+#define TRAFFIC_LED_2_YELLOW                GPIO_NUM_15
+#define TRAFFIC_LED_2_RED                   GPIO_NUM_4
+#define TRAFFIC_LED_3_GREEN                 GPIO_NUM_25
+#define TRAFFIC_LED_3_YELLOW                GPIO_NUM_33
+#define TRAFFIC_LED_3_RED                   GPIO_NUM_32
+#define TRAFFIC_LED_4_RED                   GPIO_NUM_14
+#define TRAFFIC_LED_4_YELLOW                GPIO_NUM_27
+#define TRAFFIC_LED_4_GREEN                 GPIO_NUM_26
 
 // GPIO22 is TXD and GPIO21 as RXD
 #define UART_NUM                            UART_NUM_1
 #define TXD_PIN                             GPIO_NUM_21
 #define RXD_PIN                             GPIO_NUM_22
 #define RX_BUFF_SIZE                        (100u)
+// Header and Footer for Serial Packet
 #define PACKET_START                        '<'
 #define PACKET_END                          '>'
-
-typedef enum _rx_data_state_e
-{
-  RX_DATA_STATE_START,
-  RX_DATA_STATE_COPY_DATA,
-  RX_DATA_STATE_END,
-} rx_data_state_e;
 
 // Private Variables
 static const char *TAG = "APP";
 static traffic_light_t traffic_light_time[TRAFFIC_LIGHT_SIDES] = { 0 };
 static bool serial_connect_state = false;
+
+// global variables
+const uint8_t TAB_GREEN_LIGHT[TRAFFIC_LIGHT_SIDES] =
+{
+    TRAFFIC_LED_1_GREEN,
+    TRAFFIC_LED_2_GREEN,
+    TRAFFIC_LED_3_GREEN,
+    TRAFFIC_LED_4_GREEN,
+};
+
+const uint8_t TAB_YELLOW_LIGHT[TRAFFIC_LIGHT_SIDES] =
+{
+    TRAFFIC_LED_1_YELLOW,
+    TRAFFIC_LED_2_YELLOW,
+    TRAFFIC_LED_3_YELLOW,
+    TRAFFIC_LED_4_YELLOW,
+};
+
+const uint8_t TAB_RED_LIGHT[TRAFFIC_LIGHT_SIDES] =
+{
+    TRAFFIC_LED_1_RED,
+    TRAFFIC_LED_2_RED,
+    TRAFFIC_LED_3_RED,
+    TRAFFIC_LED_4_RED,
+};
 
 // Private Function Declarations
 static void serial_init( void );
@@ -65,6 +83,7 @@ static void serial_rx_task(void *pvParameter);
 static void serial_parse_traffic_payload(const char *payload, traffic_light_t *lights);
 static void serial_set_connect_state( bool state );
 static bool serial_is_connected( void );
+static void traffic_lights_init( void );
 
 void app_main(void)
 {
@@ -97,6 +116,9 @@ void app_main(void)
   // start uart for serial reception of data
   serial_start();
 
+  // initialize all traffic leds
+  traffic_lights_init();
+
   const char *data = "Traffic Controller Starting\r\n";
   uart_write_bytes(UART_NUM, data, strlen(data));
 
@@ -105,6 +127,16 @@ void app_main(void)
     // Wait before next
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
   }
+}
+
+void traffic_lights_on( gpio_num_t gpio_num )
+{
+  gpio_set_level(gpio_num, 1);
+}
+
+void traffic_lights_off( gpio_num_t gpio_num )
+{
+  gpio_set_level(gpio_num, 0);
 }
 
 // Private Function Definitions
@@ -154,15 +186,16 @@ static void serial_rx_task( void *pvParameter )
       }
       else if (byte == PACKET_END && receiving)
       {
+        receiving = false;
         rx_buff[rx_idx] = '\0';
         // ESP_LOGI("UART_RX", "Received: %s", rx_buff);
 
-        // Parse and update traffic lights
-        serial_parse_traffic_payload(rx_buff, traffic_light_time);
-        receiving = false;
         // MQTT is not connected, means we have to switch to Serial Mode
         if( mqtt_get_connection_status() == false )
         {
+          // Parse and update traffic lights
+          serial_parse_traffic_payload(rx_buff, traffic_light_time);
+
           // check if system knows about serial connection
           if( serial_is_connected() == false )
           {
@@ -222,16 +255,25 @@ static void serial_parse_traffic_payload(const char *payload, traffic_light_t *l
     lights[index].green_time = 0;
     lights[index].yellow_time = 0;
     lights[index].red_time = 0;
+
+    // turn off the leds and then turn them on individually
+    traffic_lights_off( TAB_GREEN_LIGHT[index] );
+    traffic_lights_off( TAB_YELLOW_LIGHT[index] );
+    traffic_lights_off( TAB_RED_LIGHT[index] );
+
     switch ( color )
     {
       case 'G':
         lights[index].green_time = duration;
+        traffic_lights_on( TAB_GREEN_LIGHT[index] );
         break;
       case 'Y':
         lights[index].yellow_time = duration;
+        traffic_lights_on( TAB_YELLOW_LIGHT[index] );
         break;
       case 'R':
         lights[index].red_time = duration;
+        traffic_lights_on( TAB_RED_LIGHT[index] );
         break;
       default:
         break;
@@ -249,4 +291,29 @@ static void serial_set_connect_state( bool state )
 static bool serial_is_connected( void )
 {
   return serial_connect_state;
+}
+
+
+static void init_gpio_output( gpio_num_t gpio )
+{
+  gpio_config_t io_conf =
+  {
+      .pin_bit_mask = (1ULL << gpio),
+      .mode = GPIO_MODE_OUTPUT,
+      .pull_up_en = GPIO_PULLUP_DISABLE,
+      .pull_down_en = GPIO_PULLDOWN_DISABLE,
+      .intr_type = GPIO_INTR_DISABLE
+  };
+  gpio_config(&io_conf);
+
+}
+
+static void traffic_lights_init( void )
+{
+  for (uint8_t i=0; i < TRAFFIC_LIGHT_SIDES; i++ )
+  {
+    init_gpio_output( TAB_GREEN_LIGHT[i] );
+    init_gpio_output( TAB_YELLOW_LIGHT[i] );
+    init_gpio_output( TAB_RED_LIGHT[i] );
+  }
 }
