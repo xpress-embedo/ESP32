@@ -66,6 +66,7 @@ ESP32 Application is quite complex and is doing several activities. When ESP32 i
 
 The following are the parallel tasks running on ESP32 to handle various things.
 1. **HTTP Server Task**: HTTP Server Task configures the ESP32 in Access Point mode and host a web-server as shown below.
+
   ![Web Server](docs/webpage.png)
 
   This page can be accessed by connecting with the Access Point `ESP_AP` with Password `1122334455` and once the connection is successful, by opening the IP Address `192.168.0.1`.
@@ -75,6 +76,7 @@ The following are the parallel tasks running on ESP32 to handle various things.
 2. **Graphical Management Task**: This task takes care of all the stuff regarding displaying data on the TFT screen. When ESP32 is powered-up the following page is displayed.
 
   ![Main Page](docs/gui_main.png)
+
   This page display the project title and school logo and at the botto right cornet one can see a small icon, this indicates whether ESP32 is connected with the MQTT server or not, if not connected then Serial Data will be used for display update.
 
   Once MQTT connection is established or Serial Connection is established, the following screen is displayed.
