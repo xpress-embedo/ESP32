@@ -46,6 +46,7 @@ LV_FONT_DECLARE(ui_font_DsDigital72);
 LV_FONT_DECLARE(ui_font_SevenSegment14);
 LV_FONT_DECLARE(ui_font_SevenSegment18);
 LV_FONT_DECLARE(ui_font_SevenSegment48);
+LV_FONT_DECLARE(ui_font_MontserratExtraBold22);
 
 // UI INIT
 void ui_init(void);

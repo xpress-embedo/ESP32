@@ -20,6 +20,7 @@ idf_component_register( SRCS
     										ui/fonts/ui_font_DsDigital72.c
     										ui/fonts/ui_font_SevenSegment48.c
     										ui/fonts/ui_font_SevenSegment18.c
+    										ui/fonts/ui_font_MontserratExtraBold22.c
     										ui/images/ui_img_school_logo_png.c
     										ui/images/ui_img_traffic_light_png.c
     										ui/images/ui_img_traffic_light_housing_png.c

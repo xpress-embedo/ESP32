@@ -26,7 +26,7 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_width(ui_imgLogo, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_imgLogo, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_imgLogo, 0);
-    lv_obj_set_y(ui_imgLogo, 20);
+    lv_obj_set_y(ui_imgLogo, 25);
     lv_obj_set_align(ui_imgLogo, LV_ALIGN_BOTTOM_MID);
     lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -39,9 +39,9 @@ void ui_MainScreen_screen_init(void)
     lv_obj_set_y(ui_lblTrafficController, 5);
     lv_obj_set_align(ui_lblTrafficController, LV_ALIGN_TOP_MID);
     lv_label_set_text(ui_lblTrafficController, "MLBTLS: Machine Learning\nBased Traffic Light System");
-    lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0xF44336), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_lblTrafficController, lv_color_hex(0x527131), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblTrafficController, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblTrafficController, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblTrafficController, &ui_font_MontserratExtraBold22, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgConnectStatus = lv_img_create(ui_MainScreen);
     lv_img_set_src(ui_imgConnectStatus, &ui_img_338993590);

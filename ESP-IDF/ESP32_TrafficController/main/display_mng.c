@@ -197,9 +197,27 @@ static void display_input_read(lv_indev_drv_t * drv, lv_indev_data_t*data)
   // check if we have a touch detected or not
   if( xpt2046_read(&x, &y) )
   {
+    int16_t x_rot = x;
+    int16_t y_rot = y;
     // we are here means touch is detected
-    data->point.x = x;
-    data->point.y = y;
+    switch ( ili9341_get_orientation() )
+    {
+      case LCD_ORIENTATION_0:
+        break;
+      case LCD_ORIENTATION_90:
+        x_rot = tft_get_width() - x;
+        y_rot = tft_get_height() - y;
+        break;
+      case LCD_ORIENTATION_180:
+        break;
+      case LCD_ORIENTATION_270:
+        // this is default case, don't change anything
+        x_rot = x;
+        y_rot = y;
+        break;
+    }
+    data->point.x = x_rot;
+    data->point.y = y_rot;
     data->state = LV_INDEV_STATE_PRESSED;
   }
   else

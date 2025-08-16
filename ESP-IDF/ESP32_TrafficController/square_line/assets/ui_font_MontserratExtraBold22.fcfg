@@ -1,0 +1,16 @@
+{
+  "codename": "MontserratExtraBold22",
+  "ttf_path": "/assets/Montserrat-ExtraBold.ttf",
+  "bin_path": "/assets\\ui_font_MontserratExtraBold22.bin",
+  "c_path": "/assets\\ui_font_MontserratExtraBold22.c",
+  "cfg_path": "/assets\\ui_font_MontserratExtraBold22.fcfg",
+  "size": 22,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

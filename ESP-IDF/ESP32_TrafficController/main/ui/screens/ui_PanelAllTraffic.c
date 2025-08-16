@@ -53,6 +53,10 @@ void ui_event_PanelAllTraffic(lv_event_t * e)
         lv_indev_wait_release(lv_indev_get_act());
         _ui_screen_change(&ui_Panel1, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_Panel1_screen_init);
     }
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        _ui_screen_change(&ui_Panel4, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_Panel4_screen_init);
+    }
 }
 
 void ui_event_Container1(lv_event_t * e)

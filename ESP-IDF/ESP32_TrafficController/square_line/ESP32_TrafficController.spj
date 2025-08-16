@@ -48,7 +48,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  20
+                  25
                 ],
                 "InheritedType": 7
               },
@@ -233,6 +233,7 @@
               },
               {
                 "nid": 635013354,
+                "flags": 1048576,
                 "strtype": "OBJECT/Flags",
                 "InheritedType": 1
               },
@@ -307,9 +308,9 @@
                         "nid": 1506149058,
                         "strtype": "_style/Text_Color",
                         "intarray": [
-                          244,
-                          67,
-                          54,
+                          82,
+                          113,
+                          49,
                           255
                         ],
                         "InheritedType": 7
@@ -317,7 +318,7 @@
                       {
                         "nid": -1663364274,
                         "strtype": "_style/Text_Font",
-                        "strval": "montserrat_22",
+                        "strval": "MontserratExtraBold22",
                         "InheritedType": 3
                       }
                     ],
@@ -7022,6 +7023,7 @@
           },
           {
             "nid": 20,
+            "flags": 1048576,
             "strtype": "OBJECT/Layout",
             "InheritedType": 1
           },
@@ -7145,6 +7147,7 @@
               },
               {
                 "nid": 1000052,
+                "flags": 1048576,
                 "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
@@ -7186,6 +7189,82 @@
                   },
                   {
                     "nid": 1000059,
+                    "strtype": "CHANGE SCREEN/Delay",
+                    "InheritedType": 6
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
+          },
+          {
+            "disabled": false,
+            "nid": 1000072,
+            "strtype": "_event/EventHandler",
+            "strval": "GESTURE_RIGHT(GESTURE)",
+            "childs": [
+              {
+                "nid": 1000073,
+                "strtype": "_event/name",
+                "strval": "PanelAllTrafficGestureRightEvent",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000074,
+                "strtype": "_event/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000075,
+                "strtype": "_event/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000076,
+                "strtype": "_event/action",
+                "strval": "CHANGE SCREEN",
+                "childs": [
+                  {
+                    "nid": 1000077,
+                    "strtype": "CHANGE SCREEN/Name",
+                    "strval": "CHANGE SCREEN",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000078,
+                    "strtype": "CHANGE SCREEN/Call",
+                    "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000079,
+                    "strtype": "CHANGE SCREEN/CallC",
+                    "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000080,
+                    "strtype": "CHANGE SCREEN/Screen_to",
+                    "strval": "GUID36824215-349106S32904219",
+                    "InheritedType": 9
+                  },
+                  {
+                    "nid": 1000081,
+                    "strtype": "CHANGE SCREEN/Fade_mode",
+                    "strval": "MOVE_RIGHT",
+                    "InheritedType": 3
+                  },
+                  {
+                    "nid": 1000082,
+                    "strtype": "CHANGE SCREEN/Speed",
+                    "integer": 500,
+                    "InheritedType": 6
+                  },
+                  {
+                    "nid": 1000083,
                     "strtype": "CHANGE SCREEN/Delay",
                     "InheritedType": 6
                   }
@@ -12252,7 +12331,7 @@
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\ESP32_TrafficController\\main\\ui",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 441,
+    "backup_cnt": 447,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.6",
@@ -12270,7 +12349,7 @@
     "naming": null,
     "naming_force_lowercase": false,
     "naming_add_subcomponent": false,
-    "nidcnt": 1000072,
+    "nidcnt": 1000084,
     "BitDepth": 16,
     "Name": "ESP32_Clock"
   }

@@ -42,7 +42,7 @@ void tft_init( void )
 {
   tft_driver_init();
   ili9341_init();
-  ili9341_set_orientation(LCD_ORIENTATION_270);
+  ili9341_set_orientation(LCD_ORIENTATION_90);
 //  ili9341_set_orientation(LCD_LANDSCAPE);
 //  ili9341_set_orientation(LCD_ORIENTATION_180);
 //  ili9341_set_orientation(LCD_PORTRAIT);
