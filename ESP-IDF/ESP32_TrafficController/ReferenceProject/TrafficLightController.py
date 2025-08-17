@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 
 # global variables of the project
 mqtt_client = None
-serial_port = None
+serial_obj = None
 previous_time = 0
 run_algorithm = False
 
@@ -44,9 +44,9 @@ def generate_message():
   print (message)
   if mqtt_client is not None:
     mqtt_client.publish("TrafficTopic2", message)
-  if serial_port is not None and serial_port.is_open:
+  if serial_obj is not None and serial_obj.is_open:
     try:
-      serial_port.write(message.encode('ascii'))
+      serial_obj.write(message.encode('ascii'))
     except Exception as e:
       print(f"Error sending message to serial port: {e}")
 
@@ -84,12 +84,16 @@ for port, desc, hwid in sorted(ports):
 # Select the first available serial port
 port = 'COM4'  # Change this to your actual port
 baud = 115200
-# Configure the serial port
-serial_port = serial.Serial(port, baud, timeout=1)
-# Open the serial port
-if not serial_port.is_open:
-    serial_port.open()
-    print(f"Serial port {port} opened successfully.")
+try:
+  # Configure the serial port
+  serial_obj = serial.Serial(port, baud, timeout=1)
+  # Open the serial port
+  if not serial_obj.is_open:
+      serial_obj.open()
+      print(f"Serial port {port} opened successfully.")
+except:
+  print (f"Error: Could not open serial port {port}. Please check the port name and connection.")
+  print ("Continuing without Serial Port")
 
 
 # Configure MQTT Client (Starts)
@@ -105,9 +109,21 @@ mqtt_port = 1883
 # mqtt_pswd = "aQp113ENJeO9";
 # client.username_pw_set( user_name, mqtt_pswd );
 
-mqtt_client.connect( mqtt_server, mqtt_port, 60 );
-mqtt_client.loop_start()
+mqtt_client_connect_status = True
+try:
+  mqtt_client.connect( mqtt_server, mqtt_port, 60 )
+  mqtt_client.loop_start()
+except:
+  mqtt_client_connect_status = False
+  print ("Internet is not available on the device")
 # Configure MQTT Client (Ends)
+
+# check if it is okay to proceed further or exit
+if mqtt_client_connect_status is False and serial_obj is None:
+  print ("Unable to Connect to Internet and Serial Port")
+  print ("At-least one is required to proceed further.")
+  print ("EXITING.....")
+  exit()
 
 # Opening the Camera
 camera_number = 1 # Change this to your camera number
