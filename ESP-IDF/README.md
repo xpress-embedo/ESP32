@@ -1,4 +1,57 @@
-Some Important Links
+# Some Important Commands
+On Windows I am using Eclipse based IDE, so it's not a problem, but on Linux environment I didn't installed this IDE, and using the command-line version, maybe I need to install IDE when I wanted to develop and debug my ESP32 Kaluga Development Kit, as this is the only board which supports the debugging.
+
+Use the following command to get the ESP-IDF framework.
+```bash
+mkdir -p ~/esp
+cd ~/esp
+git clone -b v5.5 --recursive https://github.com/espressif/esp-idf.git
+```
+Once the above command clones the repository from internet, we need to install the tools for the devices we want to use, with the following commands.
+```bash
+# to install tools for esp32 device
+./install.sh esp32
+# to install tools for multiple devices
+./install.sh esp32 esp32s2 esp32s3
+# to install tools for all available espressif devices
+./install.sh all
+```
+
+Then we have to use the following command.
+```bash
+source ./export.sh
+```
+
+The following are some of the important ESP-IDF commands.
+
+```bash
+# create project
+idf.py create-project <project name>
+
+# set target chip
+idf.py set-target <target>
+# examples
+idf.py set-target esp32
+idf.py set-target esp32s3
+idf.py set-target esp32s2
+
+# start the graphical configuration tool
+idf.py menuconfig
+
+# build the project
+idf.py build
+
+# remove build output
+idf.py clean
+
+# full clean the project (deletes entire build content)
+idf.py fullclean
+
+# Flash the project
+idf.py flash
+```
+
+# Some Important Links
 =======================
 
 [Development Board Overview](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html#development-board-overviews)
