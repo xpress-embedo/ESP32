@@ -2,14 +2,16 @@
 The full board name is `ESP32-8048S043C` this board is from Sunton company, and has the following important points.  
 * ESP32-S3 is the on-board MCU
 * The Flash size connected is 16MB, this is needed while updating the SDKConfig.
+  ![Flash Configuration](esp32-8048s043-docs/flash_configuration.png)
 * The PSRAM size is 8MB, this shall be updated in the SDKConfig, to use external SPI PSRAM, and mode should be octal. This is more suitable for loading loading fonts and graphics.
-  ```
+  ```python
   CONFIG_SPIRAM=y
   CONFIG_SPIRAM_MODE_OCT=y
   CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
   CONFIG_SPIRAM_RODATA=y
   CONFIG_SPIRAM_SPEED_80M=y
   ```
+  ![PSRAM Configuration](esp32-8048s043-docs/psram_configuration.png)
 * Display Panel is 4.3 inch IPS
 * Display Resolution is 800x480
 * Touch Screen is Capacitive (GTA911)
