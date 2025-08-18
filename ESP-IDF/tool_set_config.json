@@ -3,7 +3,7 @@
     "id": -1218143955,
     "idfLocation": "/home/xpress_embedo/esp/esp-idf",
     "idfVersion": "5.2",
-    "active": true,
+    "active": false,
     "systemGitExecutablePath": "/usr/bin/git",
     "systemPythonExecutablePath": "/usr/bin/python3",
     "envVars": {
@@ -16,6 +16,23 @@
       "IDF_PYTHON_ENV_PATH": "/home/xpress_embedo/.espressif/python_env/idf5.2_py3.10_env",
       "ESP_IDF_VERSION": "5.2",
       "ESP_ROM_ELF_DIR": "/home/xpress_embedo/.espressif/tools/esp-rom-elfs/20230320/"
+    }
+  },
+  {
+    "id": 0,
+    "idfLocation": "C:/Espressif/frameworks/esp-idf-v5.5/",
+    "active": true,
+    "systemGitExecutablePath": "C:/Espressif/tools/idf-git/2.44.0/cmd/git.exe",
+    "systemPythonExecutablePath": "C:/Espressif/python_env/idf5.5_py3.11_env/Scripts/python.exe",
+    "envVars": {
+      "PATH": "C:\\Espressif\\tools\\xtensa-esp-elf-gdb\\16.2_20250324\\xtensa-esp-elf-gdb\\bin;C:\\Espressif\\tools\\xtensa-esp-elf\\esp-14.2.0_20241119\\xtensa-esp-elf\\bin;C:\\Espressif\\tools\\esp-clang\\esp-19.1.2_20250312\\esp-clang\\bin;C:\\Espressif\\tools\\riscv32-esp-elf\\esp-14.2.0_20241119\\riscv32-esp-elf\\bin;C:\\Espressif\\tools\\esp32ulp-elf\\2.38_20240113\\esp32ulp-elf\\bin;C:\\Espressif\\tools\\cmake\\3.30.2\\bin;C:\\Espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20250422\\openocd-esp32\\bin;C:\\Espressif\\tools\\ninja\\1.12.1\\;C:\\Espressif\\tools\\idf-exe\\1.0.3\\;C:\\Espressif\\tools\\ccache\\4.10.2\\ccache-4.10.2-windows-x86_64;C:\\Espressif\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;C:\\Espressif\\python_env\\idf5.5_py3.11_env\\Scripts;C:\\Espressif\\frameworks\\esp-idf-v5.5\\tools;%PATH%",
+      "IDF_COMPONENT_MANAGER": "1",
+      "OPENOCD_SCRIPTS": "C:\\Espressif\\tools\\openocd-esp32\\v0.12.0-esp32-20250422\\openocd-esp32\\share\\openocd\\scripts",
+      "IDF_DEACTIVATE_FILE_PATH": "C:\\Users\\XPRESS~1\\AppData\\Local\\Temp\\tmpwhw6dbmgidf_3080",
+      "IDF_MAINTAINER": "1",
+      "IDF_CCACHE_ENABLE": "1",
+      "IDF_PYTHON_ENV_PATH": "C:\\Espressif\\python_env\\idf5.5_py3.11_env",
+      "ESP_ROM_ELF_DIR": "C:\\Espressif\\tools\\esp-rom-elfs\\20241011\\"
     }
   }
 ]
