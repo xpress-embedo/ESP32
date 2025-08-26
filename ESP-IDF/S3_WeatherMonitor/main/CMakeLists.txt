@@ -3,6 +3,7 @@
 
 idf_component_register(
     SRCS main.c         # list the source files of this component
+    dht11.c
     lcd.c
     gui_mng.c
     gui_mng_cfg.c
