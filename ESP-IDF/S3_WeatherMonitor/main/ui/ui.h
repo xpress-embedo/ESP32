@@ -19,7 +19,6 @@ extern "C" {
 ///////////////////// SCREENS ////////////////////
 
 #include "screens/ui_MainScreen.h"
-#include "screens/ui_ResultsBarScreen.h"
 
 ///////////////////// VARIABLES ////////////////////
 

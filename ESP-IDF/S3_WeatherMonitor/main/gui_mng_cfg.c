@@ -33,3 +33,27 @@ void gui_cfg_init( void )
 {
   ui_init();
 }
+
+/**
+ * @brief Process the events posted to GUI manager module
+ *        This function calls the dedicated function based on the event posted
+ *        to GUI manager queue,v I will think of moving this function to GUI manager
+ * @param event event name
+ * @param data event data pointer
+ */
+void gui_cfg_mng_process( gui_mng_event_t event, uint8_t *data )
+{
+//  uint8_t idx = 0;
+//  for( idx=0; idx < NUM_ELEMENTS(gui_mng_event_cb); idx++ )
+//  {
+//    // check if event matches the table
+//    if( event == gui_mng_event_cb[idx].event )
+//    {
+//      // call the callback function with arguments, if not NULL
+//      if( gui_mng_event_cb[idx].callback != NULL )
+//      {
+//        gui_mng_event_cb[idx].callback(data);
+//      }
+//    }
+//  }
+}

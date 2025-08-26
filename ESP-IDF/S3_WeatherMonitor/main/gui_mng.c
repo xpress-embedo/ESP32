@@ -44,8 +44,7 @@ void gui_start( void )
   gui_init();
 
   // callback function, task name, stack size, parameters, priority, task handle
-  xTaskCreatePinnedToCore(&gui_task, "gui task", 4096*2, NULL, 5, NULL, 0);
-  // NOTE: I checked the flush timing with pinning and without pinning to core is same
+  xTaskCreate(&gui_task, "gui task", 4096*2, NULL, 5, NULL);
 }
 
 /**
