@@ -19,7 +19,7 @@ idf_component_register(
     ui/images/ui_img_wifi_disconnected_png.c
     ui/images/ui_img_wifi_png.c
     INCLUDE_DIRS        # optional, add here public include directories
-    "." "ui"
+    "." "ui" "ui/screens"
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)
     PRIV_REQUIRES       # optional, list the private requirements

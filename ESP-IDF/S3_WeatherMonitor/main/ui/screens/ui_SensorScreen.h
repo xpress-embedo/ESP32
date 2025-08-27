@@ -29,7 +29,7 @@ extern lv_obj_t * ui_sensorBg2;
 extern lv_obj_t * ui_SensorNumBg2;
 extern lv_obj_t * ui_lblSensor2;
 extern lv_obj_t * ui_lblHumidity;
-extern lv_obj_t * ui_Image1;
+extern lv_obj_t * ui_imgWiFiStatus2;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

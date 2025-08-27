@@ -20,7 +20,7 @@ lv_obj_t * ui_sensorBg2 = NULL;
 lv_obj_t * ui_SensorNumBg2 = NULL;
 lv_obj_t * ui_lblSensor2 = NULL;
 lv_obj_t * ui_lblHumidity = NULL;
-lv_obj_t * ui_Image1 = NULL;
+lv_obj_t * ui_imgWiFiStatus2 = NULL;
 // event funtions
 void ui_event_SensorScreen(lv_event_t * e)
 {
@@ -241,15 +241,15 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_text_opa(ui_lblHumidity, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblHumidity, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Image1 = lv_img_create(ui_SensorScreen);
-    lv_img_set_src(ui_Image1, &ui_img_wifi_connected_png);
-    lv_obj_set_width(ui_Image1, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Image1, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Image1, -10);
-    lv_obj_set_y(ui_Image1, -10);
-    lv_obj_set_align(ui_Image1, LV_ALIGN_BOTTOM_RIGHT);
-    lv_obj_add_flag(ui_Image1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_imgWiFiStatus2 = lv_img_create(ui_SensorScreen);
+    lv_img_set_src(ui_imgWiFiStatus2, &ui_img_wifi_connected_png);
+    lv_obj_set_width(ui_imgWiFiStatus2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgWiFiStatus2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgWiFiStatus2, -10);
+    lv_obj_set_y(ui_imgWiFiStatus2, -10);
+    lv_obj_set_align(ui_imgWiFiStatus2, LV_ALIGN_BOTTOM_RIGHT);
+    lv_obj_add_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_add_event_cb(ui_SensorScreen, ui_event_SensorScreen, LV_EVENT_ALL, NULL);
 
@@ -275,6 +275,6 @@ void ui_SensorScreen_screen_destroy(void)
     ui_SensorNumBg2 = NULL;
     ui_lblSensor2 = NULL;
     ui_lblHumidity = NULL;
-    ui_Image1 = NULL;
+    ui_imgWiFiStatus2 = NULL;
 
 }

@@ -131,13 +131,18 @@ static void gui_task(void *pvParameter)
 
   while(1)
   {
-    vTaskDelay(pdMS_TO_TICKS(20));
+    // TODO: need to understand, mostly we don't have data in queue, so there is
+    // already a delay, I think we don't need this delay
+    // vTaskDelay(pdMS_TO_TICKS(20));
 
     // refresh the display
     gui_refresh();
+    
+    // custom configurable function
+    gui_cfg_refresh();
 
-    // wait only 5 ms and then proceed
-    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(10)) )
+    // wait only GUI_MNG_REFRESH_TIME ms and then proceed
+    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(GUI_MNG_REFRESH_TIME)) )
     {
       // the below is the code to handle the state machine
       if( GUI_MNG_EV_NONE != msg.event_id )
