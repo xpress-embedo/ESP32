@@ -8,12 +8,11 @@
 
 // Private Macros
 #define MAIN_TASK_PERIOD                (5000)
-#define DHT11_GPIO_NUM              		(GPIO_NUM_17)
+#define DHT11_PIN              					(GPIO_NUM_17)
 
 // Private Variables
 static const char *TAG = "MAIN";
-static uint8_t humidity = 0u;
-static uint8_t temperature = 0u;
+static sensor_data_t sensor_data = { .sensor_idx = 0 };
 
 void app_main(void)
 {
@@ -30,22 +29,59 @@ void app_main(void)
   
 	ESP_LOGI( TAG, "Starting Program");
 	
-	// initialize the dht11 module
-  dht11_init(DHT11_GPIO_NUM);
+  // initialize dht sensor library
+  dht11_init(DHT11_PIN, true);
 	
 	gui_start();
 	
-	while( 1 )
-	{
-		// read the data from dht11 sensor
-    dht11_value = dht11_read();
-    // If reading is valid then only print
-    if( dht11_value.status == DHT11_OK )
+  while(1)
+  {
+    // Get DHT11 Temperature and Humidity Values
+    if( dht11_read().status == DHT11_OK )
     {
-      temperature = (uint8_t)dht11_value.temperature;
-      humidity = (uint8_t)dht11_value.humidity;
-      ESP_LOGI(TAG, "Temperature:%d, Humidity:%d", temperature, humidity);
+      uint8_t temp = (uint8_t)dht11_read().humidity;
+      // humidity can't be greater than 100%, that means invalid data
+      if( temp < 100 )
+      {
+        if( sensor_data.sensor_idx < SENSOR_BUFF_SIZE )
+        {
+          sensor_data.humidity[sensor_data.sensor_idx] = temp;
+          sensor_data.humidity_current = temp;
+          temp = (uint8_t)dht11_read().temperature;
+          sensor_data.temperature[sensor_data.sensor_idx] = temp;
+          sensor_data.temperature_current = temp;
+          ESP_LOGI(TAG, "Temperature: %d", sensor_data.temperature_current);
+          ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity_current);
+          sensor_data.sensor_idx++;
+          // reset the index
+          if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )
+          {
+            sensor_data.sensor_idx = 0;
+          }
+        }
+      }
+      else
+      {
+        ESP_LOGE(TAG, "In-correct data received from DHT11 -> %u", temp);
+      }
     }
+    else
+    {
+      ESP_LOGE(TAG, "Unable to Read DHT11 Status");
+    }
+    // Wait before next measurement
     vTaskDelay(MAIN_TASK_PERIOD / portTICK_PERIOD_MS);
-	}
+  }
+}
+
+// Public Function Definition
+/**
+ * @brief Get the Pointer to the Sensor Data Structure to get the temperature
+ *        and Humidity values
+ * @param  None
+ * @return sensor_data data structure pointer
+ */
+sensor_data_t * get_temperature_humidity( void )
+{
+	return &sensor_data;
 }

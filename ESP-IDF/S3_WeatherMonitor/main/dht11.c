@@ -24,10 +24,12 @@
 static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
 static dht11_sensor_t last_read;
+// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_idf.html#critical-sections
+static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 /* Private Function Prototypes */
 static int dht11_wait_or_timeout(uint16_t useconds, int level);
-static dht11_status_e dht11_check_checksum(uint8_t data[]);
+static int dht11_check_checksum(uint8_t data[]);
 static void dht11_send_start_signal( void );
 static int dht11_check_response( void );
 static dht11_sensor_t dht11_timeout_error( void );
@@ -35,10 +37,20 @@ static dht11_sensor_t dht11_crc_error( void );
 
 
 /* Public Function Definitions */
-void dht11_init(gpio_num_t gpio_num)
+
+/**
+ * @brief Initialize DHT11 sensor
+ * @param gpio_num    gpio pin number of the DHT11 sensor
+ * @param start_delay true if we want start-up delay, else false, the reason to
+ *                    add this parameter is to have this feature configurable
+ */
+void dht11_init( gpio_num_t gpio_num, uint8_t start_delay )
 {
-  /* Wait for some seconds to make the device pass its initial unstable status */
-  vTaskDelay(DHT11_INITIAL_WAKEUP_DELAY / portTICK_PERIOD_MS);
+  if( start_delay )
+  {
+    /* Wait for some seconds to make the device pass its initial unstable status */
+    vTaskDelay( pdMS_TO_TICKS(DHT11_INITIAL_WAKEUP_DELAY) );
+  }
   dht_gpio = gpio_num;
 }
 
@@ -55,6 +67,9 @@ dht11_sensor_t dht11_read( void )
   last_read_time = esp_timer_get_time();
 
   uint8_t data[5] = {0,0,0,0,0};
+
+  // critical section starts (this will block other tasks, but is much needed here)
+  portENTER_CRITICAL(&mux);
 
   /* trigger the start signal */
   dht11_send_start_signal();
@@ -77,6 +92,8 @@ dht11_sensor_t dht11_read( void )
     timeout error. */
     if(dht11_wait_or_timeout(50, 0) == DHT11_TIMEOUT_ERROR)
     {
+      // exit the critical section, other tasks based on the priority can also run
+      portEXIT_CRITICAL(&mux);
       return last_read = dht11_timeout_error();
     }
 
@@ -89,6 +106,8 @@ dht11_sensor_t dht11_read( void )
       data[i/8] |= (1 << (7-(i%8)));
     }
   }
+  // exit the critical section, other tasks based on the priority can also run
+  portEXIT_CRITICAL(&mux);
 
   /* last step is to validate the received data by checking the checksum */
   if(dht11_check_checksum(data) != DHT11_CHECKSUM_ERROR)
@@ -120,14 +139,14 @@ static int dht11_wait_or_timeout(uint16_t useconds, int level)
   return micros_ticks;
 }
 
-static dht11_status_e dht11_check_checksum( uint8_t data[] )
+static int dht11_check_checksum( uint8_t data[] )
 {
   dht11_status_e dht_status = DHT11_CHECKSUM_ERROR;
   if(data[4] == (data[0] + data[1] + data[2] + data[3]))
   {
     dht_status = DHT11_OK;
   }
-  return dht_status;
+  return (int)dht_status;
 }
 
 static void dht11_send_start_signal( void )
@@ -137,9 +156,17 @@ static void dht11_send_start_signal( void )
    * The Request is to pull down the bus for more than 18ms, in order to give
    * DHT11 time to understand it and then pull it up for 40 micro-seconds
    */
-  gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
+  gpio_config_t io_conf = {};
+  io_conf.pin_bit_mask = (1u<<dht_gpio);
+  io_conf.mode = GPIO_MODE_OUTPUT;
+  io_conf.pull_up_en = true;
+  gpio_config(&io_conf);
+  // NOTE: I have to add the above code, without this GPIO is not working
+  // so I added above configuration code and commented the below one
+  // gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
   gpio_set_level(dht_gpio, 0);
   ets_delay_us(DHT11_START_SIGNAL_PULL_DOWN_DELAY);   // 20ms delay
+  // vTaskDelay( pdMS_TO_TICKS(DHT11_START_SIGNAL_PULL_DOWN_DELAY) );
   gpio_set_level(dht_gpio, 1);
   ets_delay_us(DHT11_START_SIGNAL_PULL_UP_DELAY);     // 40us delay
   gpio_set_direction(dht_gpio, GPIO_MODE_INPUT);
