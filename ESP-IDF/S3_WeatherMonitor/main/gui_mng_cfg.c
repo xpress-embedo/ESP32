@@ -11,11 +11,9 @@
 #include "freertos/task.h"
 
 #include "main.h"
-#include "screens/ui_SensorScreen.h"
 #include "ui.h"
 #include "lvgl.h"
 #include "gui_mng.h"
-#include <stdint.h>
 #include "gui_mng_cfg.h"
 
 // Private Macros
@@ -150,5 +148,5 @@ static void gui_wifi_mqtt_disconnected( uint8_t *data )
  */
 static void gui_load_sensor_screen( uint8_t *data )
 {
-	// lv_disp_load_scr(ui_SensorScreen );
+	lv_disp_load_scr(ui_SensorScreen );
 }
