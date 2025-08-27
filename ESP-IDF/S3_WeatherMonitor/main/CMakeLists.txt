@@ -10,6 +10,14 @@ idf_component_register(
     ui/ui.c
     ui/ui_helpers.c
     ui/screens/ui_MainScreen.c
+    ui/screens/ui_SensorScreen.c
+    ui/components/ui_comp_hook.c
+    ui/fonts/ui_font_Number.c
+    ui/images/ui_img_2479933.c
+    ui/images/ui_img_school_logo_png.c
+    ui/images/ui_img_wifi_connected_png.c
+    ui/images/ui_img_wifi_disconnected_png.c
+    ui/images/ui_img_wifi_png.c
     INCLUDE_DIRS        # optional, add here public include directories
     "." "ui"
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
