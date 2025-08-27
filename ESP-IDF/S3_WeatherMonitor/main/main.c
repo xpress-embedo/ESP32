@@ -146,6 +146,12 @@ sensor_data_t * get_temperature_humidity( void )
 void get_mac_address( char *mac_str )
 {
   uint8_t mac[6];
+  /* NOTE: there is an another function named esp_wifi_get_mac and the below function.
+  Both function are used to get the mac address but there is a difference.
+  esp_wifi_get_mac: Returns the currently MAC used by WiFi, i.e. after calling function esp_wifi_init
+  This function may reflect the overridden MAC is esp_wifi_set_mac function was used
+  while esp_read_mac returns the Factory Programmed MAC directly from EFUSE, doesn't
+  require WiFi drivers to be running */
   esp_read_mac( mac, ESP_MAC_WIFI_STA );
   snprintf( mac_str, MAC_ADDR_SIZE, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
 }
@@ -183,13 +189,20 @@ static void app_connect_wifi( void )
   // setting MAC address as hostname
   esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
 
+	/*
 	uint8_t mac[6];
 	ESP_ERROR_CHECK(esp_wifi_get_mac(WIFI_IF_STA, mac));
 	char hostname[32];
 	snprintf(	hostname, sizeof(hostname), "ESP_%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	*/
+	// Another way of doing things, since I want MAC address programmed in EFUSE of ESP32S3
+	char mac_str[MAC_ADDR_SIZE];
+	char hostname[32];
+	get_mac_address( mac_str );
+	snprintf(hostname, sizeof(hostname), "ESP32_%s", mac_str);
 	
-	ESP_ERROR_CHECK(esp_netif_set_hostname(netif, hostname));
-	ESP_LOGI(TAG, "Hostname set to MAC: %s", hostname);
+	ESP_ERROR_CHECK( esp_netif_set_hostname(netif, hostname) );
+	ESP_LOGW( TAG, "Hostname set to MAC: %s", hostname );
 
   esp_event_handler_instance_t instance_any_id;
   esp_event_handler_instance_t instance_got_ip;
