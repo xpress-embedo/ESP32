@@ -4317,7 +4317,7 @@
               {
                 "nid": 10,
                 "strtype": "OBJECT/Name",
-                "strval": "Image1",
+                "strval": "imgWiFiStatus2",
                 "InheritedType": 10
               },
               {
@@ -4884,7 +4884,7 @@
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_WeatherMonitor\\main\\ui",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 28,
+    "backup_cnt": 29,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",
