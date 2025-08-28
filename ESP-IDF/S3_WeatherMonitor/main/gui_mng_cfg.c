@@ -110,12 +110,13 @@ void gui_cfg_refresh( void )
   
   if( (sensor_arc_animation_timer > 0) && (--sensor_arc_animation_timer == 0) )
   {
-    // reload it
+    // ESP_LOGI( TAG, "Reloading ARC Animation Timer" );
     sensor_arc_animation_timer = SENSOR_ARC_ANIMATION_TIMER;
     if( temp_ovf || humidity_ovf )
     {
       // send event
       gui_send_event( GUI_MNG_EV_TEMP_HUMID_ARC_ANIM, NULL );
+      // ESP_LOGI( TAG, "Sending Event: GUI_MNG_EV_TEMP_HUMID_ARC_ANIM" );
     }
   }
 }
@@ -238,6 +239,7 @@ static void gui_update_sensor_data( uint8_t *data )
   
   if( overflow )
   {
+    ESP_LOGI( TAG, "OverFlow Detected" );
     sensor_arc_animation_timer = SENSOR_ARC_ANIMATION_TIMER;
   }
   else
@@ -246,7 +248,10 @@ static void gui_update_sensor_data( uint8_t *data )
   }
 }
 
-
+/**
+ * @brief Callback function to update the arc animation
+ * @param data pointer to sensor data
+ */
 static void gui_sensor_arc_animation( uint8_t *data )
 {
   static bool toggle_animation = false;
@@ -277,6 +282,10 @@ static void gui_sensor_arc_animation( uint8_t *data )
   if ( toggle_animation )
   {
     toggle_animation = false;
+  }
+  else 
+  {
+    toggle_animation = true;
   }
 }
 
