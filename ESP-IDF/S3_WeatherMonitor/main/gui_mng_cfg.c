@@ -15,11 +15,13 @@
 #include "lvgl.h"
 #include "gui_mng.h"
 #include "ui_SensorScreen.h"
+#include <stdbool.h>
 #include "gui_mng_cfg.h"
 
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
 #define LOAD_SENSOR_SCREEN_TIMER        ( 2000/ GUI_MNG_REFRESH_TIME )
+#define SENSOR_ARC_ANIMATION_TIMER      ( 1000/ GUI_MNG_REFRESH_TIME )
 
 // function template for callback function
 typedef void (*gui_mng_callback)(uint8_t * data);
@@ -38,10 +40,15 @@ static void gui_wifi_internet_connected( uint8_t *data );
 static void gui_wifi_disconnected( uint8_t *data );
 static void gui_load_sensor_screen( uint8_t *data );
 static void gui_update_sensor_data( uint8_t *data );
+static void gui_sensor_arc_animation( uint8_t *data );
+
 
 // Private Variables
 static const char *TAG = "GUI_CFG";
 static uint32_t load_sensor_screen_timer = 0;
+static uint32_t sensor_arc_animation_timer = 0;
+static bool temp_ovf = false;
+static bool humidity_ovf = false;
 
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
@@ -51,6 +58,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
   { GUI_MNG_EV_WIFI_INTERNET_CONNECTED, gui_wifi_internet_connected   },
   { GUI_MNG_EV_LOAD_SENSOR_SCREEN,      gui_load_sensor_screen        },
   { GUI_MNG_EV_TEMP_HUMID,              gui_update_sensor_data        },
+  { GUI_MNG_EV_TEMP_HUMID_ARC_ANIM,     gui_sensor_arc_animation      },
 };
 
 // Public Function Definitions
@@ -98,6 +106,17 @@ void gui_cfg_refresh( void )
   if( (load_sensor_screen_timer > 0) && (--load_sensor_screen_timer == 0) )
   {
     gui_send_event( GUI_MNG_EV_LOAD_SENSOR_SCREEN, NULL );
+  }
+  
+  if( (sensor_arc_animation_timer > 0) && (--sensor_arc_animation_timer == 0) )
+  {
+    // reload it
+    sensor_arc_animation_timer = SENSOR_ARC_ANIMATION_TIMER;
+    if( temp_ovf || humidity_ovf )
+    {
+      // send event
+      gui_send_event( GUI_MNG_EV_TEMP_HUMID_ARC_ANIM, NULL );
+    }
   }
 }
 
@@ -179,6 +198,9 @@ static void gui_load_sensor_screen( uint8_t *data )
  */
 static void gui_update_sensor_data( uint8_t *data )
 {
+  #define TEMPERATURE_OVERFLOW_VALUE            (30u)
+  #define HUMIDITY_OVERFLOW_VALUE               (60u)
+  bool overflow = false;
   sensor_data_t *sensor_data;
   sensor_data = (sensor_data_t*)data;
   ESP_LOGI( TAG, "gui_update_sensor_data" );
@@ -188,4 +210,73 @@ static void gui_update_sensor_data( uint8_t *data )
   lv_arc_set_value( ui_arcSensor1, temperature );
   lv_label_set_text_fmt( ui_lblSensor2, "%d%%", humidity );
   lv_arc_set_value( ui_arcSensor2, humidity );
+  
+  // overflow logic and start of animation
+  if ( temperature > TEMPERATURE_OVERFLOW_VALUE )
+  {
+    overflow = true;
+    temp_ovf = true;
+  }
+  else
+  {
+    temp_ovf = false;
+    // restore the color
+    lv_obj_set_style_arc_color(ui_arcSensor1, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  }
+  
+  if ( humidity > HUMIDITY_OVERFLOW_VALUE )
+  {
+    overflow = true;
+    humidity_ovf = true;
+  }
+  else
+  {
+    humidity_ovf = false;
+    // restore the color
+    lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  }
+  
+  if( overflow )
+  {
+    sensor_arc_animation_timer = SENSOR_ARC_ANIMATION_TIMER;
+  }
+  else
+  {
+    sensor_arc_animation_timer = 0;
+  }
 }
+
+
+static void gui_sensor_arc_animation( uint8_t *data )
+{
+  static bool toggle_animation = false;
+  if( temp_ovf )
+  {
+    if ( toggle_animation )
+    {
+      lv_obj_set_style_arc_color(ui_arcSensor1, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    }
+    else
+    {
+      lv_obj_set_style_arc_color(ui_arcSensor1, lv_color_hex(0xF63653), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    }
+  }
+  
+  if( humidity_ovf )
+  {
+    if ( toggle_animation )
+    {
+      lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    }
+    else
+    {
+      lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0xF63653), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    }
+  }
+  
+  if ( toggle_animation )
+  {
+    toggle_animation = false;
+  }
+}
+

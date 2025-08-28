@@ -2066,9 +2066,9 @@
                             "nid": 10310,
                             "strtype": "_style/Arc_Color",
                             "intarray": [
-                              15,
-                              18,
-                              21,
+                              54,
+                              185,
+                              246,
                               255
                             ],
                             "InheritedType": 7
@@ -2100,9 +2100,9 @@
                             "nid": 10310,
                             "strtype": "_style/Arc_Color",
                             "intarray": [
-                              54,
-                              185,
                               246,
+                              54,
+                              83,
                               255
                             ],
                             "InheritedType": 7
@@ -5065,7 +5065,7 @@
     "uiExportFolderPath": "D:\\Projects\\Embedded\\ESP32\\ESP-IDF\\S3_WeatherMonitor\\main\\ui",
     "projectExportFolderPath": "",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 104,
+    "backup_cnt": 105,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

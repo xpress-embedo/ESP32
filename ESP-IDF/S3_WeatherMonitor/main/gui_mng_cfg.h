@@ -22,6 +22,7 @@ typedef enum {
   GUI_MNG_EV_WIFI_INTERNET_CONNECTED, // Event for ESP32 has internet access as it can connect with SNTP server
   GUI_MNG_EV_LOAD_SENSOR_SCREEN,			// Event for loading sensor screen
   GUI_MNG_EV_TEMP_HUMID,							// Event for display temperature and humidity data
+  GUI_MNG_EV_TEMP_HUMID_ARC_ANIM,     // Event for ARC animation of temperature & humidity
   GUI_MNG_EV_MAX,
 } gui_mng_event_t;
 
