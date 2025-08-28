@@ -10,12 +10,16 @@ lv_obj_t * ui_panelHeaderSensorScreen = NULL;
 lv_obj_t * ui_lblProjectNameSensorScreen = NULL;
 lv_obj_t * ui_panelSensor1 = NULL;
 lv_obj_t * ui_arcSensor1 = NULL;
+lv_obj_t * ui_lblMinSensor1 = NULL;
+lv_obj_t * ui_lblMaxSensor1 = NULL;
 lv_obj_t * ui_panelBgSensor1 = NULL;
 lv_obj_t * ui_panelNumBgSensor1 = NULL;
 lv_obj_t * ui_lblSensor1 = NULL;
 lv_obj_t * ui_lblTemperature = NULL;
 lv_obj_t * ui_panelSensor2 = NULL;
 lv_obj_t * ui_arcSensor2 = NULL;
+lv_obj_t * ui_lblMinSensor2 = NULL;
+lv_obj_t * ui_lblMaxSensor2 = NULL;
 lv_obj_t * ui_panelBgSensor2 = NULL;
 lv_obj_t * ui_panelNumBgSensor2 = NULL;
 lv_obj_t * ui_lblSensor2 = NULL;
@@ -88,6 +92,28 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_arc_opa(ui_arcSensor1, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_width(ui_arcSensor1, 15, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
+    ui_lblMinSensor1 = lv_label_create(ui_arcSensor1);
+    lv_obj_set_width(ui_lblMinSensor1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblMinSensor1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblMinSensor1, 60);
+    lv_obj_set_y(ui_lblMinSensor1, -20);
+    lv_obj_set_align(ui_lblMinSensor1, LV_ALIGN_BOTTOM_LEFT);
+    lv_label_set_text(ui_lblMinSensor1, "5°C");
+    lv_obj_set_style_text_color(ui_lblMinSensor1, lv_color_hex(0x36B9F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblMinSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblMinSensor1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblMaxSensor1 = lv_label_create(ui_arcSensor1);
+    lv_obj_set_width(ui_lblMaxSensor1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblMaxSensor1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblMaxSensor1, -60);
+    lv_obj_set_y(ui_lblMaxSensor1, -20);
+    lv_obj_set_align(ui_lblMaxSensor1, LV_ALIGN_BOTTOM_RIGHT);
+    lv_label_set_text(ui_lblMaxSensor1, "60°C");
+    lv_obj_set_style_text_color(ui_lblMaxSensor1, lv_color_hex(0x36B9F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblMaxSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblMaxSensor1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     ui_panelBgSensor1 = lv_obj_create(ui_panelSensor1);
     lv_obj_set_width(ui_panelBgSensor1, 280);
     lv_obj_set_height(ui_panelBgSensor1, 280);
@@ -154,8 +180,7 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_width(ui_arcSensor2, 350);
     lv_obj_set_height(ui_arcSensor2, 350);
     lv_obj_set_align(ui_arcSensor2, LV_ALIGN_CENTER);
-    lv_arc_set_range(ui_arcSensor2, 5, 60);
-    lv_arc_set_value(ui_arcSensor2, 20);
+    lv_arc_set_value(ui_arcSensor2, 45);
     lv_obj_set_style_radius(ui_arcSensor2, 350, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_arcSensor2, lv_color_hex(0x1E232D), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_arcSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -170,6 +195,28 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_opa(ui_arcSensor2, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_width(ui_arcSensor2, 15, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+    ui_lblMinSensor2 = lv_label_create(ui_arcSensor2);
+    lv_obj_set_width(ui_lblMinSensor2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblMinSensor2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblMinSensor2, 60);
+    lv_obj_set_y(ui_lblMinSensor2, -20);
+    lv_obj_set_align(ui_lblMinSensor2, LV_ALIGN_BOTTOM_LEFT);
+    lv_label_set_text(ui_lblMinSensor2, "0%");
+    lv_obj_set_style_text_color(ui_lblMinSensor2, lv_color_hex(0x36B9F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblMinSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblMinSensor2, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblMaxSensor2 = lv_label_create(ui_arcSensor2);
+    lv_obj_set_width(ui_lblMaxSensor2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblMaxSensor2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblMaxSensor2, -60);
+    lv_obj_set_y(ui_lblMaxSensor2, -20);
+    lv_obj_set_align(ui_lblMaxSensor2, LV_ALIGN_BOTTOM_RIGHT);
+    lv_label_set_text(ui_lblMaxSensor2, "100%");
+    lv_obj_set_style_text_color(ui_lblMaxSensor2, lv_color_hex(0x36B9F6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblMaxSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblMaxSensor2, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelBgSensor2 = lv_obj_create(ui_panelSensor2);
     lv_obj_set_width(ui_panelBgSensor2, 280);
@@ -242,12 +289,16 @@ void ui_SensorScreen_screen_destroy(void)
     ui_lblProjectNameSensorScreen = NULL;
     ui_panelSensor1 = NULL;
     ui_arcSensor1 = NULL;
+    ui_lblMinSensor1 = NULL;
+    ui_lblMaxSensor1 = NULL;
     ui_panelBgSensor1 = NULL;
     ui_panelNumBgSensor1 = NULL;
     ui_lblSensor1 = NULL;
     ui_lblTemperature = NULL;
     ui_panelSensor2 = NULL;
     ui_arcSensor2 = NULL;
+    ui_lblMinSensor2 = NULL;
+    ui_lblMaxSensor2 = NULL;
     ui_panelBgSensor2 = NULL;
     ui_panelNumBgSensor2 = NULL;
     ui_lblSensor2 = NULL;
