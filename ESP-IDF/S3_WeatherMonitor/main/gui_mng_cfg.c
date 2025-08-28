@@ -14,6 +14,7 @@
 #include "ui.h"
 #include "lvgl.h"
 #include "gui_mng.h"
+#include "ui_SensorScreen.h"
 #include "gui_mng_cfg.h"
 
 // Private Macros
@@ -39,6 +40,7 @@ static void gui_load_sensor_screen( uint8_t *data );
 static void gui_update_sensor_data( uint8_t *data );
 
 // Private Variables
+static const char *TAG = "GUI_CFG";
 static uint32_t load_sensor_screen_timer = 0;
 
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
@@ -58,6 +60,7 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
  */
 void gui_cfg_init( void )
 {
+  ESP_LOGI( TAG, "UI Init" );
   ui_init();
 }
 
@@ -106,6 +109,7 @@ static void gui_wifi_connecting( uint8_t *data )
   // update the connect icon status to disconnected
   lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_disconnected_png );
   lv_img_set_src( ui_imgWiFiStatus2,  &ui_img_wifi_disconnected_png );
+  ESP_LOGI( TAG, "gui_wifi_connecting" );
 }
 
 /**
@@ -117,6 +121,7 @@ static void gui_wifi_connected( uint8_t *data )
   // update the connect icon status to wifi connected with no internet
   lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_png );
   lv_img_set_src( ui_imgWiFiStatus2,  &ui_img_wifi_png );
+  ESP_LOGI( TAG, "gui_wifi_connected" );
 }
 
 /**
@@ -132,6 +137,8 @@ static void gui_wifi_internet_connected( uint8_t *data )
 
   // this will be used to post another event to load sensor screen
   load_sensor_screen_timer = LOAD_SENSOR_SCREEN_TIMER;
+  ESP_LOGI( TAG, "gui_wifi_internet_connected" );
+  ESP_LOGW( TAG, "Time Starts to Load Next Screen ");
 }
 
 /**
@@ -143,6 +150,7 @@ static void gui_wifi_disconnected( uint8_t *data )
   // update the connect icon status to disconnected
   lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_disconnected_png );
   lv_img_set_src( ui_imgWiFiStatus2,  &ui_img_wifi_disconnected_png );
+  ESP_LOGI( TAG, "gui_wifi_disconnected" );
 }
 
 /**
@@ -151,8 +159,17 @@ static void gui_wifi_disconnected( uint8_t *data )
  */
 static void gui_load_sensor_screen( uint8_t *data )
 {
-  printf( "Secreen Should Change\r\n" );
-  lv_disp_load_scr(ui_SensorScreen );
+  ESP_LOGI( TAG, "gui_load_sensor_screen" );
+  // ui_SensorScreen_screen_init();
+  if( ui_SensorScreen == NULL )
+  {
+    ESP_LOGE( TAG, "Sensor Screen Is Null" );
+  }
+  else
+  {
+    ESP_LOGW( TAG, "Loading Sensor Screen" );
+    lv_disp_load_scr(ui_SensorScreen );
+  }
 }
 
 /**
@@ -163,9 +180,9 @@ static void gui_update_sensor_data( uint8_t *data )
 {
   sensor_data_t *sensor_data;
   sensor_data = (sensor_data_t*)data;
-  printf( "updating sensor data\r\n" );
+  ESP_LOGI( TAG, "gui_update_sensor_data" );
   uint8_t temperature = sensor_data->temperature_current;
   uint8_t humidity = sensor_data->humidity_current;
   lv_label_set_text_fmt( ui_lblSensor1, "%d °C", temperature );
-  lv_label_set_text_fmt( ui_lblSensor2, "%d %%", humidity );
+  // lv_label_set_text_fmt( ui_lblSensor2, "%d %%", humidity );
 }

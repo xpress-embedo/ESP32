@@ -17,7 +17,7 @@ void ui_event_MainScreen(lv_event_t * e)
 
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());
-        _ui_screen_change(&ui_SensorScreen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_SensorScreen_screen_init);
+        _ui_screen_change(&ui_SensorScreenBackup, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_SensorScreenBackup_screen_init);
     }
 }
 

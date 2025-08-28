@@ -110,7 +110,7 @@ void app_main(void)
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity_current);
           sensor_data.sensor_idx++;
           // trigger event to display temperature and humidity
-          gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
+          // gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
           // if wifi is connected, trigger event to send data to ThingSpeak
           if( wifi_connect_status && sntp_connect_status )
           {
