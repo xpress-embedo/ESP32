@@ -6,15 +6,15 @@
 #include "../ui.h"
 
 lv_obj_t * ui_SensorScreen = NULL;
-lv_obj_t * ui_Header3 = NULL;
-lv_obj_t * ui_lblProjectName3 = NULL;
+lv_obj_t * ui_panelHeaderSensorScreen = NULL;
+lv_obj_t * ui_lblProjectNameSensorScreen = NULL;
 lv_obj_t * ui_imgWiFiStatus2 = NULL;
 lv_obj_t * ui_panelSensor1 = NULL;
 lv_obj_t * ui_arcSensor1 = NULL;
 lv_obj_t * ui_panelBgSensor1 = NULL;
 lv_obj_t * ui_panelNumBgSensor1 = NULL;
 lv_obj_t * ui_lblSensor1 = NULL;
-lv_obj_t * ui_Label2 = NULL;
+lv_obj_t * ui_lblTemperature = NULL;
 // event funtions
 void ui_event_SensorScreen(lv_event_t * e)
 {
@@ -38,24 +38,24 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_SensorScreen, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_SensorScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Header3 = lv_obj_create(ui_SensorScreen);
-    lv_obj_set_height(ui_Header3, 50);
-    lv_obj_set_width(ui_Header3, lv_pct(100));
-    lv_obj_set_align(ui_Header3, LV_ALIGN_TOP_MID);
-    lv_obj_clear_flag(ui_Header3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_radius(ui_Header3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Header3, lv_color_hex(0x14191E), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Header3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui_Header3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_panelHeaderSensorScreen = lv_obj_create(ui_SensorScreen);
+    lv_obj_set_height(ui_panelHeaderSensorScreen, 50);
+    lv_obj_set_width(ui_panelHeaderSensorScreen, lv_pct(100));
+    lv_obj_set_align(ui_panelHeaderSensorScreen, LV_ALIGN_TOP_MID);
+    lv_obj_clear_flag(ui_panelHeaderSensorScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_panelHeaderSensorScreen, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelHeaderSensorScreen, lv_color_hex(0x14191E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_panelHeaderSensorScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelHeaderSensorScreen, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblProjectName3 = lv_label_create(ui_Header3);
-    lv_obj_set_width(ui_lblProjectName3, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_lblProjectName3, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_lblProjectName3, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblProjectName3, "Weather Monitoring Station");
-    lv_obj_set_style_text_color(ui_lblProjectName3, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_lblProjectName3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblProjectName3, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblProjectNameSensorScreen = lv_label_create(ui_panelHeaderSensorScreen);
+    lv_obj_set_width(ui_lblProjectNameSensorScreen, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblProjectNameSensorScreen, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_lblProjectNameSensorScreen, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblProjectNameSensorScreen, "Weather Monitoring Station");
+    lv_obj_set_style_text_color(ui_lblProjectNameSensorScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblProjectNameSensorScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblProjectNameSensorScreen, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_imgWiFiStatus2 = lv_img_create(ui_SensorScreen);
     lv_img_set_src(ui_imgWiFiStatus2, &ui_img_wifi_disconnected_png);
@@ -76,6 +76,9 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_clear_flag(ui_panelSensor1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_panelSensor1, lv_color_hex(0x414852), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_panelSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelSensor1, lv_color_hex(0x414852), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelSensor1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_arcSensor1 = lv_arc_create(ui_panelSensor1);
     lv_obj_set_width(ui_arcSensor1, 350);
@@ -83,6 +86,9 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_align(ui_arcSensor1, LV_ALIGN_CENTER);
     lv_arc_set_range(ui_arcSensor1, 5, 60);
     lv_arc_set_value(ui_arcSensor1, 20);
+    lv_obj_set_style_radius(ui_arcSensor1, 350, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_arcSensor1, lv_color_hex(0x1E232D), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_arcSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_arcSensor1, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_right(ui_arcSensor1, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(ui_arcSensor1, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -101,8 +107,19 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_align(ui_panelBgSensor1, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_panelBgSensor1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_panelBgSensor1, 280, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_panelBgSensor1, lv_color_hex(0x414852), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelBgSensor1, lv_color_hex(0x646464), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_panelBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_color(ui_panelBgSensor1, lv_color_hex(0x3C414B), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_panelBgSensor1, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelBgSensor1, lv_color_hex(0x2D323C), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelBgSensor1, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_color(ui_panelBgSensor1, lv_color_hex(0x050A0F), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_opa(ui_panelBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_width(ui_panelBgSensor1, 80, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_spread(ui_panelBgSensor1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_ofs_x(ui_panelBgSensor1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_ofs_y(ui_panelBgSensor1, 30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelNumBgSensor1 = lv_obj_create(ui_panelBgSensor1);
     lv_obj_set_width(ui_panelNumBgSensor1, 200);
@@ -110,27 +127,34 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_align(ui_panelNumBgSensor1, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_panelNumBgSensor1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_panelNumBgSensor1, 200, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_panelNumBgSensor1, lv_color_hex(0x101820), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelNumBgSensor1, lv_color_hex(0x0C191E), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_panelNumBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_color(ui_panelNumBgSensor1, lv_color_hex(0x191C26), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_panelNumBgSensor1, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelNumBgSensor1, lv_color_hex(0x5A646E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelNumBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_lblSensor1 = lv_label_create(ui_panelNumBgSensor1);
     lv_obj_set_width(ui_lblSensor1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_lblSensor1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblSensor1, 10);
+    lv_obj_set_y(ui_lblSensor1, 0);
     lv_obj_set_align(ui_lblSensor1, LV_ALIGN_CENTER);
     lv_label_set_text(ui_lblSensor1, "23°");
     lv_obj_set_style_text_color(ui_lblSensor1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui_lblSensor1, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblSensor1, &ui_font_Number, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Label2 = lv_label_create(ui_panelSensor1);
-    lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Label2, LV_ALIGN_BOTTOM_MID);
-    lv_label_set_text(ui_Label2, "Temperature");
-    lv_obj_set_style_text_color(ui_Label2, lv_color_hex(0xD5CECD), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_Label2, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lblTemperature = lv_label_create(ui_panelSensor1);
+    lv_obj_set_width(ui_lblTemperature, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblTemperature, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblTemperature, 0);
+    lv_obj_set_y(ui_lblTemperature, 20);
+    lv_obj_set_align(ui_lblTemperature, LV_ALIGN_BOTTOM_MID);
+    lv_label_set_text(ui_lblTemperature, "Temperature");
+    lv_obj_set_style_text_color(ui_lblTemperature, lv_color_hex(0xD5CECD), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblTemperature, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblTemperature, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_SensorScreen, ui_event_SensorScreen, LV_EVENT_ALL, NULL);
 
@@ -142,14 +166,14 @@ void ui_SensorScreen_screen_destroy(void)
 
     // NULL screen variables
     ui_SensorScreen = NULL;
-    ui_Header3 = NULL;
-    ui_lblProjectName3 = NULL;
+    ui_panelHeaderSensorScreen = NULL;
+    ui_lblProjectNameSensorScreen = NULL;
     ui_imgWiFiStatus2 = NULL;
     ui_panelSensor1 = NULL;
     ui_arcSensor1 = NULL;
     ui_panelBgSensor1 = NULL;
     ui_panelNumBgSensor1 = NULL;
     ui_lblSensor1 = NULL;
-    ui_Label2 = NULL;
+    ui_lblTemperature = NULL;
 
 }

@@ -60,8 +60,9 @@ static const gui_mng_event_cb_t gui_mng_event_cb[] =
  */
 void gui_cfg_init( void )
 {
-  ESP_LOGI( TAG, "UI Init" );
+  ESP_LOGI( TAG, "UI Init. Starts" );
   ui_init();
+  ESP_LOGI( TAG, "UI Init. Ends" );
 }
 
 /**
