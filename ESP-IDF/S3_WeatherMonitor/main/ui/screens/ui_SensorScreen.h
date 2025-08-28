@@ -13,17 +13,22 @@ extern "C" {
 // SCREEN: ui_SensorScreen
 extern void ui_SensorScreen_screen_init(void);
 extern void ui_SensorScreen_screen_destroy(void);
-extern void ui_event_SensorScreen(lv_event_t * e);
 extern lv_obj_t * ui_SensorScreen;
 extern lv_obj_t * ui_panelHeaderSensorScreen;
 extern lv_obj_t * ui_lblProjectNameSensorScreen;
-extern lv_obj_t * ui_imgWiFiStatus2;
 extern lv_obj_t * ui_panelSensor1;
 extern lv_obj_t * ui_arcSensor1;
 extern lv_obj_t * ui_panelBgSensor1;
 extern lv_obj_t * ui_panelNumBgSensor1;
 extern lv_obj_t * ui_lblSensor1;
 extern lv_obj_t * ui_lblTemperature;
+extern lv_obj_t * ui_panelSensor2;
+extern lv_obj_t * ui_arcSensor2;
+extern lv_obj_t * ui_panelBgSensor2;
+extern lv_obj_t * ui_panelNumBgSensor2;
+extern lv_obj_t * ui_lblSensor2;
+extern lv_obj_t * ui_lblHumidity;
+extern lv_obj_t * ui_imgWiFiStatus2;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

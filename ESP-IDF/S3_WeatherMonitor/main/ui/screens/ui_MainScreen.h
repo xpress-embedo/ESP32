@@ -13,10 +13,9 @@ extern "C" {
 // SCREEN: ui_MainScreen
 extern void ui_MainScreen_screen_init(void);
 extern void ui_MainScreen_screen_destroy(void);
-extern void ui_event_MainScreen(lv_event_t * e);
 extern lv_obj_t * ui_MainScreen;
-extern lv_obj_t * ui_Header1;
-extern lv_obj_t * ui_lblProjectName1;
+extern lv_obj_t * ui_panelHeaderMainScreen;
+extern lv_obj_t * ui_lblProjectNameMainScreen;
 extern lv_obj_t * ui_imgWiFiStatus1;
 extern lv_obj_t * ui_imgLogo;
 // CUSTOM VARIABLES

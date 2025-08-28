@@ -8,23 +8,20 @@
 lv_obj_t * ui_SensorScreen = NULL;
 lv_obj_t * ui_panelHeaderSensorScreen = NULL;
 lv_obj_t * ui_lblProjectNameSensorScreen = NULL;
-lv_obj_t * ui_imgWiFiStatus2 = NULL;
 lv_obj_t * ui_panelSensor1 = NULL;
 lv_obj_t * ui_arcSensor1 = NULL;
 lv_obj_t * ui_panelBgSensor1 = NULL;
 lv_obj_t * ui_panelNumBgSensor1 = NULL;
 lv_obj_t * ui_lblSensor1 = NULL;
 lv_obj_t * ui_lblTemperature = NULL;
+lv_obj_t * ui_panelSensor2 = NULL;
+lv_obj_t * ui_arcSensor2 = NULL;
+lv_obj_t * ui_panelBgSensor2 = NULL;
+lv_obj_t * ui_panelNumBgSensor2 = NULL;
+lv_obj_t * ui_lblSensor2 = NULL;
+lv_obj_t * ui_lblHumidity = NULL;
+lv_obj_t * ui_imgWiFiStatus2 = NULL;
 // event funtions
-void ui_event_SensorScreen(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_get_act());
-        _ui_screen_change(&ui_SensorScreenBackup, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, &ui_SensorScreenBackup_screen_init);
-    }
-}
 
 // build funtions
 
@@ -56,16 +53,6 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_text_color(ui_lblProjectNameSensorScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblProjectNameSensorScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblProjectNameSensorScreen, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_imgWiFiStatus2 = lv_img_create(ui_SensorScreen);
-    lv_img_set_src(ui_imgWiFiStatus2, &ui_img_wifi_disconnected_png);
-    lv_obj_set_width(ui_imgWiFiStatus2, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_imgWiFiStatus2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_imgWiFiStatus2, -10);
-    lv_obj_set_y(ui_imgWiFiStatus2, -10);
-    lv_obj_set_align(ui_imgWiFiStatus2, LV_ALIGN_BOTTOM_RIGHT);
-    lv_obj_add_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_panelSensor1 = lv_obj_create(ui_SensorScreen);
     lv_obj_set_width(ui_panelSensor1, 400);
@@ -114,12 +101,6 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_border_color(ui_panelBgSensor1, lv_color_hex(0x2D323C), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_panelBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_panelBgSensor1, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_color(ui_panelBgSensor1, lv_color_hex(0x050A0F), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_opa(ui_panelBgSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui_panelBgSensor1, 80, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_spread(ui_panelBgSensor1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_ofs_x(ui_panelBgSensor1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_ofs_y(ui_panelBgSensor1, 30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_panelNumBgSensor1 = lv_obj_create(ui_panelBgSensor1);
     lv_obj_set_width(ui_panelNumBgSensor1, 200);
@@ -140,7 +121,7 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_x(ui_lblSensor1, 10);
     lv_obj_set_y(ui_lblSensor1, 0);
     lv_obj_set_align(ui_lblSensor1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lblSensor1, "23°");
+    lv_label_set_text(ui_lblSensor1, "15°");
     lv_obj_set_style_text_color(ui_lblSensor1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lblSensor1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblSensor1, &ui_font_Number, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -156,7 +137,98 @@ void ui_SensorScreen_screen_init(void)
     lv_obj_set_style_text_opa(ui_lblTemperature, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lblTemperature, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_add_event_cb(ui_SensorScreen, ui_event_SensorScreen, LV_EVENT_ALL, NULL);
+    ui_panelSensor2 = lv_obj_create(ui_SensorScreen);
+    lv_obj_set_width(ui_panelSensor2, 400);
+    lv_obj_set_height(ui_panelSensor2, 400);
+    lv_obj_set_x(ui_panelSensor2, 200);
+    lv_obj_set_y(ui_panelSensor2, 10);
+    lv_obj_set_align(ui_panelSensor2, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_panelSensor2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_panelSensor2, lv_color_hex(0x414852), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_panelSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelSensor2, lv_color_hex(0x414852), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelSensor2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_arcSensor2 = lv_arc_create(ui_panelSensor2);
+    lv_obj_set_width(ui_arcSensor2, 350);
+    lv_obj_set_height(ui_arcSensor2, 350);
+    lv_obj_set_align(ui_arcSensor2, LV_ALIGN_CENTER);
+    lv_arc_set_range(ui_arcSensor2, 5, 60);
+    lv_arc_set_value(ui_arcSensor2, 20);
+    lv_obj_set_style_radius(ui_arcSensor2, 350, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_arcSensor2, lv_color_hex(0x1E232D), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_arcSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui_arcSensor2, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui_arcSensor2, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui_arcSensor2, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui_arcSensor2, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0x0F1215), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_opa(ui_arcSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_arcSensor2, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_arc_color(ui_arcSensor2, lv_color_hex(0x36B9F6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_opa(ui_arcSensor2, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_arcSensor2, 15, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+    ui_panelBgSensor2 = lv_obj_create(ui_panelSensor2);
+    lv_obj_set_width(ui_panelBgSensor2, 280);
+    lv_obj_set_height(ui_panelBgSensor2, 280);
+    lv_obj_set_align(ui_panelBgSensor2, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_panelBgSensor2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_panelBgSensor2, 280, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelBgSensor2, lv_color_hex(0x646464), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_panelBgSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_color(ui_panelBgSensor2, lv_color_hex(0x3C414B), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_panelBgSensor2, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelBgSensor2, lv_color_hex(0x2D323C), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelBgSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelBgSensor2, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_panelNumBgSensor2 = lv_obj_create(ui_panelBgSensor2);
+    lv_obj_set_width(ui_panelNumBgSensor2, 200);
+    lv_obj_set_height(ui_panelNumBgSensor2, 200);
+    lv_obj_set_align(ui_panelNumBgSensor2, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_panelNumBgSensor2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_panelNumBgSensor2, 200, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelNumBgSensor2, lv_color_hex(0x0C191E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_panelNumBgSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_color(ui_panelNumBgSensor2, lv_color_hex(0x191C26), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui_panelNumBgSensor2, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_panelNumBgSensor2, lv_color_hex(0x5A646E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_panelNumBgSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblSensor2 = lv_label_create(ui_panelNumBgSensor2);
+    lv_obj_set_width(ui_lblSensor2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblSensor2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblSensor2, 10);
+    lv_obj_set_y(ui_lblSensor2, 0);
+    lv_obj_set_align(ui_lblSensor2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblSensor2, "45%");
+    lv_obj_set_style_text_color(ui_lblSensor2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblSensor2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblSensor2, &ui_font_Number, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblHumidity = lv_label_create(ui_panelSensor2);
+    lv_obj_set_width(ui_lblHumidity, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblHumidity, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_lblHumidity, 0);
+    lv_obj_set_y(ui_lblHumidity, 20);
+    lv_obj_set_align(ui_lblHumidity, LV_ALIGN_BOTTOM_MID);
+    lv_label_set_text(ui_lblHumidity, "Humidity");
+    lv_obj_set_style_text_color(ui_lblHumidity, lv_color_hex(0xD5CECD), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblHumidity, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblHumidity, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_imgWiFiStatus2 = lv_img_create(ui_SensorScreen);
+    lv_img_set_src(ui_imgWiFiStatus2, &ui_img_wifi_disconnected_png);
+    lv_obj_set_width(ui_imgWiFiStatus2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgWiFiStatus2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgWiFiStatus2, -10);
+    lv_obj_set_y(ui_imgWiFiStatus2, -10);
+    lv_obj_set_align(ui_imgWiFiStatus2, LV_ALIGN_BOTTOM_RIGHT);
+    lv_obj_add_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgWiFiStatus2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
 }
 
@@ -168,12 +240,18 @@ void ui_SensorScreen_screen_destroy(void)
     ui_SensorScreen = NULL;
     ui_panelHeaderSensorScreen = NULL;
     ui_lblProjectNameSensorScreen = NULL;
-    ui_imgWiFiStatus2 = NULL;
     ui_panelSensor1 = NULL;
     ui_arcSensor1 = NULL;
     ui_panelBgSensor1 = NULL;
     ui_panelNumBgSensor1 = NULL;
     ui_lblSensor1 = NULL;
     ui_lblTemperature = NULL;
+    ui_panelSensor2 = NULL;
+    ui_arcSensor2 = NULL;
+    ui_panelBgSensor2 = NULL;
+    ui_panelNumBgSensor2 = NULL;
+    ui_lblSensor2 = NULL;
+    ui_lblHumidity = NULL;
+    ui_imgWiFiStatus2 = NULL;
 
 }

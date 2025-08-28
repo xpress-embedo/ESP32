@@ -184,6 +184,6 @@ static void gui_update_sensor_data( uint8_t *data )
   ESP_LOGI( TAG, "gui_update_sensor_data" );
   uint8_t temperature = sensor_data->temperature_current;
   uint8_t humidity = sensor_data->humidity_current;
-  lv_label_set_text_fmt( ui_lblSensor1, "%d °C", temperature );
-  // lv_label_set_text_fmt( ui_lblSensor2, "%d %%", humidity );
+  lv_label_set_text_fmt( ui_lblSensor1, "%d°C", temperature );
+  lv_label_set_text_fmt( ui_lblSensor2, "%d%%", humidity );
 }

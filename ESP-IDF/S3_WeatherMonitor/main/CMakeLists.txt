@@ -12,7 +12,6 @@ idf_component_register(
     ui/ui_helpers.c
     ui/screens/ui_MainScreen.c
     ui/screens/ui_SensorScreen.c
-    ui/screens/ui_SensorScreenBackup.c
     ui/components/ui_comp_hook.c
     ui/fonts/ui_font_Number.c
     ui/images/ui_img_2479933.c
