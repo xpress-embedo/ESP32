@@ -592,11 +592,15 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# Weather Monitor Configuration
 #
-CONFIG_ESP_WIFI_SSID="myssid"
-CONFIG_ESP_WIFI_PASSWORD="mypassword"
-# end of Example Configuration
+CONFIG_ESP_WIFI_SSID="SECOND"
+CONFIG_ESP_WIFI_PASSWORD="Brutal@garry"
+CONFIG_INFLUXDB_URL="https://us-east-1-1.aws.cloud2.influxdata.com"
+CONFIG_INFLUXDB_ORG="697c4e83a61ce79b"
+CONFIG_INFLUXDB_BUCKET="EmLab"
+CONFIG_INFLUXDB_TOKEN="ZUhdAhpcI806uM-OG9GrIL1NOBvsfOFzB26f37xVAFH-QNH-JOndHiaQevUxi-vt_RvsODb-gyV5KnPKwlnaKg=="
+# end of Weather Monitor Configuration
 
 #
 # Compiler options
@@ -2392,7 +2396,7 @@ CONFIG_LV_ATTRIBUTE_MEM_ALIGN_SIZE=1
 CONFIG_LV_FONT_MONTSERRAT_14=y
 # CONFIG_LV_FONT_MONTSERRAT_16 is not set
 # CONFIG_LV_FONT_MONTSERRAT_18 is not set
-# CONFIG_LV_FONT_MONTSERRAT_20 is not set
+CONFIG_LV_FONT_MONTSERRAT_20=y
 # CONFIG_LV_FONT_MONTSERRAT_22 is not set
 # CONFIG_LV_FONT_MONTSERRAT_24 is not set
 # CONFIG_LV_FONT_MONTSERRAT_26 is not set

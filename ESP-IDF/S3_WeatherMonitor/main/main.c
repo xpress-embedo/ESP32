@@ -15,14 +15,14 @@
 #include "main.h"
 #include "gui_mng.h"
 #include "dht11.h"
+#include "gui_mng_cfg.h"
+#include "influxDB.h"
 
 // Private Macros
-#define MAIN_TASK_PERIOD                		(5000)
+#define MAIN_TASK_PERIOD                		(60000)
 #define DHT11_PIN              							(GPIO_NUM_17)
-// #define APP_WIFI_SSID                       CONFIG_ESP_WIFI_SSID
-// #define APP_WIFI_PSWD                       CONFIG_ESP_WIFI_PASSWORD
-#define APP_WIFI_SSID                       "SECOND"
-#define APP_WIFI_PSWD                       "Brutal@garry"
+#define APP_WIFI_SSID                       CONFIG_ESP_WIFI_SSID
+#define APP_WIFI_PSWD                       CONFIG_ESP_WIFI_PASSWORD
 #define WIFI_MAX_RETRY                      (6)
 #define WIFI_CONNECT_DELAY                  (500)     // Initial delay in milliseconds
 #define WIFI_MAX_DELAY                      (60000)   // Maximum delay in milliseconds
@@ -68,19 +68,22 @@ void app_main(void)
 	ESP_LOGI( TAG, "Starting Program");
 	
 	gui_start();
+	gui_send_event( GUI_MNG_EV_WIFI_CONNECTING, NULL );
 	
 	// connect with WiFi (it will take some time)
   app_connect_wifi();
   if( wifi_connect_status )
   {
     ESP_LOGI( TAG, "WiFi Connected, now synchronizing with NTP server." );
+    gui_send_event( GUI_MNG_EV_WIFI_CONNECTED, NULL );
     app_sntp_init();
     sntp_connect_status = app_sntp_get_time();
     // if time fetched then only start the influxDB server
     if( sntp_connect_status )
     {
       // now start the influxDB task
-      // influxdb_start();
+      influxdb_start();
+      gui_send_event( GUI_MNG_EV_WIFI_INTERNET_CONNECTED, NULL );
     }
   }
   
@@ -106,6 +109,13 @@ void app_main(void)
           ESP_LOGI(TAG, "Temperature: %d", sensor_data.temperature_current);
           ESP_LOGI(TAG, "Humidity: %d", sensor_data.humidity_current);
           sensor_data.sensor_idx++;
+          // trigger event to display temperature and humidity
+          gui_send_event(GUI_MNG_EV_TEMP_HUMID, (uint8_t*)(&sensor_data) );
+          // if wifi is connected, trigger event to send data to ThingSpeak
+          if( wifi_connect_status && sntp_connect_status )
+          {
+            influxdb_send_event(INFLUXDB_EV_TEMP_HUMID, NULL);
+          }
           // reset the index
           if( sensor_data.sensor_idx >= SENSOR_BUFF_SIZE )
           {

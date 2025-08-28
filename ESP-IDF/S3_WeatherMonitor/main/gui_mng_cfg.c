@@ -18,7 +18,7 @@
 
 // Private Macros
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
-#define LOAD_SENSOR_SCREEN_TIMER				( 2000/ GUI_MNG_REFRESH_TIME )
+#define LOAD_SENSOR_SCREEN_TIMER        ( 2000/ GUI_MNG_REFRESH_TIME )
 
 // function template for callback function
 typedef void (*gui_mng_callback)(uint8_t * data);
@@ -32,21 +32,23 @@ typedef struct _gui_mng_event_cb_t
 
 // Private Function Prototypes
 static void gui_wifi_connecting( uint8_t *data );
-static void gui_mqtt_connecting( uint8_t *data );
-static void gui_mqtt_connected( uint8_t *data );
-static void gui_wifi_mqtt_disconnected( uint8_t *data );
+static void gui_wifi_connected( uint8_t *data );
+static void gui_wifi_internet_connected( uint8_t *data );
+static void gui_wifi_disconnected( uint8_t *data );
 static void gui_load_sensor_screen( uint8_t *data );
+static void gui_update_sensor_data( uint8_t *data );
 
 // Private Variables
 static uint32_t load_sensor_screen_timer = 0;
 
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
-  { GUI_MNG_EV_WIFI_CONNECTING,       gui_wifi_connecting           },
-  { GUI_MNG_EV_MQTT_CONNECTING,       gui_mqtt_connecting           },
-  { GUI_MNG_EV_MQTT_CONNECTED,        gui_mqtt_connected            },
-  { GUI_MNG_EV_WIFI_DISCONNECTED,     gui_wifi_mqtt_disconnected    },
-  { GUI_MNG_EV_LOAD_SENSOR_SCREEN,    gui_load_sensor_screen 				},
+  { GUI_MNG_EV_WIFI_CONNECTING,         gui_wifi_connecting           },
+  { GUI_MNG_EV_WIFI_CONNECTED,          gui_wifi_connected            },
+  { GUI_MNG_EV_WIFI_DISCONNECTED,       gui_wifi_disconnected         },
+  { GUI_MNG_EV_WIFI_INTERNET_CONNECTED, gui_wifi_internet_connected   },
+  { GUI_MNG_EV_LOAD_SENSOR_SCREEN,      gui_load_sensor_screen        },
+  { GUI_MNG_EV_TEMP_HUMID,              gui_update_sensor_data        },
 };
 
 // Public Function Definitions
@@ -107,10 +109,10 @@ static void gui_wifi_connecting( uint8_t *data )
 }
 
 /**
- * @brief Callback function when ESP32 is connecting to MQTT Broker
+ * @brief Callback function when ESP32 is connected to Router
  * @param data 
  */
-static void gui_mqtt_connecting( uint8_t *data )
+static void gui_wifi_connected( uint8_t *data )
 {
   // update the connect icon status to wifi connected with no internet
   lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_png );
@@ -118,13 +120,14 @@ static void gui_mqtt_connecting( uint8_t *data )
 }
 
 /**
- * @brief Callback function when ESP32 is connecting to MQTT Broker
+ * @brief Callback function when ESP32 is connected to router and also get time 
+          from SNTP
  * @param data
  */
-static void gui_mqtt_connected( uint8_t *data )
+static void gui_wifi_internet_connected( uint8_t *data )
 {
   // update the connect icon status to connected
-	lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_connected_png );
+  lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_connected_png );
   lv_img_set_src( ui_imgWiFiStatus2,  &ui_img_wifi_connected_png );
 
   // this will be used to post another event to load sensor screen
@@ -132,13 +135,13 @@ static void gui_mqtt_connected( uint8_t *data )
 }
 
 /**
- * @brief Callback function when WiFi is disconnected (Disconnect from Router & MQTT Server)
+ * @brief Callback function when WiFi is disconnected (Disconnect from Router & Influx Server)
  * @param data
  */
-static void gui_wifi_mqtt_disconnected( uint8_t *data )
+static void gui_wifi_disconnected( uint8_t *data )
 {
   // update the connect icon status to disconnected
-	lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_disconnected_png );
+  lv_img_set_src( ui_imgWiFiStatus1,  &ui_img_wifi_disconnected_png );
   lv_img_set_src( ui_imgWiFiStatus2,  &ui_img_wifi_disconnected_png );
 }
 
@@ -148,5 +151,21 @@ static void gui_wifi_mqtt_disconnected( uint8_t *data )
  */
 static void gui_load_sensor_screen( uint8_t *data )
 {
-	lv_disp_load_scr(ui_SensorScreen );
+  printf( "Secreen Should Change\r\n" );
+  lv_disp_load_scr(ui_SensorScreen );
+}
+
+/**
+ * @brief Update the Temperature and Humidity data on display
+ * @param data pointer to sensor data
+ */
+static void gui_update_sensor_data( uint8_t *data )
+{
+  sensor_data_t *sensor_data;
+  sensor_data = (sensor_data_t*)data;
+  printf( "updating sensor data\r\n" );
+  uint8_t temperature = sensor_data->temperature_current;
+  uint8_t humidity = sensor_data->humidity_current;
+  lv_label_set_text_fmt( ui_lblSensor1, "%d °C", temperature );
+  lv_label_set_text_fmt( ui_lblSensor2, "%d %%", humidity );
 }
