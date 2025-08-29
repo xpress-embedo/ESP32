@@ -13,7 +13,7 @@ The following is the `html` code which is generated with the help of `CoPilot`.
   
   <!-- Left Side: Text Content -->
   <div style="flex: 1; text-align: left;">
-    <h1 style="font-size: 56px; margin: 0 0 20px; font-weight: 700;">Shambhu Dayal Global School</h1>
+    <h1 style="font-size: 64px; margin: 0 0 20px; font-weight: 700;">Shambhu Dayal Global School</h1>
     <h2 style="font-size: 32px; font-weight: 400; color: #455a64; margin: 0;">Weather Monitoring System</h2>
     <div style="margin-top: 24px; width: 80px; height: 4px; background-color: #00796b; border-radius: 2px;"></div>
   </div>

@@ -594,7 +594,7 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # Weather Monitor Configuration
 #
-CONFIG_ESP_WIFI_SSID="SECOND"
+CONFIG_ESP_WIFI_SSID="GROUND"
 CONFIG_ESP_WIFI_PASSWORD="Brutal@garry"
 CONFIG_INFLUXDB_URL="https://us-east-1-1.aws.cloud2.influxdata.com"
 CONFIG_INFLUXDB_ORG="697c4e83a61ce79b"
