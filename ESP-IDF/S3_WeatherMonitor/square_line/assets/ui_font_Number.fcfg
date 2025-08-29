@@ -1,0 +1,16 @@
+{
+  "codename": "Number",
+  "ttf_path": "/assets/number_font.ttf",
+  "bin_path": "/assets\\ui_font_Number.bin",
+  "c_path": "/assets\\ui_font_Number.c",
+  "cfg_path": "/assets\\ui_font_Number.fcfg",
+  "size": 80,
+  "bpp": 4,
+  "letters": 3,
+  "ranges": [
+    "0x20-0xff"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

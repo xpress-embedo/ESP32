@@ -6,7 +6,10 @@
 #include "../ui.h"
 
 lv_obj_t * ui_MainScreen = NULL;
-lv_obj_t * ui_lblProjectName = NULL;
+lv_obj_t * ui_panelHeaderMainScreen = NULL;
+lv_obj_t * ui_lblProjectNameMainScreen = NULL;
+lv_obj_t * ui_imgWiFiStatus1 = NULL;
+lv_obj_t * ui_imgLogo = NULL;
 // event funtions
 
 // build funtions
@@ -15,17 +18,49 @@ void ui_MainScreen_screen_init(void)
 {
     ui_MainScreen = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_MainScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_MainScreen, lv_color_hex(0x464B55), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_MainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_color(ui_MainScreen, lv_color_hex(0x2D323C), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_lblProjectName = lv_label_create(ui_MainScreen);
-    lv_obj_set_width(ui_lblProjectName, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_lblProjectName, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_lblProjectName, 0);
-    lv_obj_set_y(ui_lblProjectName, 10);
-    lv_obj_set_align(ui_lblProjectName, LV_ALIGN_TOP_MID);
-    lv_label_set_text(ui_lblProjectName, "Weather Monitoring Station");
-    lv_obj_set_style_text_color(ui_lblProjectName, lv_color_hex(0x414141), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_lblProjectName, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_lblProjectName, &lv_font_montserrat_48, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_panelHeaderMainScreen = lv_obj_create(ui_MainScreen);
+    lv_obj_set_height(ui_panelHeaderMainScreen, 50);
+    lv_obj_set_width(ui_panelHeaderMainScreen, lv_pct(100));
+    lv_obj_set_align(ui_panelHeaderMainScreen, LV_ALIGN_TOP_MID);
+    lv_obj_clear_flag(ui_panelHeaderMainScreen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_panelHeaderMainScreen, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_panelHeaderMainScreen, lv_color_hex(0x14191E), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_panelHeaderMainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_panelHeaderMainScreen, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_lblProjectNameMainScreen = lv_label_create(ui_panelHeaderMainScreen);
+    lv_obj_set_width(ui_lblProjectNameMainScreen, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_lblProjectNameMainScreen, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_lblProjectNameMainScreen, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_lblProjectNameMainScreen, "Weather Monitoring Station");
+    lv_obj_set_style_text_color(ui_lblProjectNameMainScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_lblProjectNameMainScreen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_lblProjectNameMainScreen, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_imgWiFiStatus1 = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgWiFiStatus1, &ui_img_wifi_disconnected_png);
+    lv_obj_set_width(ui_imgWiFiStatus1, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgWiFiStatus1, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgWiFiStatus1, -10);
+    lv_obj_set_y(ui_imgWiFiStatus1, -10);
+    lv_obj_set_align(ui_imgWiFiStatus1, LV_ALIGN_BOTTOM_RIGHT);
+    lv_obj_add_flag(ui_imgWiFiStatus1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgWiFiStatus1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_imgLogo = lv_img_create(ui_MainScreen);
+    lv_img_set_src(ui_imgLogo, &ui_img_school_logo_png);
+    lv_obj_set_width(ui_imgLogo, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_imgLogo, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_imgLogo, 0);
+    lv_obj_set_y(ui_imgLogo, 25);
+    lv_obj_set_align(ui_imgLogo, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_imgLogo, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_imgLogo, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_zoom(ui_imgLogo, 480);
 
 }
 
@@ -35,6 +70,9 @@ void ui_MainScreen_screen_destroy(void)
 
     // NULL screen variables
     ui_MainScreen = NULL;
-    ui_lblProjectName = NULL;
+    ui_panelHeaderMainScreen = NULL;
+    ui_lblProjectNameMainScreen = NULL;
+    ui_imgWiFiStatus1 = NULL;
+    ui_imgLogo = NULL;
 
 }

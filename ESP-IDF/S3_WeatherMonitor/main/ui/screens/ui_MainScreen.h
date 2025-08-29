@@ -14,7 +14,10 @@ extern "C" {
 extern void ui_MainScreen_screen_init(void);
 extern void ui_MainScreen_screen_destroy(void);
 extern lv_obj_t * ui_MainScreen;
-extern lv_obj_t * ui_lblProjectName;
+extern lv_obj_t * ui_panelHeaderMainScreen;
+extern lv_obj_t * ui_lblProjectNameMainScreen;
+extern lv_obj_t * ui_imgWiFiStatus1;
+extern lv_obj_t * ui_imgLogo;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
