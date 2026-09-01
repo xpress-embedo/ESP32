@@ -1,2 +1,2 @@
-idf_component_register(SRCS "S3_BME280.c"
+idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS ".")
