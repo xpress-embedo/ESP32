@@ -1,0 +1,13 @@
+list(
+  APPEND
+  LV_EDITOR_PROJECT_SOURCES
+  ${CMAKE_CURRENT_LIST_DIR}/images/background_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/balloon_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/cloud_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/dog_walk1_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/dog_walk1_r_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/dog_walk2_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/dog_walk2_r_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/screens/main_screen/main_screen_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/ui_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/ui.c)
