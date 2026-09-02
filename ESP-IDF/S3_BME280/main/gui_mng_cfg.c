@@ -5,63 +5,91 @@
  *      Author: xpress_embedo
  */
 
-#include "esp_log.h"
-
 #include <stdio.h>
-
-#include "lvgl.h"
-#include "gui_mng_cfg.h"
 #include "ui.h"
+#include "gui_mng_cfg.h"
 
-// Private Macros
+/* Private Macros */
 #define NUM_ELEMENTS(x)                 (sizeof(x)/sizeof(x[0]))
 
-// Each GUI event can be connected to one handler function with this type.
+/* Each GUI event can be connected to one handler function with this type. */
 typedef void (*gui_mng_callback)(const gui_mng_event_data_t *data);
 
-// One row in the event-to-callback table.
+/* One row in the event-to-callback table. */
 typedef struct _gui_mng_event_cb_t
 {
   gui_mng_event_t   event;
   gui_mng_callback  callback;
 } gui_mng_event_cb_t;
 
-// Private Function Prototypes
+/* Threshold Rule Structure */
+typedef struct
+{
+  int32_t max_threshold;      /* Range Upper Limit */
+  const char *text;           /* status text */
+  uint32_t color;             /* status color */
+} sensor_range_rule_t;
+
+/* Private Function Prototypes */
+static const sensor_range_rule_t * get_sensor_rule( int32_t value, const sensor_range_rule_t *rules, size_t count );
+static void gui_startup_rgb_obsv_cb( lv_observer_t *observer, lv_subject_t *subject );
 static void gui_startup( const gui_mng_event_data_t *data );
-static void gui_IR_command_received( const gui_mng_event_data_t *data );
+static void gui_load_sensor_screen( const gui_mng_event_data_t *data );
+static void gui_sensor_data_update( const gui_mng_event_data_t *data );
 
-// Private Variables
-static const char *TAG = "GUI_CFG";
-static lv_obj_t *s_ir_signal_label = NULL;
-
+/* Private Variables */
 static const gui_mng_event_cb_t gui_mng_event_cb[] =
 {
-  { GUI_MNG_EV_STARTUP,                 gui_startup                   },
-  { GUI_MNG_EV_IR_COMMAND,              gui_IR_command_received       },
+  { GUI_MNG_EV_STARTUP,                 gui_startup                     },
+  { GUI_MNG_EV_LOAD_SENSOR_SCREEN,      gui_load_sensor_screen          },
+  { GUI_MNG_EV_SENSOR_DATA_UPDATE,      gui_sensor_data_update          },
 };
 
-// Public Function Definitions
+/* Temperature Rules (in °C) */
+static const sensor_range_rule_t temp_rules[] = 
+{
+  { 10,  "Too Cold", 0x3498DB }, /* Blue */
+  { 18,  "Cold",     0x5DADE2 }, /* Light Blue */
+  { 26,  "Ideal",    0x2ECC71 }, /* Emerald Green */
+  { 32,  "Warm",     0xF39C12 }, /* Orange */
+  { 100, "Hot",      0xE74C3C }  /* Red */
+};
+
+/* Humidity Rules (in %RH) */
+static const sensor_range_rule_t hum_rules[] =
+{
+  { 30,  "Too Dry",   0xE67E22 }, /* Amber */
+  { 40,  "Dry",       0xF1C40F }, /* Yellow */
+  { 60,  "Ideal",     0x00E5FF }, /* Glowing Cyan */
+  { 70,  "Humid",     0x3498DB }, /* Blue */
+  { 100, "Too Humid", 0x9B59B6 }  /* Purple */
+};
+
+/* Barometric Pressure Rules (in hPa) */
+static const sensor_range_rule_t press_rules[] =
+{
+  { 1000, "Low (Rain)",   0xE74C3C }, /* Red (Rain/Stormy) */
+  { 1020, "Stable",       0xBD10E0 }, /* Purple (Fair/Calm) */
+  { 1200, "High (Clear)", 0x2ECC71 }  /* Green (Sunny) */
+};
+
+static lv_obj_t * active_sensor_screen = NULL;  /* Pointer to the currently active sensor screen */
+
+/* Public Function Definitions */
 /**
  * @brief GUI Configurable Initialization Function
  * @param  None
  */
 void gui_cfg_init( void )
 {
-  ESP_LOGI( TAG, "UI Init. Starts" );
   ui_init( NULL );
-  ESP_LOGI( TAG, "UI Init. Ends" );
 
-  // Create and load the LVGL Pro generated main screen
-  lv_obj_t *scr = screen_main_create();
-  lv_screen_load( scr );
-
-  // Step 1: Find your generated label by name and store pointer for reuse.
-  // This avoids editing generated C file internals.
-  s_ir_signal_label = lv_obj_find_by_name( scr, "lv_label_IR_signal" );
-  if( s_ir_signal_label == NULL )
-  {
-    ESP_LOGW( TAG, "Label lv_label_IR_signal not found" );
-  }
+  #if 0
+  /* NOTE: Actual GUI Screen is loaded by GUI MNG Events */
+  /* Create and load the LVGL Pro generated main screen */
+  lv_obj_t *screen = main_screen_create();
+  lv_screen_load( screen );
+  #endif
 }
 
 /**
@@ -104,161 +132,178 @@ void gui_cfg_refresh( void )
 {
 }
 
-// Private Function Definitions
-// These variables are kept static so only this file can access this screen state.
-static lv_obj_t *s_uptime_label = NULL;
-static lv_obj_t *s_touch_label = NULL;
-static uint32_t s_uptime_seconds = 0;
-static uint32_t s_touch_count = 0;
-
+/* Private Function Definitions */
 /**
- * @brief Refresh touch counter label immediately.
- *
- * This helper is called from both event and timer paths so there is one
- * place that formats the touch counter text.
+ * @brief Get the sensor rule based on the value and rules array
+ * @param value The sensor value to evaluate
+ * @param rules The array of sensor range rules
+ * @param count The number of rules in the array
+ * @return A pointer to the matching sensor range rule
  */
-static void starter_ui_update_touch_label( void )
+static const sensor_range_rule_t * get_sensor_rule( int32_t value, const sensor_range_rule_t *rules, size_t count )
 {
-  if( s_touch_label != NULL )
+  for ( size_t i = 0; i < count; i++ )
   {
-    char touch_text[48];
-    snprintf( touch_text, sizeof(touch_text), "Touch taps: %lu", (unsigned long)s_touch_count );
-    lv_label_set_text( s_touch_label, touch_text );
+    if ( value < rules[i].max_threshold )
+    {
+      return &rules[i];
+    }
   }
+  return &rules[count - 1]; /* Fallback to last rule if value exceeds all thresholds */
 }
 
-/**
- * @brief LVGL event callback for touch press.
- *
- * We count on LV_EVENT_PRESSED so feedback feels immediate when finger touches
- * the panel, rather than waiting for release.
- *
- * @param e LVGL event object.
- */
-static void starter_ui_touch_event_cb( lv_event_t *e )
-{
-  if( lv_event_get_code(e) == LV_EVENT_PRESSED )
-  {
-    s_touch_count++;
-    starter_ui_update_touch_label();
-  }
-}
 
 /**
- * @brief LVGL 1-second timer callback.
- *
- * Updates uptime text every second. Touch counter is also refreshed from here
- * as a safety refresh, while primary touch updates happen in real-time from
- * the touch event callback.
- *
- * @param timer LVGL timer handle (unused).
+ * @brief Update callback for the RGB observer
+ * @param observer The observer object
+ * @param subject The subject object
  */
-static void starter_ui_timer_cb( lv_timer_t *timer )
+static void gui_startup_rgb_obsv_cb( lv_observer_t *observer, lv_subject_t *subject )
 {
-  (void) timer;
-  s_uptime_seconds++;
+  lv_obj_t *rectangle = lv_observer_get_target_obj( observer );
 
-  if( s_uptime_label != NULL )
+  /* Read the current value of each subject directly */
+  int32_t r = lv_subject_get_int( &red_val );
+  int32_t g = lv_subject_get_int( &green_val );
+  int32_t b = lv_subject_get_int( &blue_val );
+
+  /* Combine the three channel values and update the rectangle background */
+  lv_obj_set_style_bg_color( rectangle, lv_color_make( r, g, b ), LV_PART_MAIN );
+  lv_obj_set_style_bg_opa( rectangle, LV_OPA_COVER, LV_PART_MAIN );
+
+  /* If all sliders are at 255 value then load the next screen */
+  if ( r == 255 && g == 255 && b == 255 )
   {
-    char uptime_text[48];
-    snprintf( uptime_text, sizeof(uptime_text), "Uptime: %lu s", (unsigned long)s_uptime_seconds );
-    lv_label_set_text( s_uptime_label, uptime_text );
+    gui_cfg_mng_process( GUI_MNG_EV_LOAD_SENSOR_SCREEN, NULL );
   }
-
-  starter_ui_update_touch_label();
 }
 
 /**
  * @brief Build a simple LVGL starter screen.
  *
- * This is called when GUI_MNG_EV_STARTUP is processed.
- *
- * The screen has:
- * - title/subtitle
- * - uptime counter
- * - touch counter
- * - hint text for validation
+ * @param data Pointer to event data structure.
  */
 static void gui_startup( const gui_mng_event_data_t *data )
 {
-  (void) data;
+  (void)data;
+  lv_obj_t *screen = main_screen_create();
+  lv_screen_load( screen );
 
-  // Get current active screen (root container in LVGL).
-  lv_obj_t *screen = lv_screen_active();
-  lv_obj_set_style_bg_color( screen, lv_color_hex(0xEAF4FF), LV_PART_MAIN );
-  lv_obj_set_style_bg_opa( screen, LV_OPA_COVER, LV_PART_MAIN );
-  lv_obj_add_event_cb( screen, starter_ui_touch_event_cb, LV_EVENT_PRESSED, NULL );
-
-  // Main card widget used as a simple demo panel.
-  lv_obj_t *card = lv_obj_create( screen );
-  lv_obj_set_size( card, 560, 300 );
-  lv_obj_center( card );
-  lv_obj_set_style_radius( card, 18, LV_PART_MAIN );
-  lv_obj_set_style_bg_color( card, lv_color_hex(0xFFFFFF), LV_PART_MAIN );
-  lv_obj_set_style_border_width( card, 2, LV_PART_MAIN );
-  lv_obj_set_style_border_color( card, lv_color_hex(0x8AB4F8), LV_PART_MAIN );
-  lv_obj_set_style_shadow_width( card, 18, LV_PART_MAIN );
-  lv_obj_set_style_shadow_opa( card, LV_OPA_20, LV_PART_MAIN );
-  lv_obj_set_style_shadow_color( card, lv_color_hex(0x5B7DB0), LV_PART_MAIN );
-
-  // Create title label.
-  lv_obj_t *title = lv_label_create( card );
-  lv_label_set_text( title, "LVGL 9.5 Validation" );
-  lv_obj_set_style_text_font( title, &lv_font_montserrat_14, 0 );
-  lv_obj_set_style_text_color( title, lv_color_hex(0x1E3556), 0 );
-  lv_obj_align( title, LV_ALIGN_TOP_MID, 0, 20 );
-
-  // Create subtitle to confirm board/display details.
-  lv_obj_t *subtitle = lv_label_create( card );
-  lv_label_set_text( subtitle, "Sunton ESP32-8048S043 is rendering and updating." );
-  lv_obj_set_style_text_font( subtitle, &lv_font_montserrat_14, 0 );
-  lv_obj_set_style_text_color( subtitle, lv_color_hex(0x3D587E), 0 );
-  lv_obj_align_to( subtitle, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 14 );
-
-  // Dynamic label: uptime seconds.
-  s_uptime_label = lv_label_create( card );
-  lv_label_set_text( s_uptime_label, "Uptime: 0 s" );
-  lv_obj_set_style_text_font( s_uptime_label, &lv_font_montserrat_14, 0 );
-  lv_obj_align( s_uptime_label, LV_ALIGN_CENTER, 0, 18 );
-
-  // Dynamic label: number of touches.
-  s_touch_label = lv_label_create( card );
-  lv_label_set_text( s_touch_label, "Touch taps: 0" );
-  lv_obj_set_style_text_font( s_touch_label, &lv_font_montserrat_14, 0 );
-  lv_obj_align_to( s_touch_label, s_uptime_label, LV_ALIGN_OUT_BOTTOM_MID, 0, 14 );
-
-  // Ensure label formatting comes from one helper function.
-  starter_ui_update_touch_label();
-
-  // User hint label.
-  lv_obj_t *hint = lv_label_create( card );
-  lv_label_set_text( hint, "Tap anywhere on screen to validate touch." );
-  lv_obj_set_style_text_font( hint, &lv_font_montserrat_14, 0 );
-  lv_obj_set_style_text_color( hint, lv_color_hex(0x5A6F90), 0 );
-  lv_obj_align( hint, LV_ALIGN_BOTTOM_MID, 0, -18 );
-
-  // Periodic timer for updating uptime/touch labels.
-  lv_timer_create( starter_ui_timer_cb, 1000, NULL );
+  /* setting up rgb mixer callback */
+  /* get the rectange object pointer using its name */
+  lv_obj_t * rectangle = lv_obj_get_child_by_name( screen, "rgb_mix_rectangle" );
+  if ( rectangle != NULL )
+  {
+    /* The subjects are plain global variables exported by ui_gen.h.
+     * No lookup function is needed - just take their address directly. */
+    lv_subject_add_observer_obj( &red_val,   gui_startup_rgb_obsv_cb, rectangle, NULL );
+    lv_subject_add_observer_obj( &green_val, gui_startup_rgb_obsv_cb, rectangle, NULL );
+    lv_subject_add_observer_obj( &blue_val,  gui_startup_rgb_obsv_cb, rectangle, NULL );
+  }
 }
 
-static void gui_IR_command_received( const gui_mng_event_data_t *data )
+/**
+ * @brief Load the sensor screen when the corresponding event is received.
+ * @param data Pointer to event data structure.
+ */
+static void gui_load_sensor_screen( const gui_mng_event_data_t *data )
 {
-  if( data == NULL )
+  (void)data;
+  /* Load the sensor screen */
+  active_sensor_screen = sensor_screen_create();
+  /* Load with a smooth fade-in animation and auto-delete old screen to free RAM */
+  lv_screen_load_anim( active_sensor_screen, LV_SCR_LOAD_ANIM_FADE_ON, 400, 100, true );
+}
+
+/**
+ * @brief Update the sensor data on the active sensor screen.
+ * @param data Pointer to event data structure.
+ */
+static void gui_sensor_data_update( const gui_mng_event_data_t *data )
+{
+  if ( (active_sensor_screen == NULL) || (data == NULL) )
   {
-    return;
+    return; /* No active sensor screen or no data to update */
   }
 
-  ESP_LOGI( TAG, "IR Command Received: %s", data->infrared.command_msg );
+  char buf[32];
+  /* Temperature: Value & Status */
+  int32_t t_int = data->sensor_data.temperature / 100;
+  int32_t t_dec = (data->sensor_data.temperature % 100) / 10;
+  snprintf( buf, sizeof(buf), "%ld.%ld °C", t_int, (t_dec < 0 ? -t_dec : t_dec) );
+  lv_subject_copy_string( &temp_str, buf );
+  const sensor_range_rule_t *t_rule = get_sensor_rule( t_int, temp_rules, NUM_ELEMENTS(temp_rules) );
+  lv_subject_copy_string( &temp_status_str, t_rule->text );
 
-  // Step 2: Update TFT label text on every IR command event.
-  // This callback runs in GUI task context, so LVGL call is safe here.
-  if( s_ir_signal_label != NULL )
+  /* Humidity: Value & Status */
+  uint32_t hum_pct = data->sensor_data.humidity >> 10;
+  snprintf( buf, sizeof(buf), "%lu %%", hum_pct );
+  lv_subject_copy_string( &hum_str, buf );
+  const sensor_range_rule_t *h_rule = get_sensor_rule( (int32_t)hum_pct, hum_rules, NUM_ELEMENTS(hum_rules) );
+  lv_subject_copy_string( &hum_status_str, h_rule->text );
+
+  /* Pressure: Value & Status */
+  uint32_t press_hpa = data->sensor_data.pressure / 100;
+  snprintf( buf, sizeof(buf), "%lu\nhPa", press_hpa );
+  lv_subject_copy_string( &press_str, buf );
+  const sensor_range_rule_t *p_rule = get_sensor_rule( (int32_t)press_hpa, press_rules, NUM_ELEMENTS(press_rules) );
+  lv_subject_copy_string( &press_status_str, p_rule->text );
+
+  /* Updating Status Label Colors and Box Color Logic */
+  /* Cards Row Container */
+  lv_obj_t *cards_row = lv_obj_get_child( active_sensor_screen, 1 );
+  if ( cards_row != NULL )
   {
-    lv_label_set_text( s_ir_signal_label, data->infrared.command_msg );
-  }
-  else
-  {
-    ESP_LOGW( TAG, "IR label pointer is NULL, cannot update text" );
+    /* temperature status coloring logic */
+    lv_obj_t *temp_card = lv_obj_get_child( cards_row, 0 );
+    if ( temp_card )
+    {
+      lv_obj_t *box = lv_obj_get_child_by_name( temp_card, "card_box" );
+      lv_obj_t *lbl = lv_obj_get_child_by_name( box, "status_label" );
+      if ( lbl ) 
+      {
+        lv_obj_set_style_text_color( lbl, lv_color_hex( t_rule->color ), LV_PART_MAIN );
+      }
+      if ( box ) 
+      {
+        lv_obj_set_style_border_color( box, lv_color_hex( t_rule->color ), LV_PART_MAIN );
+        lv_obj_set_style_shadow_color( box, lv_color_hex( t_rule->color ), LV_PART_MAIN );
+      }
+    }
+
+    /* humidity status coloring logic */
+    lv_obj_t *hum_card = lv_obj_get_child( cards_row, 1 );
+    if ( hum_card )
+    {
+      lv_obj_t *box = lv_obj_get_child_by_name( hum_card, "card_box" );
+      lv_obj_t *lbl = lv_obj_get_child_by_name( box, "status_label" );
+      if ( lbl ) 
+      {
+        lv_obj_set_style_text_color( lbl, lv_color_hex( h_rule->color ), LV_PART_MAIN );
+      }
+      if ( box ) 
+      {
+        lv_obj_set_style_border_color( box, lv_color_hex( h_rule->color ), LV_PART_MAIN );
+        lv_obj_set_style_shadow_color( box, lv_color_hex( h_rule->color ), LV_PART_MAIN );
+      }
+    }
+
+    /* pressure status coloring logic */
+    lv_obj_t *press_card = lv_obj_get_child( cards_row, 2 );
+    if ( press_card )
+    {
+      lv_obj_t *box = lv_obj_get_child_by_name( press_card, "card_box" );
+      lv_obj_t *lbl = lv_obj_get_child_by_name( box, "status_label" );
+      if ( lbl ) 
+      {
+        lv_obj_set_style_text_color( lbl, lv_color_hex( p_rule->color ), LV_PART_MAIN );
+      }
+      if ( box ) 
+      {
+        lv_obj_set_style_border_color( box, lv_color_hex( p_rule->color ), LV_PART_MAIN );
+        lv_obj_set_style_shadow_color( box, lv_color_hex( p_rule->color ), LV_PART_MAIN );
+      }
+    }
   }
 }
 

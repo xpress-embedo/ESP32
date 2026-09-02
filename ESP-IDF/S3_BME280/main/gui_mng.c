@@ -13,17 +13,25 @@
 #include "gui_mng.h"
 #include "lcd.h"
 
-// Macros
-#define GUI_LOCK()                        gui_update_lock()
-#define GUI_UNLOCK()                      gui_update_unlock()
+/* Private Macros */
+/* IMPORTANT NOTE 
+In my previous projects based on ESP32 controller, I used to create a semaphore 
+for LVGL tasks, because LVGL is not thread safe, so it must be protected when
+multiple tasks tried to update the display buffer by calling the LVGL function.
+Here it is not required because in lv_conf.h file, I have enabled the 
+LV_USE_OS macro to use the FreeRTOS kernel for LVGL tasks.
+#define LV_USE_OS   LV_OS_FREERTOS
+so we can use lv_lock() and lv_unlock() function instead of the one I created 
+earlier on ESP32. The mutex created by LVGL is Recursive Mutex xSemaphoreCreateRecursiveMutex
+which means that a task can acquire the mutex multiple times without blocking 
+itself, and release it when it is no longer needed. I mentioned this because 
+lv_timer_handler() has already protected by this locking and unlocking, but even 
+if I use it again, there will be no impact, due to the usage of recursive mutex.
+*/
 #define GUI_EVENT_QUEUE_LEN               (5)
 
 // Private Variables
 static const char *TAG = "GUI";
-// LVGL is not thread-safe by default.
-// If more than one task can call LVGL functions, all of them must use the same
-// lock, otherwise one task can modify UI objects while another task is drawing.
-static SemaphoreHandle_t  gui_semaphore;
 // Queue used to move GUI requests from other tasks into the dedicated GUI task.
 static QueueHandle_t      gui_event = NULL;
 
@@ -105,36 +113,7 @@ BaseType_t gui_send_event( gui_mng_event_t event, const gui_mng_event_data_t *pD
   return status;
 }
 
-/**
- * @brief Lock the display update with a semaphore
- *        Creates a semaphore to handle concurrent call to lvgl stuff
- * @param   none
- * @return  if locking is successful else false
- * @note    Check this link https://docs.lvgl.io/8.3/porting/os.html#
- */
-uint8_t gui_update_lock( void )
-{
-  uint8_t status = false;
-  if( (gui_semaphore != NULL) && (pdTRUE == xSemaphoreTake(gui_semaphore, portMAX_DELAY)) )
-  {
-    status = true;
-  }
-  return status;
-}
-
-/**
- * @brief Unlock the display update from a semaphore
- * @param  none
- */
-void gui_update_unlock( void )
-{
-  if( gui_semaphore != NULL )
-  {
-    xSemaphoreGive(gui_semaphore);
-  }
-}
-
-// Private Function Definitions
+/* Private Function Definitions */
 
 /**
  * @brief Initialize GUI manager resources and the first screen.
@@ -153,33 +132,18 @@ void gui_update_unlock( void )
  */
 static bool gui_init( void )
 {
-  gui_semaphore = xSemaphoreCreateMutex();
-  if( gui_semaphore == NULL )
-  {
-    ESP_LOGE(TAG, "Unable to create GUI mutex");
-    return false;
-  }
-
-  // create message queue with the length GUI_EVENT_QUEUE_LEN
+  /* create message queue with the length GUI_EVENT_QUEUE_LEN */
   gui_event = xQueueCreate( GUI_EVENT_QUEUE_LEN, sizeof(gui_q_msg_t) );
   if( gui_event == NULL )
   {
     ESP_LOGE(TAG, "Unable to Create Queue");
-    vSemaphoreDelete(gui_semaphore);
-    gui_semaphore = NULL;
     return false;
   }
 
-  // initialize display related stuff, also lvgl
+  /* Initialize the LVGL library and TFT display driver */
   lcd_init();
-  // turn on the backlight
+  /* turn on the backlight */
   lcd_set_backlight(true);
-
-  // main user interface
-  gui_cfg_init();
-
-  // Build the first screen from inside the GUI module so startup is self-contained.
-  // gui_cfg_mng_process( GUI_MNG_EV_STARTUP, NULL );
 
   return true;
 }
@@ -195,32 +159,39 @@ static bool gui_init( void )
  *
  * @param *pvParameter  task parameter
  */
-static void gui_task(void *pvParameter)
+static void gui_task( void *pvParameters )
 {
   gui_q_msg_t msg;
   msg.event_id = GUI_MNG_EV_NONE;
 
-  while(1)
+  /* Initialize LVGL and Drivers */
+  if ( gui_init() )
   {
-    // TODO: need to understand, mostly we don't have data in queue, so there is
-    // already a delay, I think we don't need this delay
-    // vTaskDelay(pdMS_TO_TICKS(20));
+    /* main user interface */
+    gui_cfg_init();
 
-    // refresh the display
+    /* send an event to display the start-up screen */
+    gui_send_event( GUI_MNG_EV_STARTUP , NULL );
+    // gui_send_event( GUI_MNG_EV_LOAD_SENSOR_SCREEN, NULL );
+  }
+  
+  while (1)
+  {
+    /* Refresh the display */
     gui_refresh();
-    
-    // custom configurable function
+
+    /* custom configurable function */
     gui_cfg_refresh();
 
-    // wait only GUI_MNG_REFRESH_TIME ms and then proceed
-    if( xQueueReceive(gui_event, &msg, pdMS_TO_TICKS(GUI_MNG_REFRESH_TIME)) )
+    /* wait only for GUI_MNG_REFRESH_TIME in ms and then proceed */
+    if ( xQueueReceive( gui_event, &msg, pdMS_TO_TICKS(GUI_MNG_REFRESH_TIME) ) )
     {
       // the below is the code to handle the state machine
       if( GUI_MNG_EV_NONE != msg.event_id )
       {
         gui_cfg_mng_process(msg.event_id, &msg.data);
       }   // if event received in limit end
-    }     // xQueueReceive end
+    }
   }
 }
 
@@ -232,13 +203,6 @@ static void gui_task(void *pvParameter)
  */
 static void gui_refresh( void )
 {
-  if( GUI_LOCK() )
-  {
-    // LVGL engine: processes animations, input, and redraw scheduling.
-    // Call this periodically from a FreeRTOS task.
-    lcd_lvgl_timer_handler();
-    // Semaphore is released when flushing is completed, this is checked using
-    // tft_flush_status function, and then we release the semaphore
-    GUI_UNLOCK();
-  }
+  /* Handle GUI events and updates */
+  lcd_lvgl_timer_handler();
 }
