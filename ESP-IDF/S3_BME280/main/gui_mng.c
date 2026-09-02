@@ -49,19 +49,8 @@ static void gui_refresh( void );
  */
 bool gui_start( void )
 {
-  if( !gui_init() )
-  {
-    return false;
-  }
-
-  // callback function, task name, stack size, parameters, priority, task handle
-  if( pdPASS != xTaskCreate(
-    &gui_task, 
-    "gui task", 
-    8192,
-    NULL,
-    4,
-    NULL) )
+  /* callback function, task name, stack size, parameters, priority, task handle */
+  if( pdPASS != xTaskCreate( &gui_task, "gui task", 8192, NULL, 4, NULL) )
   {
     ESP_LOGE(TAG, "Unable to create GUI task");
     return false;
