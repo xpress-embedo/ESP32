@@ -1,0 +1,18 @@
+<screen>
+	<view extends="lv_obj" width="100%" height="100%">
+		<!-- background image -->
+		<lv_image name="img_bg" src="background" width="100%" height="100%" align="center" />
+
+		<!-- Cloud in the Sky -->
+		<lv_image name="img_cloud" src="cloud" x="0" y="30" />
+
+		<!-- Hot Air Baloon -->
+		<lv_image name="img_balloon" src="balloon" x="736" y="150" />
+
+		<!-- dog frames/images -->
+		<lv_image name="img_dog_r1" src="dog_walk1" align="bottom_left" x="0" y="-30" />
+		<lv_image name="img_dog_r2" src="dog_walk2" align="bottom_left" x="0" y="-30" style_opa="0%" />
+		<lv_image name="img_dog_l1" src="dog_walk1_r" align="bottom_left" x="0" y="-30" style_opa="0%" />
+		<lv_image name="img_dog_l2" src="dog_walk2_r" align="bottom_left" x="0" y="-30" style_opa="0%" />
+	</view>
+</screen>

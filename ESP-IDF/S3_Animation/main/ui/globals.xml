@@ -1,0 +1,31 @@
+<globals>
+	<api>
+		<!-- Add <enumdefs> here -->
+	</api>
+
+	<consts>
+		<!-- Add <px>, <int>, <color> etc here -->
+	</consts>
+
+	<styles>
+		<!-- Add <style> tags here -->
+	</styles>
+
+	<subjects>
+		<!-- Add <int>, <string>, or <float> subjects here -->
+	</subjects>
+
+	<images>
+		<data name="dog_walk1" color_format="argb8888" src_path="images/dog1_walk1.png" />
+		<data name="dog_walk1_r" color_format="argb8888" src_path="images/dog1_walk1_r.png" />
+		<data name="dog_walk2" color_format="argb8888" src_path="images/dog1_walk2.png" />
+		<data name="dog_walk2_r" color_format="argb8888" src_path="images/dog1_walk2_r.png" />
+		<data name="background" color_format="rgb565" src_path="images/background.png" />
+		<data name="cloud" color_format="argb8888" src_path="images/cloud.png" />
+		<data name="balloon" color_format="argb8888" src_path="images/balloon.png" />
+	</images>
+
+	<fonts>
+		<!-- Add <bin> , <tiny_ttf>, <freetype> tags here -->
+	</fonts>
+</globals>
