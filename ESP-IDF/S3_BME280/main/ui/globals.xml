@@ -1,0 +1,41 @@
+<globals>
+	<api>
+		<!-- Add <enumdefs> here -->
+	</api>
+
+	<consts>
+		<!-- Add <px>, <int>, <color> etc here -->
+	</consts>
+
+	<styles>
+		<!-- Add <style> tags here -->
+	</styles>
+
+	<subjects>
+		<int name="red_val" value="0" />
+		<int name="green_val" value="0" />
+		<int name="blue_val" value="0" />
+
+		<!-- Sensor Data Strings -->
+		<string name="temp_str" value="-- °C" />
+		<string name="temp_status_str" value="--" />
+
+		<string name="hum_str" value="-- %" />
+		<string name="hum_status_str" value="--" />
+
+		<string name="press_str" value="-- hPa" />
+		<string name="press_status_str" value="--" />
+	</subjects>
+
+	<images>
+		<data name="thermometer_img" color_format="rgb565" src_path="images/thermometer_graph_icon.png" />
+		<data name="humidity_img" color_format="rgb565" src_path="images/humidity_icon.png" />
+		<data name="pressure_img" color_format="rgb565" src_path="images/pressure_icon.png" />
+	</images>
+
+	<fonts>
+		<bin name="title_large" src_path="fonts/Montserrat-Bold.ttf" size="44" bpp="4" as_file="false" symbols="°" />
+		<bin name="body_medium" src_path="fonts/Montserrat-Medium.ttf" size="22" bpp="4" as_file="false" symbols="°" />
+		<bin name="body_normal" src_path="fonts/Montserrat-Medium.ttf" size="16" bpp="4" as_file="false" symbols="°" />
+	</fonts>
+</globals>

@@ -1,0 +1,14 @@
+list(
+  APPEND
+  LV_EDITOR_PROJECT_SOURCES
+  ${CMAKE_CURRENT_LIST_DIR}/components/sensor_card_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/fonts/body_medium_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/fonts/body_normal_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/fonts/title_large_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/humidity_img_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/pressure_img_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/thermometer_img_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/screens/main_screen_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/screens/sensor_screen_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/ui_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/ui.c)
