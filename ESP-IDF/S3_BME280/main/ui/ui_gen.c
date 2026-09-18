@@ -8,7 +8,7 @@
 
 #include "ui_gen.h"
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
 #endif /* LV_USE_XML */
 
 /*********************
@@ -104,8 +104,6 @@ lv_subject_t press_status_str;
 
 void ui_init_gen(const char * asset_path)
 {
-    char buf[256];
-
 
     /*----------------
      * Fonts
@@ -226,7 +224,7 @@ void ui_init_gen(const char * asset_path)
         lv_translation_set_language(translation_languages[0]);
     #endif
 
-#if LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     /* Register widgets */
 
     /* Check all fonts / default if needed. This prevents fonts that are used in one target but
@@ -256,14 +254,14 @@ void ui_init_gen(const char * asset_path)
 
     /* Register all the global assets so that they won't be created again when globals.xml is parsed.
      * While running in the editor skip this step to update the preview when the XML changes */
-#if LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
+#if defined(LV_USE_XML) && LV_USE_XML && !defined(LV_EDITOR_PREVIEW)
     /* Register images */
     lv_xml_register_image(NULL, "thermometer_img", thermometer_img);
     lv_xml_register_image(NULL, "humidity_img", humidity_img);
     lv_xml_register_image(NULL, "pressure_img", pressure_img);
 #endif
 
-#if LV_USE_XML == 0
+#if !defined(LV_USE_XML) || LV_USE_XML == 0
     /*--------------------
      *  Permanent screens
      *-------------------*/

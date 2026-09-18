@@ -2,8 +2,8 @@
  * @file main_screen_gen.h
  */
 
-#ifndef MAIN_SCREEN_H
-#define MAIN_SCREEN_H
+#ifndef LVGL_PRO_MAIN_SCREEN_GEN_H
+#define LVGL_PRO_MAIN_SCREEN_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -49,4 +49,4 @@ lv_obj_t * main_screen_create(void);
 } /*extern "C"*/
 #endif
 
-#endif /*MAIN_SCREEN_H*/
+#endif /*LVGL_PRO_MAIN_SCREEN_GEN_H*/

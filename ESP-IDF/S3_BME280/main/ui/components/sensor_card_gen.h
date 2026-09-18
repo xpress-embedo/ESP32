@@ -2,8 +2,8 @@
  * @file sensor_card_gen.h
  */
 
-#ifndef SENSOR_CARD_H
-#define SENSOR_CARD_H
+#ifndef LVGL_PRO_SENSOR_CARD_GEN_H
+#define LVGL_PRO_SENSOR_CARD_GEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #include "lvgl/lvgl_private.h"
 #endif
 
-#ifdef LV_USE_XML
+#if defined(LV_USE_XML) && LV_USE_XML
     #include "lv_xml/lv_xml.h"
 #endif
 
@@ -47,4 +47,4 @@ lv_obj_t * sensor_card_create(lv_obj_t * parent, lv_subject_t * value_text, cons
 } /*extern "C"*/
 #endif
 
-#endif /*SENSOR_CARD_H*/
+#endif /*LVGL_PRO_SENSOR_CARD_GEN_H*/

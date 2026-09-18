@@ -3915,33 +3915,22 @@ CONFIG_I2C_MS_TO_WAIT=200
 # end of Bus Options
 
 #
-# LVGL configuration
+# LVGL
 #
-# default:
-CONFIG_LV_CONF_SKIP=y
-# default:
-# CONFIG_LV_CONF_MINIMAL is not set
 
 #
-# Color Settings
+# Memory and Standard Library
 #
 # default:
-# CONFIG_LV_COLOR_DEPTH_32 is not set
+CONFIG_LV_STDLIB_BUILTIN=0
 # default:
-# CONFIG_LV_COLOR_DEPTH_24 is not set
+CONFIG_LV_STDLIB_CLIB=1
 # default:
-CONFIG_LV_COLOR_DEPTH_16=y
+CONFIG_LV_STDLIB_MICROPYTHON=2
 # default:
-# CONFIG_LV_COLOR_DEPTH_8 is not set
+CONFIG_LV_STDLIB_RTTHREAD=3
 # default:
-# CONFIG_LV_COLOR_DEPTH_1 is not set
-# default:
-CONFIG_LV_COLOR_DEPTH=16
-# end of Color Settings
-
-#
-# Memory Settings
-#
+CONFIG_LV_STDLIB_CUSTOM=255
 # default:
 CONFIG_LV_USE_BUILTIN_MALLOC=y
 # default:
@@ -3953,33 +3942,55 @@ CONFIG_LV_USE_BUILTIN_MALLOC=y
 # default:
 # CONFIG_LV_USE_CUSTOM_MALLOC is not set
 # default:
+CONFIG_LV_USE_STDLIB_MALLOC=0
+# default:
 CONFIG_LV_USE_BUILTIN_STRING=y
 # default:
 # CONFIG_LV_USE_CLIB_STRING is not set
 # default:
+# CONFIG_LV_USE_RTTHREAD_STRING is not set
+# default:
 # CONFIG_LV_USE_CUSTOM_STRING is not set
+# default:
+CONFIG_LV_USE_STDLIB_STRING=0
 # default:
 CONFIG_LV_USE_BUILTIN_SPRINTF=y
 # default:
 # CONFIG_LV_USE_CLIB_SPRINTF is not set
 # default:
+# CONFIG_LV_USE_RTTHREAD_SPRINTF is not set
+# default:
 # CONFIG_LV_USE_CUSTOM_SPRINTF is not set
 # default:
-CONFIG_LV_MEM_SIZE_KILOBYTES=64
+CONFIG_LV_USE_STDLIB_SPRINTF=0
+
+#
+# Builtin Malloc Settings
+#
+# default:
+CONFIG_LV_MEM_SIZE=65536
+CONFIG_LV_MEM_SIZE_KILOBYTES=0
 # default:
 CONFIG_LV_MEM_POOL_EXPAND_SIZE_KILOBYTES=0
 # default:
 CONFIG_LV_MEM_ADR=0x0
-# end of Memory Settings
+# end of Builtin Malloc Settings
 
-#
-# HAL Settings
-#
 # default:
-CONFIG_LV_DEF_REFR_PERIOD=33
+CONFIG_LV_STDINT_INCLUDE="stdint.h"
 # default:
-CONFIG_LV_DPI_DEF=130
-# end of HAL Settings
+CONFIG_LV_STDDEF_INCLUDE="stddef.h"
+# default:
+CONFIG_LV_STDBOOL_INCLUDE="stdbool.h"
+# default:
+CONFIG_LV_INTTYPES_INCLUDE="inttypes.h"
+# default:
+CONFIG_LV_LIMITS_INCLUDE="limits.h"
+# default:
+CONFIG_LV_STDARG_INCLUDE="stdarg.h"
+# default:
+CONFIG_LV_USE_TLSF=y
+# end of Memory and Standard Library
 
 #
 # Operating System (OS)
@@ -3994,16 +4005,71 @@ CONFIG_LV_OS_FREERTOS=y
 # CONFIG_LV_OS_SDL2 is not set
 # CONFIG_LV_OS_CUSTOM is not set
 # default:
+CONFIG_LV_USE_OS=2
+# default:
+CONFIG_LV_OS_USE_FREERTOS=y
+
+#
+# FreeRTOS Configuration
+#
+# default:
 CONFIG_LV_USE_FREERTOS_TASK_NOTIFY=y
+# default:
+# CONFIG_LV_OS_IDLE_PERCENT_CUSTOM is not set
+# end of FreeRTOS Configuration
 # end of Operating System (OS)
 
 #
 # Rendering Configuration
 #
+
+#
+# Color Settings
+#
+# default:
+# CONFIG_LV_COLOR_FORMAT_I1 is not set
+# default:
+# CONFIG_LV_COLOR_FORMAT_L8 is not set
+# default:
+CONFIG_LV_COLOR_FORMAT_RGB565=y
+# default:
+# CONFIG_LV_COLOR_FORMAT_RGB565_SWAPPED is not set
+# default:
+# CONFIG_LV_COLOR_FORMAT_RGB888 is not set
+# default:
+# CONFIG_LV_COLOR_FORMAT_XRGB8888 is not set
+# default:
+# CONFIG_LV_COLOR_FORMAT_ARGB8888 is not set
+# default:
+# CONFIG_LV_COLOR_FORMAT_ARGB8888_PREMULTIPLIED is not set
+# default:
+# CONFIG_LV_COLOR_DEPTH_UNSET is not set
+# default:
+# CONFIG_LV_COLOR_DEPTH_32 is not set
+# default:
+# CONFIG_LV_COLOR_DEPTH_24 is not set
+# default:
+CONFIG_LV_COLOR_DEPTH_16=y
+# default:
+# CONFIG_LV_COLOR_DEPTH_8 is not set
+# default:
+# CONFIG_LV_COLOR_DEPTH_1 is not set
+# default:
+CONFIG_LV_COLOR_DEPTH=16
+# default:
+CONFIG_LV_COLOR_MIX_ROUND_OFS=128
+# end of Color Settings
+
+# default:
+CONFIG_LV_DEF_REFR_PERIOD=33
+# default:
+CONFIG_LV_DPI_DEF=130
 # default:
 CONFIG_LV_DRAW_BUF_STRIDE_ALIGN=1
 # default:
 CONFIG_LV_DRAW_BUF_ALIGN=4
+# default:
+# CONFIG_LV_USE_MATRIX is not set
 # default:
 CONFIG_LV_DRAW_LAYER_SIMPLE_BUF_SIZE=24576
 # default:
@@ -4013,7 +4079,21 @@ CONFIG_LV_DRAW_THREAD_STACK_SIZE=8192
 # default:
 CONFIG_LV_DRAW_THREAD_PRIO=3
 # default:
+# CONFIG_LV_USE_VECTOR_GRAPHIC is not set
+# default:
+# CONFIG_LV_USE_SNAPSHOT is not set
+# default:
+# CONFIG_LV_USE_THORVG is not set
+
+#
+# SW
+#
+# default:
 CONFIG_LV_USE_DRAW_SW=y
+
+#
+# Supported color formats
+#
 # default:
 CONFIG_LV_DRAW_SW_SUPPORT_RGB565=y
 # default:
@@ -4038,6 +4118,8 @@ CONFIG_LV_DRAW_SW_SUPPORT_A8=y
 CONFIG_LV_DRAW_SW_SUPPORT_I1=y
 # default:
 CONFIG_LV_DRAW_SW_I1_LUM_THRESHOLD=127
+# end of Supported color formats
+
 # default:
 CONFIG_LV_DRAW_SW_DRAW_UNIT_CNT=1
 # default:
@@ -4046,6 +4128,8 @@ CONFIG_LV_DRAW_SW_DRAW_UNIT_CNT=1
 # CONFIG_LV_USE_NATIVE_HELIUM_ASM is not set
 # default:
 CONFIG_LV_DRAW_SW_COMPLEX=y
+# default:
+CONFIG_LV_GRADIENT_MAX_STOPS=2
 # default:
 # CONFIG_LV_USE_DRAW_SW_COMPLEX_GRADIENTS is not set
 # default:
@@ -4061,32 +4145,149 @@ CONFIG_LV_DRAW_SW_ASM_NONE=y
 # default:
 # CONFIG_LV_DRAW_SW_ASM_RISCV_V is not set
 # default:
+# CONFIG_LV_DRAW_SW_ASM_SVE2 is not set
+# default:
 # CONFIG_LV_DRAW_SW_ASM_CUSTOM is not set
 # default:
 CONFIG_LV_USE_DRAW_SW_ASM=0
+# end of SW
+
+#
+# VG-Lite
+#
+# default:
+# CONFIG_LV_USE_DRAW_VG_LITE is not set
+# end of VG-Lite
+
+#
+# Dave2D
+#
+# default:
+# CONFIG_LV_USE_DRAW_DAVE2D is not set
+# end of Dave2D
+
+#
+# NemaGFX
+#
+# default:
+# CONFIG_LV_USE_NEMA_GFX is not set
+# end of NemaGFX
+
+#
+# PXP
+#
 # default:
 # CONFIG_LV_USE_PXP is not set
 # default:
-# CONFIG_LV_USE_G2D is not set
-# default:
-# CONFIG_LV_USE_DRAW_DAVE2D is not set
-# default:
-# CONFIG_LV_USE_DRAW_SDL is not set
-# default:
-# CONFIG_LV_USE_DRAW_VG_LITE is not set
-# default:
-# CONFIG_LV_USE_VECTOR_GRAPHIC is not set
-# default:
-# CONFIG_LV_USE_DRAW_DMA2D is not set
+# CONFIG_LV_USE_DRAW_PXP is not set
+# end of PXP
+
+#
+# PPA
+#
 # default:
 # CONFIG_LV_USE_PPA is not set
+# end of PPA
+
+#
+# DMA2D
+#
+# default:
+# CONFIG_LV_USE_DRAW_DMA2D is not set
+# end of DMA2D
+
+#
+# EPIC
+#
+# default:
+# CONFIG_LV_USE_SIFLI_EPIC is not set
+# end of EPIC
+
+#
+# EVE
+#
 # default:
 # CONFIG_LV_USE_DRAW_EVE is not set
+# end of EVE
+
+#
+# G2D
+#
+# default:
+# CONFIG_LV_USE_G2D is not set
+# default:
+# CONFIG_LV_USE_DRAW_G2D is not set
+# end of G2D
+
+#
+# NanoVG
+#
+# default:
+# CONFIG_LV_USE_DRAW_NANOVG is not set
+# end of NanoVG
+
+#
+# OpenGL ES
+#
+# default:
+# CONFIG_LV_USE_DRAW_OPENGLES is not set
+# end of OpenGL ES
+
+#
+# SDL
+#
+# default:
+# CONFIG_LV_USE_DRAW_SDL is not set
+# end of SDL
 # end of Rendering Configuration
 
 #
-# Feature Configuration
+# Input Devices
 #
+# default:
+CONFIG_LV_INDEV_DEF_SCROLL_LIMIT=10
+# default:
+CONFIG_LV_INDEV_DEF_SCROLL_THROW=10
+# default:
+CONFIG_LV_INDEV_DEF_SCROLL_ELASTIC_FACTOR=4
+# default:
+CONFIG_LV_INDEV_DEF_LONG_PRESS_TIME=400
+# default:
+CONFIG_LV_INDEV_DEF_LONG_PRESS_REP_TIME=100
+# default:
+CONFIG_LV_INDEV_DEF_DOUBLE_CLICK_TIME=400
+# default:
+CONFIG_LV_INDEV_DEF_GESTURE_LIMIT=50
+# default:
+CONFIG_LV_INDEV_DEF_GESTURE_MIN_VELOCITY=3
+# default:
+CONFIG_LV_INDEV_DEF_ROTARY_SENSITIVITY=256
+# default:
+# CONFIG_LV_USE_GRIDNAV is not set
+# default:
+# CONFIG_LV_USE_GESTURE_RECOGNITION is not set
+# end of Input Devices
+
+#
+# Core
+#
+# default:
+# CONFIG_LV_OBJ_STYLE_CACHE is not set
+CONFIG_LV_USE_OBJ_NAME=y
+# default:
+# CONFIG_LV_USE_OBJ_ID is not set
+CONFIG_LV_USE_OBJ_PROPERTY=y
+CONFIG_LV_USE_OBJ_PROPERTY_NAME=y
+# default:
+# CONFIG_LV_USE_EXT_DATA is not set
+# default:
+# CONFIG_LV_USE_FLOAT is not set
+# default:
+CONFIG_LV_USE_OBSERVER=y
+CONFIG_LV_USE_TRANSLATION=y
+# default:
+# CONFIG_LV_USE_COLOR_FILTER is not set
+# end of Core
 
 #
 # Logging
@@ -4096,81 +4297,78 @@ CONFIG_LV_USE_DRAW_SW_ASM=0
 # end of Logging
 
 #
-# Asserts
+# Themes
 #
 # default:
-CONFIG_LV_USE_ASSERT_NULL=y
+CONFIG_LV_USE_THEME_DEFAULT=y
 # default:
-CONFIG_LV_USE_ASSERT_MALLOC=y
+# CONFIG_LV_THEME_DEFAULT_DARK is not set
 # default:
-# CONFIG_LV_USE_ASSERT_STYLE is not set
+CONFIG_LV_THEME_DEFAULT_GROW=y
 # default:
-# CONFIG_LV_USE_ASSERT_MEM_INTEGRITY is not set
+CONFIG_LV_THEME_DEFAULT_TRANSITION_TIME=80
 # default:
-# CONFIG_LV_USE_ASSERT_OBJ is not set
+CONFIG_LV_USE_THEME_SIMPLE=y
 # default:
-CONFIG_LV_ASSERT_HANDLER_INCLUDE="assert.h"
-# end of Asserts
+# CONFIG_LV_USE_THEME_MONO is not set
+# end of Themes
 
 #
-# Debug
+# Layouts
 #
 # default:
-# CONFIG_LV_USE_REFR_DEBUG is not set
+CONFIG_LV_USE_FLEX=y
 # default:
-# CONFIG_LV_USE_LAYER_DEBUG is not set
-# default:
-# CONFIG_LV_USE_PARALLEL_DRAW_DEBUG is not set
-# end of Debug
+CONFIG_LV_USE_GRID=y
+# end of Layouts
 
 #
-# Others
+# Image Settings
 #
-# default:
-# CONFIG_LV_ENABLE_GLOBAL_CUSTOM is not set
 # default:
 CONFIG_LV_CACHE_DEF_SIZE=0
 # default:
 CONFIG_LV_IMAGE_HEADER_CACHE_DEF_CNT=0
 # default:
-CONFIG_LV_GRADIENT_MAX_STOPS=2
+# CONFIG_LV_USE_RLE is not set
 # default:
-CONFIG_LV_COLOR_MIX_ROUND_OFS=128
+# CONFIG_LV_USE_LZ4 is not set
 # default:
-# CONFIG_LV_OBJ_STYLE_CACHE is not set
+# CONFIG_LV_BIN_DECODER_RAM_LOAD is not set
 # default:
-# CONFIG_LV_USE_OBJ_ID is not set
-CONFIG_LV_USE_OBJ_NAME=y
-CONFIG_LV_USE_OBJ_PROPERTY=y
-CONFIG_LV_USE_OBJ_PROPERTY_NAME=y
+# CONFIG_LV_USE_LODEPNG is not set
 # default:
-# CONFIG_LV_USE_EXT_DATA is not set
-# end of Others
-# end of Feature Configuration
+# CONFIG_LV_USE_LIBPNG is not set
+# default:
+# CONFIG_LV_USE_BMP is not set
+# default:
+# CONFIG_LV_USE_TJPGD is not set
+# default:
+# CONFIG_LV_USE_LIBJPEG_TURBO is not set
+# default:
+# CONFIG_LV_USE_LIBWEBP is not set
+# end of Image Settings
 
 #
-# Compiler Settings
+# Text & Font Settings
 #
 # default:
-# CONFIG_LV_BIG_ENDIAN_SYSTEM is not set
+CONFIG_LV_TXT_ENC_UTF8=y
 # default:
-CONFIG_LV_ATTRIBUTE_MEM_ALIGN_SIZE=1
+# CONFIG_LV_TXT_ENC_ASCII is not set
 # default:
-# CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM is not set
+CONFIG_LV_TXT_BREAK_CHARS=" ,.;:-_)}"
 # default:
-# CONFIG_LV_USE_FLOAT is not set
+CONFIG_LV_TXT_LINE_BREAK_LONG_LEN=0
 # default:
-# CONFIG_LV_USE_MATRIX is not set
+CONFIG_LV_TXT_COLOR_CMD="#"
 # default:
-# CONFIG_LV_USE_PRIVATE_API is not set
-# end of Compiler Settings
+# CONFIG_LV_USE_BIDI is not set
+# default:
+# CONFIG_LV_USE_ARABIC_PERSIAN_CHARS is not set
 
 #
-# Font Usage
-#
-
-#
-# Enable built-in fonts
+# Built-in Fonts
 #
 # default:
 # CONFIG_LV_FONT_MONTSERRAT_8 is not set
@@ -4225,8 +4423,12 @@ CONFIG_LV_FONT_MONTSERRAT_14=y
 # CONFIG_LV_FONT_UNSCII_8 is not set
 # default:
 # CONFIG_LV_FONT_UNSCII_16 is not set
-# end of Enable built-in fonts
+# end of Built-in Fonts
 
+# default:
+# CONFIG_LV_FONT_USE_CUSTOM_INCLUDE is not set
+# default:
+# CONFIG_LV_USE_CUSTOM_FONT_DEFAULT is not set
 # default:
 # CONFIG_LV_FONT_DEFAULT_MONTSERRAT_8 is not set
 # default:
@@ -4287,34 +4489,18 @@ CONFIG_LV_FONT_DEFAULT_MONTSERRAT_14=y
 # CONFIG_LV_USE_FONT_COMPRESSED is not set
 # default:
 CONFIG_LV_USE_FONT_PLACEHOLDER=y
+# default:
+# CONFIG_LV_USE_FONT_MANAGER is not set
+# default:
+# CONFIG_LV_USE_IMGFONT is not set
+# default:
+# CONFIG_LV_USE_FREETYPE is not set
+# default:
+# CONFIG_LV_USE_TINY_TTF is not set
+# end of Text & Font Settings
 
 #
-# Enable static fonts
-#
-# end of Enable static fonts
-# end of Font Usage
-
-#
-# Text Settings
-#
-# default:
-CONFIG_LV_TXT_ENC_UTF8=y
-# default:
-# CONFIG_LV_TXT_ENC_ASCII is not set
-# default:
-CONFIG_LV_TXT_BREAK_CHARS=" ,.;:-_)}"
-# default:
-CONFIG_LV_TXT_LINE_BREAK_LONG_LEN=0
-# default:
-CONFIG_LV_TXT_COLOR_CMD="#"
-# default:
-# CONFIG_LV_USE_BIDI is not set
-# default:
-# CONFIG_LV_USE_ARABIC_PERSIAN_CHARS is not set
-# end of Text Settings
-
-#
-# Widget Usage
+# Widgets
 #
 # default:
 CONFIG_LV_WIDGETS_HAS_DEFAULT_VALUE=y
@@ -4326,6 +4512,8 @@ CONFIG_LV_USE_ARC=y
 CONFIG_LV_USE_ARCLABEL=y
 # default:
 CONFIG_LV_USE_BAR=y
+# default:
+# CONFIG_LV_USE_BARCODE is not set
 # default:
 CONFIG_LV_USE_BUTTON=y
 # default:
@@ -4354,6 +4542,35 @@ CONFIG_LV_SATURDAY_STR="Sa"
 CONFIG_LV_SUNDAY_STR="Su"
 # end of Days name configuration
 
+#
+# Month names configuration
+#
+# default:
+CONFIG_LV_JANUARY_STR="January"
+# default:
+CONFIG_LV_FEBRUARY_STR="February"
+# default:
+CONFIG_LV_MARCH_STR="March"
+# default:
+CONFIG_LV_APRIL_STR="April"
+# default:
+CONFIG_LV_MAY_STR="May"
+# default:
+CONFIG_LV_JUNE_STR="June"
+# default:
+CONFIG_LV_JULY_STR="July"
+# default:
+CONFIG_LV_AUGUST_STR="August"
+# default:
+CONFIG_LV_SEPTEMBER_STR="September"
+# default:
+CONFIG_LV_OCTOBER_STR="October"
+# default:
+CONFIG_LV_NOVEMBER_STR="November"
+# default:
+CONFIG_LV_DECEMBER_STR="December"
+# end of Month names configuration
+
 # default:
 CONFIG_LV_USE_CALENDAR_HEADER_ARROW=y
 # default:
@@ -4369,9 +4586,17 @@ CONFIG_LV_USE_CHECKBOX=y
 # default:
 CONFIG_LV_USE_DROPDOWN=y
 # default:
+# CONFIG_LV_USE_FFMPEG is not set
+# default:
+# CONFIG_LV_USE_GIF is not set
+# default:
+# CONFIG_LV_USE_GSTREAMER is not set
+# default:
 CONFIG_LV_USE_IMAGE=y
 # default:
 CONFIG_LV_USE_IMAGEBUTTON=y
+# default:
+# CONFIG_LV_USE_IME_PINYIN is not set
 # default:
 CONFIG_LV_USE_KEYBOARD=y
 # default:
@@ -4392,6 +4617,10 @@ CONFIG_LV_USE_LIST=y
 CONFIG_LV_USE_MENU=y
 # default:
 CONFIG_LV_USE_MSGBOX=y
+# default:
+# CONFIG_LV_USE_QRCODE is not set
+# default:
+# CONFIG_LV_USE_RLOTTIE is not set
 # default:
 CONFIG_LV_USE_ROLLER=y
 # default:
@@ -4420,36 +4649,65 @@ CONFIG_LV_USE_TABVIEW=y
 CONFIG_LV_USE_TILEVIEW=y
 # default:
 CONFIG_LV_USE_WIN=y
-# end of Widget Usage
+# end of Widgets
 
 #
-# Themes
+# Drivers
 #
 # default:
-CONFIG_LV_USE_THEME_DEFAULT=y
+# CONFIG_LV_USE_LINUX_DRM is not set
 # default:
-# CONFIG_LV_THEME_DEFAULT_DARK is not set
+# CONFIG_LV_USE_LINUX_FBDEV is not set
 # default:
-CONFIG_LV_THEME_DEFAULT_GROW=y
+# CONFIG_LV_USE_FT81X is not set
 # default:
-CONFIG_LV_THEME_DEFAULT_TRANSITION_TIME=80
+# CONFIG_LV_USE_LOVYAN_GFX is not set
 # default:
-CONFIG_LV_USE_THEME_SIMPLE=y
+# CONFIG_LV_USE_GENERIC_MIPI is not set
 # default:
-# CONFIG_LV_USE_THEME_MONO is not set
-# end of Themes
+# CONFIG_LV_USE_ST7735 is not set
+# default:
+# CONFIG_LV_USE_ST7789 is not set
+# default:
+# CONFIG_LV_USE_ST7796 is not set
+# default:
+# CONFIG_LV_USE_ILI9341 is not set
+# default:
+# CONFIG_LV_USE_NV3007 is not set
+# default:
+# CONFIG_LV_USE_NXP_ELCDIF is not set
+# default:
+# CONFIG_LV_USE_RENESAS_GLCDC is not set
+# default:
+# CONFIG_LV_USE_ST_LTDC is not set
+# default:
+# CONFIG_LV_USE_TFT_ESPI is not set
+# default:
+# CONFIG_LV_USE_EVDEV is not set
+# default:
+# CONFIG_LV_USE_LIBINPUT is not set
+# default:
+# CONFIG_LV_USE_NUTTX is not set
+# default:
+# CONFIG_LV_USE_OPENGLES is not set
+# default:
+# CONFIG_LV_USE_GLFW is not set
+# default:
+# CONFIG_LV_USE_QNX is not set
+# default:
+# CONFIG_LV_USE_SDL is not set
+# default:
+# CONFIG_LV_USE_UEFI is not set
+# default:
+# CONFIG_LV_USE_WAYLAND is not set
+# default:
+# CONFIG_LV_USE_X11 is not set
+# default:
+# CONFIG_LV_USE_NANOVG is not set
+# end of Drivers
 
 #
-# Layouts
-#
-# default:
-CONFIG_LV_USE_FLEX=y
-# default:
-CONFIG_LV_USE_GRID=y
-# end of Layouts
-
-#
-# 3rd Party Libraries
+# File System
 #
 # default:
 CONFIG_LV_FS_DEFAULT_DRIVER_LETTER=0
@@ -4462,8 +4720,6 @@ CONFIG_LV_FS_DEFAULT_DRIVER_LETTER=0
 # default:
 # CONFIG_LV_USE_FS_FATFS is not set
 # default:
-# CONFIG_LV_USE_FS_MEMFS is not set
-# default:
 # CONFIG_LV_USE_FS_LITTLEFS is not set
 # default:
 # CONFIG_LV_USE_FS_ARDUINO_ESP_LITTLEFS is not set
@@ -4474,127 +4730,129 @@ CONFIG_LV_FS_DEFAULT_DRIVER_LETTER=0
 # default:
 # CONFIG_LV_USE_FS_FROGFS is not set
 # default:
-# CONFIG_LV_USE_LODEPNG is not set
+# CONFIG_LV_USE_FS_MEMFS is not set
+# end of File System
+
+#
+# Debugging
+#
+
+#
+# System Monitoring
+#
 # default:
-# CONFIG_LV_USE_LIBPNG is not set
+# CONFIG_LV_USE_SYSMON is not set
+# end of System Monitoring
+
+#
+# Profiler
+#
 # default:
-# CONFIG_LV_USE_BMP is not set
+# CONFIG_LV_USE_PROFILER is not set
 # default:
-# CONFIG_LV_USE_TJPGD is not set
+# CONFIG_LV_USE_PROFILER_BUILTIN is not set
+# end of Profiler
+
+#
+# Test Utilities
+#
 # default:
-# CONFIG_LV_USE_LIBJPEG_TURBO is not set
+# CONFIG_LV_USE_TEST is not set
 # default:
-# CONFIG_LV_USE_LIBWEBP is not set
+# CONFIG_LV_USE_MONKEY is not set
+# end of Test Utilities
+
+#
+# Debug Rendering
+#
 # default:
-# CONFIG_LV_USE_GIF is not set
+# CONFIG_LV_USE_REFR_DEBUG is not set
 # default:
-# CONFIG_LV_BIN_DECODER_RAM_LOAD is not set
+# CONFIG_LV_USE_LAYER_DEBUG is not set
 # default:
-# CONFIG_LV_USE_RLE is not set
-# default:
-# CONFIG_LV_USE_QRCODE is not set
-# default:
-# CONFIG_LV_USE_BARCODE is not set
-# default:
-# CONFIG_LV_USE_FREETYPE is not set
-# default:
-# CONFIG_LV_USE_TINY_TTF is not set
-# default:
-# CONFIG_LV_USE_RLOTTIE is not set
-# default:
-# CONFIG_LV_USE_THORVG is not set
-# default:
-# CONFIG_LV_USE_NANOVG is not set
-# default:
-# CONFIG_LV_USE_LZ4 is not set
-# default:
-# CONFIG_LV_USE_FFMPEG is not set
-# end of 3rd Party Libraries
+# CONFIG_LV_USE_PARALLEL_DRAW_DEBUG is not set
+# end of Debug Rendering
+# end of Debugging
 
 #
 # Others
 #
 # default:
-# CONFIG_LV_USE_SNAPSHOT is not set
-# default:
-# CONFIG_LV_USE_SYSMON is not set
-# default:
-# CONFIG_LV_USE_PROFILER is not set
-# default:
-# CONFIG_LV_USE_MONKEY is not set
-# default:
-# CONFIG_LV_USE_GRIDNAV is not set
-# default:
 # CONFIG_LV_USE_FRAGMENT is not set
 # default:
-# CONFIG_LV_USE_IMGFONT is not set
-# default:
-CONFIG_LV_USE_OBSERVER=y
-# default:
-# CONFIG_LV_USE_IME_PINYIN is not set
-# default:
 # CONFIG_LV_USE_FILE_EXPLORER is not set
-# default:
-# CONFIG_LV_USE_FONT_MANAGER is not set
-# default:
-# CONFIG_LV_USE_TEST is not set
-CONFIG_LV_USE_TRANSLATION=y
-# default:
-# CONFIG_LV_USE_COLOR_FILTER is not set
-# default:
-CONFIG_LVGL_VERSION_MAJOR=9
-# default:
-CONFIG_LVGL_VERSION_MINOR=5
-# default:
-CONFIG_LVGL_VERSION_PATCH=0
 # end of Others
 
 #
-# Devices
+# Build
 #
 # default:
-# CONFIG_LV_USE_SDL is not set
+CONFIG_LVGL_VERSION_MAJOR=9
 # default:
-# CONFIG_LV_USE_X11 is not set
+CONFIG_LVGL_VERSION_MINOR=6
 # default:
-# CONFIG_LV_USE_WAYLAND is not set
+CONFIG_LVGL_VERSION_PATCH=0
 # default:
-# CONFIG_LV_USE_LINUX_FBDEV is not set
+CONFIG_LV_CONF_SKIP=y
 # default:
-# CONFIG_LV_USE_NUTTX is not set
+# CONFIG_LV_CONF_MINIMAL is not set
 # default:
-# CONFIG_LV_USE_LINUX_DRM is not set
+# CONFIG_LV_USE_PRIVATE_API is not set
 # default:
-# CONFIG_LV_USE_TFT_ESPI is not set
+# CONFIG_LV_ENABLE_GLOBAL_CUSTOM is not set
+
+#
+# Asserts
+#
 # default:
-# CONFIG_LV_USE_LOVYAN_GFX is not set
+# CONFIG_LV_USE_ASSERT is not set
 # default:
-# CONFIG_LV_USE_EVDEV is not set
+CONFIG_LV_USE_ASSERT_MALLOC=y
 # default:
-# CONFIG_LV_USE_LIBINPUT is not set
+CONFIG_LV_USE_ASSERT_NULL=y
 # default:
-# CONFIG_LV_USE_ST7735 is not set
+# CONFIG_LV_USE_ASSERT_STYLE is not set
 # default:
-# CONFIG_LV_USE_ST7789 is not set
+# CONFIG_LV_USE_ASSERT_MEM_INTEGRITY is not set
 # default:
-# CONFIG_LV_USE_ST7796 is not set
+# CONFIG_LV_USE_ASSERT_OBJ is not set
 # default:
-# CONFIG_LV_USE_ILI9341 is not set
+CONFIG_LV_ASSERT_HANDLER_INCLUDE="assert.h"
 # default:
-# CONFIG_LV_USE_GENERIC_MIPI is not set
+CONFIG_LV_ASSERT_HANDLER_INCLUDE_IS_NON_EMPTY=y
+CONFIG_LV_DISABLE_ASSERT_HANDLER_INCLUDE_WARNING=y
 # default:
-# CONFIG_LV_USE_NXP_ELCDIF is not set
+# CONFIG_LV_ASSERT_USE_CUSTOM_INCLUDE is not set
+# end of Asserts
+
+#
+# Argument Checks
+#
 # default:
-# CONFIG_LV_USE_RENESAS_GLCDC is not set
+CONFIG_LV_USE_CHECK_ARG=y
 # default:
-# CONFIG_LV_USE_ST_LTDC is not set
+# CONFIG_LV_CHECK_ARG_ASSERT_ON_FAIL is not set
 # default:
-# CONFIG_LV_USE_FT81X is not set
+CONFIG_LV_CHECK_ARG_LOG_MODE_NONE=y
 # default:
-# CONFIG_LV_USE_UEFI is not set
+CONFIG_LV_CHECK_ARG_LOG_MODE=0
 # default:
-# CONFIG_LV_USE_QNX is not set
-# end of Devices
+# CONFIG_LV_USE_CHECK_OBJ_CLASSTYPE is not set
+# default:
+# CONFIG_LV_USE_CHECK_OBJ_VALIDITY is not set
+# end of Argument Checks
+# end of Build
+
+#
+# Compiler Settings
+#
+# default:
+# CONFIG_LV_BIG_ENDIAN_SYSTEM is not set
+# default:
+# CONFIG_LV_ATTRIBUTE_USE_CUSTOM_INCLUDE is not set
+# default:
+# CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM is not set
+# end of Compiler Settings
 
 #
 # Examples
@@ -4607,7 +4865,7 @@ CONFIG_LVGL_VERSION_PATCH=0
 #
 # CONFIG_LV_BUILD_DEMOS is not set
 # end of Demos
-# end of LVGL configuration
+# end of LVGL
 # end of Component config
 
 # default:
